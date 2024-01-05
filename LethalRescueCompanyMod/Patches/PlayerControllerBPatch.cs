@@ -23,6 +23,7 @@ namespace LethalRescueCompanyPlugin.Patches
         static bool logEnabled = false;
         static Stopwatch reviveTimer;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
+        static PlayerControllerB _host = null;
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
         static void updatePatch(ref bool ___isPlayerDead,
@@ -45,6 +46,18 @@ namespace LethalRescueCompanyPlugin.Patches
                         $"isMovementHindered: {___isMovementHindered}, " +
                         $"hinderedMultiplier: {___hinderedMultiplier}");
                 }
+
+                if(_host == null)
+                {
+                    ___playersManager.allPlayerScripts.ToList().ForEach(p =>
+                    {
+                        if (p.IsOwner)
+                        {
+                            _host = p;
+                        }
+                    });
+                }
+
 
                 if (___playersManager == null)
                 {
