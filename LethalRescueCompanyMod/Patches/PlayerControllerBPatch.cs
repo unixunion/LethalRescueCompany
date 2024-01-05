@@ -63,15 +63,19 @@ namespace LethalRescueCompanyPlugin.Patches
 
                     if (___deadBody.isInShip && ___deadBody.grabBodyObject.grabbable)
                     {
-                        if(reviveTimer == null)
-                        {
-                            reviveTimer = new Stopwatch();
-                            reviveTimer.Start();
-                        }
 
-                        if(reviveTimer.Elapsed.TotalSeconds > 5) { 
-                            ReviveRescuedPlayer(___deadBody, ___playersManager);
-                            reviveTimer = null;
+                        //:LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch] deadBody.isInShip: False sharedMaterial.name: SpooledPlayerMat, sharedMesh.name: Circle
+                        if(___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat") { 
+                            if (reviveTimer == null)
+                            {
+                                reviveTimer = new Stopwatch();
+                                reviveTimer.Start();
+                            }
+
+                            if(reviveTimer.Elapsed.TotalSeconds > 5) { 
+                                ReviveRescuedPlayer(___deadBody, ___playersManager);
+                                reviveTimer = null;
+                            }
                         }
                     }
 
