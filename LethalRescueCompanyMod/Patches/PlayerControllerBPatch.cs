@@ -39,7 +39,7 @@ namespace LethalRescueCompanyPlugin.Patches
             {
                 // nope out if not a body
                 if (___deadBody == null ) return;
-                if (!___deadBody.isInShip) return;
+                //if (!___deadBody.isInShip) return;
 
                 if (logEnabled)
                 {
@@ -84,7 +84,7 @@ namespace LethalRescueCompanyPlugin.Patches
                                 $"db.sharedMaterial.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name}, " +
                                 $"db.sharedMesh.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh.name}, " +
                                 $"db.causeOfDeath: {___deadBody.causeOfDeath}, " +
-                                $"db.canBeGrabbedBackByPlayers: {___deadBody.canBeGrabbedBackByPlayers}");
+                                $"db.canBeGrabbedBackByPlayers: {___deadBody.grabBodyObject.grabbable}");
              
 
                     if (___deadBody.isInShip && ___deadBody.grabBodyObject.grabbable)
