@@ -42,8 +42,9 @@ namespace LethalRescueCompanyPlugin.Patches
                         $"name: {___playerUsername}, " +
                         $"isPlayerDead: {___isPlayerDead}, " +
                         $"movementSpeed: {___movementSpeed}, " +
-                        $"isMovementHindered: {___isMovementHindered}," +
-                        $"hinderedMultiplier: {___hinderedMultiplier}");
+                        $"isMovementHindered: {___isMovementHindered}, " +
+                        $"hinderedMultiplier: {___hinderedMultiplier}, " +
+                        $"causeOfDeath: {___deadBody.causeOfDeath}");
                 }
 
                 if (___playersManager == null)
