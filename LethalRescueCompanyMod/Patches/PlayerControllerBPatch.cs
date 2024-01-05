@@ -38,7 +38,7 @@ namespace LethalRescueCompanyPlugin.Patches
             try
             {
                 // nope out if not a body
-                if (___deadBody == null) return;
+                if (___deadBody == null && !___deadBody.isInShip) return;
 
                 if (logEnabled)
                 {
