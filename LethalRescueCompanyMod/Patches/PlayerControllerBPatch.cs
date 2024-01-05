@@ -15,12 +15,18 @@ using Unity.Netcode;
 using Dissonance.Integrations.Unity_NFGO;
 using Newtonsoft.Json;
 
+//round manager has spawn enemies
+
+
 namespace LethalRescueCompanyPlugin.Patches
 {
     [HarmonyPatch(typeof(PlayerControllerB))]
     internal class PlayerControllerBPatch : BaseUnityPlugin
     {
         static bool logEnabled = false;
+        static bool isDebug = true;
+        static bool spawnedSpider = false;
+
         static Stopwatch reviveTimer;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
         static PlayerControllerB _host = null;
@@ -32,13 +38,17 @@ namespace LethalRescueCompanyPlugin.Patches
                                 ref float ___hinderedMultiplier,
                                 ref string ___playerUsername,
                                 ref bool ___performingEmote,
+                                ref Transform ___thisPlayerBody,
                                 ref StartOfRound ___playersManager,
                                 ref DeadBodyInfo ___deadBody)
         {
             try
             {
+                DebugHacks(___performingEmote, ___thisPlayerBody);
+
                 // nope out if not a body
-                if (___deadBody == null && !___deadBody.isInShip) return;
+                if (___deadBody == null) return;
+                if (!___deadBody.isInShip) return;
 
                 if (logEnabled)
                 {
@@ -101,6 +111,17 @@ namespace LethalRescueCompanyPlugin.Patches
             catch (Exception ex)
             {
                 log.LogError(JsonConvert.SerializeObject(ex));
+            }
+        }
+
+        private static void DebugHacks(bool performingEmote, Transform thisPlayerBody)
+        {
+            if (performingEmote && !spawnedSpider)
+            {
+                EnemyType n = new EnemyType();
+                n.enemyPrefab = Resources.Load<GameObject>("Prefabs/Enemies/Spider");
+                RoundManager.Instance.SpawnEnemyGameObject(thisPlayerBody.localPosition, 0f, 55, n);
+                spawnedSpider = true;
             }
         }
 
