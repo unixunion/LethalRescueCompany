@@ -43,8 +43,7 @@ namespace LethalRescueCompanyPlugin.Patches
                         $"isPlayerDead: {___isPlayerDead}, " +
                         $"movementSpeed: {___movementSpeed}, " +
                         $"isMovementHindered: {___isMovementHindered}, " +
-                        $"hinderedMultiplier: {___hinderedMultiplier}, " +
-                        $"causeOfDeath: {___deadBody.causeOfDeath}");
+                        $"hinderedMultiplier: {___hinderedMultiplier}");
                 }
 
                 if (___playersManager == null)
@@ -59,7 +58,11 @@ namespace LethalRescueCompanyPlugin.Patches
                 //&& ___playerUsername == "marzubus"
                 if (___isPlayerDead)
                 {
-                    log.LogInfo($"deadBody.isInShip: {___deadBody.isInShip} sharedMaterial.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name}, sharedMesh.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh.name}");
+                    log.LogInfo($"deadBody.isInShip: {___deadBody.isInShip}," +
+                                $"sharedMaterial.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name}, " +
+                                $"sharedMesh.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh.name}, " +
+                                $"causeOfDeath: {___deadBody.causeOfDeath}");
+             
 
                     if (___deadBody.isInShip && ___deadBody.grabBodyObject.grabbable)
                     {
