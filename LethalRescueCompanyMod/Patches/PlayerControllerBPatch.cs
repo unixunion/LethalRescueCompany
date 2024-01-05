@@ -38,7 +38,8 @@ namespace LethalRescueCompanyPlugin.Patches
             try
             {
                 // nope out if not a body
-                if (___deadBody == null && !___deadBody.isInShip) return;
+                if (___deadBody == null ) return;
+                if (!___deadBody.isInShip) return;
 
                 if (logEnabled)
                 {
@@ -68,12 +69,22 @@ namespace LethalRescueCompanyPlugin.Patches
                 }
 
                 //&& ___playerUsername == "marzubus"
+                // [Error  :LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch] {"ClassName":"System.NullReferenceException"
+                // ,"Message":"Object reference not set to an instance of an object","Data":null,"InnerException":null,"HelpURL"
+                // :null,"StackTraceString":"  at LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch.updatePatch (System.
+                // Boolean& ___isPlayerDead, System.Single& ___movementSpeed, System.Int32& ___isMovementHindered, System.Single&
+                // ___hinderedMultiplier, System.String& ___playerUsername, System.Boolean& ___performingEmote, StartOfRound&
+                // ___playersManager, DeadBodyInfo& ___deadBody) [0x0000d] in <1792070e033446bea933494d743d11f4>:0 ",
+                // "RemoteStackTraceString":null,"RemoteStackIndex":0,"ExceptionMethod":null,"HResult":-2147467261,
+                // "Source":"LethalRescueCompanyMod"}
+
                 if (___isPlayerDead)
                 {
-                    log.LogInfo($"deadBody.isInShip: {___deadBody.isInShip}," +
-                                $"sharedMaterial.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name}, " +
-                                $"sharedMesh.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh.name}, " +
-                                $"causeOfDeath: {___deadBody.causeOfDeath}");
+                    log.LogInfo($"db.isInShip: {___deadBody.isInShip}, " +
+                                $"db.sharedMaterial.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name}, " +
+                                $"db.sharedMesh.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh.name}, " +
+                                $"db.causeOfDeath: {___deadBody.causeOfDeath}, " +
+                                $"db.canBeGrabbedBackByPlayers: {___deadBody.canBeGrabbedBackByPlayers}");
              
 
                     if (___deadBody.isInShip && ___deadBody.grabBodyObject.grabbable)
