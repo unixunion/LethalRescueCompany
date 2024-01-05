@@ -80,10 +80,11 @@ namespace LethalRescueCompanyPlugin.Patches
                 //&& ___playerUsername == "marzubus"
                 if (___isPlayerDead)
                 {
-                    log.LogInfo($"deadBody.isInShip: {___deadBody.isInShip}," +
-                                $"sharedMaterial.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name}, " +
-                                $"sharedMesh.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh.name}, " +
-                                $"causeOfDeath: {___deadBody.causeOfDeath}");
+                    log.LogInfo($"db.isInShip: {___deadBody.isInShip}, " +
+                                $"db.sharedMaterial.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name}, " +
+                                $"db.sharedMesh.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh.name}, " +
+                                $"db.causeOfDeath: {___deadBody.causeOfDeath}, " +
+                                $"db.canBeGrabbedBackByPlayers: {___deadBody.grabBodyObject.grabbable}");
              
 
                     if (___deadBody.isInShip && ___deadBody.grabBodyObject.grabbable)
