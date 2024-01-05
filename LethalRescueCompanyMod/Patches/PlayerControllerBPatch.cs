@@ -37,6 +37,9 @@ namespace LethalRescueCompanyPlugin.Patches
         {
             try
             {
+                // nope out if not a body
+                if (___deadBody == null) return;
+
                 if (logEnabled)
                 {
                     log.LogInfo(
@@ -58,15 +61,11 @@ namespace LethalRescueCompanyPlugin.Patches
                     });
                 }
 
-
                 if (___playersManager == null)
                 {
                     log.LogError($"playersManager is null");
                     return;
                 }
-
-                // nope out if not a body
-                if (___deadBody == null) return;
 
                 //&& ___playerUsername == "marzubus"
                 if (___isPlayerDead)
