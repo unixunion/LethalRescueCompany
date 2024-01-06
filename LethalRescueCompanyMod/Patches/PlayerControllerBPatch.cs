@@ -56,18 +56,25 @@ namespace LethalRescueCompanyPlugin.Patches
             // fix to make spider hung bodies grabbable.
             // todo fixme, need to grab it, drop it and grab it again to release it.
             // check if body is wrapped in a spider web material,
-            if (___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat" && !___deadBody.grabBodyObject.grabbable && ___deadBody.attachedTo != null)
+            makeWebbedBodyGrabbable(___deadBody);
+            playerIsDeadAndWebbedInShipCheck(___deadBody, ___playersManager, ___isPlayerDead);
+        }
+
+        private static void makeWebbedBodyGrabbable(DeadBodyInfo deadBodyInfo)
+        {
+            // fix to make spider hung bodies grabbable.
+            // todo fixme, need to grab it, drop it and grab it again to release it.
+            // check if body is wrapped in a spider web material,
+            if (deadBodyInfo.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat" && !deadBodyInfo.grabBodyObject.grabbable && deadBodyInfo.attachedTo != null)
             {
-                if (___deadBody.attachedTo.name != "MouthTarget")
+                if (deadBodyInfo.attachedTo.name != "MouthTarget")
                 {
-                    log.LogInfo($"Making wrapped body grabbable, currently attached to: {___deadBody.attachedTo.name}");
-                    ___deadBody.grabBodyObject.grabbable = true;
-                    ___deadBody.canBeGrabbedBackByPlayers = true;
+                    log.LogInfo($"Making wrapped body grabbable, currently attached to: {deadBodyInfo.attachedTo.name}");
+                    deadBodyInfo.grabBodyObject.grabbable = true;
+                    deadBodyInfo.canBeGrabbedBackByPlayers = true;
 
                 }
             }
-
-            playerIsDeadAndWebbedInShipCheck(___deadBody, ___playersManager, ___isPlayerDead);
         }
 
         private static void playerIsDeadAndWebbedInShipCheck(DeadBodyInfo deadBodyInfo, StartOfRound playersManager, bool isPlayerDead)
