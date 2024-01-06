@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using LethalRescueCompanyMod.Patches;
 using LethalRescueCompanyPlugin.Patches;
 
 namespace LethalRescueCompanyPlugin
@@ -26,6 +27,7 @@ namespace LethalRescueCompanyPlugin
             log.LogInfo("I am alive!");
             harmony.PatchAll(typeof(LethalCompanyMemorableMomentsPlugin));
             harmony.PatchAll(typeof(PlayerControllerBPatch));
+            harmony.PatchAll(typeof(HudManagerPatch));
 
         }
     }
