@@ -40,7 +40,7 @@ namespace LethalRescueCompanyPlugin.Patches
 
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
-        static void udpatePatch(ref bool ___isPlayerDead,
+        static void updatePatch(ref bool ___isPlayerDead,
                                ref float ___movementSpeed,
                                ref int ___isMovementHindered,
                                ref float ___hinderedMultiplier,
