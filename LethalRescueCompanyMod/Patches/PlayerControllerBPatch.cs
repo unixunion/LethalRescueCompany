@@ -57,10 +57,14 @@ namespace LethalRescueCompanyPlugin.Patches
 
                 // nope out if not a body
                 if (___deadBody == null) return;
-                if (___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat" && !___deadBody.grabBodyObject.grabbable)
+                if (___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat" && !___deadBody.grabBodyObject.grabbable && ___deadBody.attachedTo != null)
                 {
-                    log.LogInfo($"Making wrapped body grabbable, currently attached to: {___deadBody.attachedTo.name}");
-                    ___deadBody.grabBodyObject.grabbable = true;
+                    if (___deadBody.attachedTo.name != "MouthTarget")
+                    {
+                        log.LogInfo($"Making wrapped body grabbable, currently attached to: {___deadBody.attachedTo.name}");
+                        ___deadBody.grabBodyObject.grabbable = true;
+                        ___deadBody.canBeGrabbedBackByPlayers = true;
+                    }
                 }
                 if (!___deadBody.isInShip) return;
 
