@@ -58,7 +58,7 @@ namespace LethalRescueCompanyPlugin.Patches
                 if (___deadBody == null) return;
                 if (___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat" && !___deadBody.grabBodyObject.grabbable)
                 {
-                    log.LogInfo("Making wrapped body grabbable");
+                    log.LogInfo($"Making wrapped body grabbable, currently attached to: {___deadBody.attachedTo.name}");
                     ___deadBody.grabBodyObject.grabbable = true;
                 }
                 if (!___deadBody.isInShip) return;
@@ -184,6 +184,7 @@ namespace LethalRescueCompanyPlugin.Patches
                     GameObject thespider = UnityEngine.Object.Instantiate(enemyType.enemyPrefab, thisPlayerBody.position, Quaternion.Euler(new Vector3(0f, 0, 0f)));
                     thespider.GetComponentInChildren<NetworkObject>().Spawn(destroyWithScene: true);
                     RoundManager.Instance.SpawnedEnemies.Add(thespider.GetComponent<EnemyAI>());
+                    
                     spawnedSpiderEnemy = thespider;
                     spawnedSpider = true;
                     if (cooldown == null)
