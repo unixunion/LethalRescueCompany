@@ -35,12 +35,10 @@ namespace LethalRescueCompanyPlugin.Patches
     internal class PlayerControllerBPatch : BaseUnityPlugin
     {
         static Helper reviveHelper = new Helper();
-        static bool isDebug = true;
-        static bool spawnedSpider = false;
-
+        static bool isDebug = Settings.isDebug;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
         //static PlayerControllerB _host = null;
-        [HarmonyPatch("Emote1_performed")]
+        [HarmonyPatch("Emote2_performed")]
         [HarmonyPostfix]
         static void emote1performedPatch(ref bool ___isPlayerDead,
                                ref float ___movementSpeed,
@@ -52,11 +50,7 @@ namespace LethalRescueCompanyPlugin.Patches
                                ref StartOfRound ___playersManager,
                                ref DeadBodyInfo ___deadBody)
         {
-            // spider debugging stuff
-            if (isDebug)
-            {
-                DebugHacks(___performingEmote, ___thisPlayerBody);
-            }
+
         }
 
 
@@ -145,74 +139,7 @@ namespace LethalRescueCompanyPlugin.Patches
         }
 
 
-        private static List<EnemyAI> spawnedSpiders = null;
-        private static EnemyType spiderEnemyType = null;
-        private static bool hasKilledSpiders = false;
-        private static void DebugHacks(bool performingEmote, Transform thisPlayerBody)
-        {
-            List<EnemyAI> fuckingSpiders = null;
-            if (RoundManager.Instance.SpawnedEnemies.Count > 0)
-            {
-                try
-                {
-                    fuckingSpiders = RoundManager.Instance.SpawnedEnemies.Where(x => x.enemyType.enemyPrefab.name.ToLower().Contains("spider")).ToList();
-                    if (fuckingSpiders != null && fuckingSpiders.Count > 0)
-                    {
-                        spawnedSpiders = fuckingSpiders;
-                        spawnedSpider = true;
-                    }
-                    else
-                    {
-                        spawnedSpider = false;
-                    }
-                }
-                catch { };
-            }
-            if (!spawnedSpider)
-            {
-                if (spiderEnemyType == null)
-                {
-                    RoundManager.Instance.currentLevel.Enemies.ForEach(enemy =>
-                    {
-                        //log.LogInfo(enemy.enemyType.enemyPrefab.name);
-                        if (enemy.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
-                        {
-                            spiderEnemyType = enemy.enemyType;
-                        }
-                    });
-                }
-
-                if (spiderEnemyType != null && spawnedSpiders == null)
-                {
-                    //log.LogInfo($"Spawning spider at: {thisPlayerBody.position}");
-                    var n = RoundManager.Instance.SpawnEnemyGameObject(thisPlayerBody.position, 0, 99, spiderEnemyType);
-                    //RoundManager.Instance.SpawnedEnemies.Add(spiderEnemyType.enemyPrefab.GetComponent<EnemyAI>());
-                    spawnedSpiders = fuckingSpiders;
-                    spawnedSpider = true;
-                }
-            }
-            else
-            {
-                if (fuckingSpiders != null)
-                {
-                    if (fuckingSpiders.Count > 0 && !hasKilledSpiders)
-                    {
-                        fuckingSpiders.ForEach(spider => Destroy(spider.gameObject));
-                        fuckingSpiders.ForEach(spider => Destroy(spider));
-                        RoundManager.Instance.SpawnedEnemies.RemoveAll(_ => true);
-                        hasKilledSpiders = true;
-                    }
-                }
-
-                if (hasKilledSpiders)
-                {
-                    spiderEnemyType = null;
-                    spawnedSpider = false;
-                    spawnedSpiders = null;
-                    hasKilledSpiders = false;
-                }
-            }
-        }
+       
 
         public static void KillPlayer(PlayerControllerB player, Vector3 bodyVelocity, bool spawnBody = true, CauseOfDeath causeOfDeath = CauseOfDeath.Unknown, int deathAnimation = 0)
         {
