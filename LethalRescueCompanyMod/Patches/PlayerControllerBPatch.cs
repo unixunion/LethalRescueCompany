@@ -151,7 +151,7 @@ namespace LethalRescueCompanyPlugin.Patches
                     RoundManager.Instance.SpawnEnemyGameObject(thisPlayerBody.position, 0, 99, spiderEnemyType);
                     //GameObject thespider = UnityEngine.Object.Instantiate(enemyType.enemyPrefab, thisPlayerBody.position, Quaternion.Euler(new Vector3(0f, 0, 0f)));
                     //thespider.GetComponentInChildren<NetworkObject>().Spawn(destroyWithScene: true);
-                    //RoundManager.Instance.SpawnedEnemies.Add(enemyType.GetComponent<EnemyAI>());
+                    RoundManager.Instance.SpawnedEnemies.Add(spiderEnemyType.enemyPrefab.GetComponent<EnemyAI>());
                     spawnedSpiders = fuckingspiders;
 
                     spawnedSpider = true;
