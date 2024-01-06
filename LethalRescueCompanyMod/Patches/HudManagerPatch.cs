@@ -27,11 +27,21 @@ namespace LethalRescueCompanyMod.Patches
                 DebugHacks(___localPlayer.thisPlayerBody);
             }
         }
-        
         private static List<EnemyAI> spawnedSpiders = null;
         private static EnemyType spiderEnemyType = null;
         private static bool hasKilledSpiders = false;
         private static bool spidersExist = false;
+
+        [HarmonyPatch("OnEnable")]
+        [HarmonyPostfix]
+        static void unsetSpiderEntity()
+        {
+            spiderEnemyType = null;
+            hasKilledSpiders = false;
+            spawnedSpiders = null;
+            spidersExist = false;
+        }
+
         private static void DebugHacks(Transform thisPlayerBody)
         {
             List<EnemyAI> fuckingSpiders = null;
