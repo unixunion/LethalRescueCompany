@@ -15,6 +15,7 @@ using Unity.Netcode;
 using Dissonance.Integrations.Unity_NFGO;
 using Newtonsoft.Json;
 using DunGen;
+using System.Collections.Generic;
 
 //round manager has spawn enemies
 
@@ -122,7 +123,7 @@ namespace LethalRescueCompanyPlugin.Patches
         }
 
 
-        private static GameObject spawnedSpiderEnemy = null;
+        private static List<EnemyAI> spawnedSpiders = null;
         private static Stopwatch cooldown = null;
         private static void DebugHacks(bool performingEmote, Transform thisPlayerBody)
         {
@@ -144,30 +145,36 @@ namespace LethalRescueCompanyPlugin.Patches
                 }
 
 
-                if (spawnedSpider && spawnedSpiderEnemy != null)
+                if (spawnedSpider && spawnedSpiders != null)
                 {
                     if (cooldown != null)
                     {
                         if (cooldown.Elapsed.TotalSeconds > 5)
                         {
-                            Destroy(spawnedSpiderEnemy);
-                            enemyType = null;
-                            spawnedSpider = false;
-                            cooldown.Stop();
-                            cooldown = null;
+                            if (spawnedSpiders.Count > 0)
+                            {
+                                spawnedSpiders.ForEach(spider => Destroy(spider.gameObject));
+                                enemyType = null;
+                                spawnedSpider = false;
+                                cooldown.Stop();
+                                cooldown = null;
+                            }
                         }
                     }
                     return;
                 }
 
-                if (enemyType != null && spawnedSpiderEnemy == null)
+                if (enemyType != null && spawnedSpiders == null)
                 {
                     log.LogInfo($"Spawning spider at: {thisPlayerBody.position}");
-                    GameObject thespider = UnityEngine.Object.Instantiate(enemyType.enemyPrefab, thisPlayerBody.position, Quaternion.Euler(new Vector3(0f, 0, 0f)));
-                    thespider.GetComponentInChildren<NetworkObject>().Spawn(destroyWithScene: true);
-                    RoundManager.Instance.SpawnedEnemies.Add(thespider.GetComponent<EnemyAI>());
-                    
-                    spawnedSpiderEnemy = thespider;
+
+                    RoundManager.Instance.SpawnEnemyGameObject(thisPlayerBody.position, 0, 99, enemyType);
+                    //GameObject thespider = UnityEngine.Object.Instantiate(enemyType.enemyPrefab, thisPlayerBody.position, Quaternion.Euler(new Vector3(0f, 0, 0f)));
+                    //thespider.GetComponentInChildren<NetworkObject>().Spawn(destroyWithScene: true);
+                    //RoundManager.Instance.SpawnedEnemies.Add(thespider.GetComponent<EnemyAI>());
+                    var fuckingspiders = RoundManager.Instance.SpawnedEnemies.Where(x => x.enemyType.enemyPrefab.name.ToLower().Contains("spider")).ToList();
+                    spawnedSpiders = fuckingspiders;
+
                     spawnedSpider = true;
                     if (cooldown == null)
                     {
