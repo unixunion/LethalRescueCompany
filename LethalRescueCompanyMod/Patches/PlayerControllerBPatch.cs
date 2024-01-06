@@ -124,56 +124,34 @@ namespace LethalRescueCompanyPlugin.Patches
 
 
         private static List<EnemyAI> spawnedSpiders = null;
+        private static EnemyType spiderEnemyType = null;
         private static Stopwatch cooldown = null;
         private static void DebugHacks(bool performingEmote, Transform thisPlayerBody)
         {
-
             if (performingEmote && !spawnedSpider)
             {
                 var fuckingspiders = RoundManager.Instance.SpawnedEnemies.Where(x => x.enemyType.enemyPrefab.name.ToLower().Contains("spider")).ToList();
 
-                EnemyType enemyType = null;
-                if (enemyType == null)
+                if (spiderEnemyType == null)
                 {
                     RoundManager.Instance.currentLevel.Enemies.ForEach(enemy =>
                     {
                         log.LogInfo(enemy.enemyType.enemyPrefab.name);
                         if (enemy.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
                         {
-                            enemyType = enemy.enemyType;
+                            spiderEnemyType = enemy.enemyType;
                         }
                     });
                 }
 
-
-                if (spawnedSpider && spawnedSpiders != null)
-                {
-                    if (cooldown != null)
-                    {
-                        if (cooldown.Elapsed.TotalSeconds > 5)
-                        {
-                            if (spawnedSpiders.Count > 0)
-                            {
-                                spawnedSpiders.ForEach(spider => Destroy(spider.gameObject));
-                                enemyType = null;
-                                spawnedSpider = false;
-                                cooldown.Stop();
-                                cooldown = null;
-                                spawnedSpiders = null;
-                            }
-                        }
-                    }
-                    return;
-                }
-
-                if (enemyType != null && spawnedSpiders == null)
+                if (spiderEnemyType != null && spawnedSpiders == null)
                 {
                     log.LogInfo($"Spawning spider at: {thisPlayerBody.position}");
 
-                    RoundManager.Instance.SpawnEnemyGameObject(thisPlayerBody.position, 0, 99, enemyType);
+                    RoundManager.Instance.SpawnEnemyGameObject(thisPlayerBody.position, 0, 99, spiderEnemyType);
                     //GameObject thespider = UnityEngine.Object.Instantiate(enemyType.enemyPrefab, thisPlayerBody.position, Quaternion.Euler(new Vector3(0f, 0, 0f)));
                     //thespider.GetComponentInChildren<NetworkObject>().Spawn(destroyWithScene: true);
-                    //RoundManager.Instance.SpawnedEnemies.Add(thespider.GetComponent<EnemyAI>());
+                    //RoundManager.Instance.SpawnedEnemies.Add(enemyType.GetComponent<EnemyAI>());
                     spawnedSpiders = fuckingspiders;
 
                     spawnedSpider = true;
@@ -183,6 +161,28 @@ namespace LethalRescueCompanyPlugin.Patches
                         cooldown.Start();
                     }
 
+                }
+            }
+            else if(performingEmote)
+            {
+                if (spawnedSpider && spawnedSpiders != null)
+                {
+                    if (cooldown != null)
+                    {
+                        if (cooldown.Elapsed.TotalSeconds > 5)
+                        {
+                            if (spawnedSpiders.Count > 0)
+                            {
+                                spawnedSpiders.ForEach(spider => Destroy(spider.gameObject));
+                                spiderEnemyType = null;
+                                spawnedSpider = false;
+                                cooldown.Stop();
+                                cooldown = null;
+                                spawnedSpiders = null;
+                            }
+                        }
+                    }
+                    return;
                 }
             }
         }
