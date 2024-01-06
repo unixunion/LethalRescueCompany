@@ -156,7 +156,7 @@ namespace LethalRescueCompanyPlugin.Patches
                     //    log.LogInfo(x.enemyType.enemyPrefab.name);
                     //    if (x.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
                     //    {
-                    //        enemyType = x.enemyType;
+                    //        enemyType = x.enemyType;s
                     //    }
 
                     //});
@@ -176,6 +176,7 @@ namespace LethalRescueCompanyPlugin.Patches
                             cooldown = null;
                         }
                     }
+                    return;
                 }
 
                 if (enemyType != null && spawnedSpiderEnemy == null)
