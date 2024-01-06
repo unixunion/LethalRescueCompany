@@ -200,11 +200,10 @@ namespace LethalRescueCompanyPlugin.Patches
                             }
                         }
                     }
-                    return;
                 }
 
 
-                if (cooldown.Elapsed.TotalSeconds > 10 && hasKilledSpiders)
+                if (cooldown != null && cooldown.Elapsed.TotalSeconds > 10 && hasKilledSpiders)
                 {
                     cooldown.Stop();
                     cooldown = null;
