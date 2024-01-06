@@ -68,7 +68,7 @@ namespace LethalRescueCompanyPlugin.Patches
         {
             try
             {
-                
+
 
                 // nope out if not a body
                 if (___deadBody == null) return;
@@ -83,7 +83,7 @@ namespace LethalRescueCompanyPlugin.Patches
                         log.LogInfo($"Making wrapped body grabbable, currently attached to: {___deadBody.attachedTo.name}");
                         ___deadBody.grabBodyObject.grabbable = true;
                         ___deadBody.canBeGrabbedBackByPlayers = true;
-                        
+
                     }
                 }
 
@@ -147,7 +147,6 @@ namespace LethalRescueCompanyPlugin.Patches
 
         private static List<EnemyAI> spawnedSpiders = null;
         private static EnemyType spiderEnemyType = null;
-        private static Stopwatch cooldown = null;
         private static bool hasKilledSpiders = false;
         private static void DebugHacks(bool performingEmote, Transform thisPlayerBody)
         {
@@ -157,7 +156,7 @@ namespace LethalRescueCompanyPlugin.Patches
                 try
                 {
                     fuckingSpiders = RoundManager.Instance.SpawnedEnemies.Where(x => x.enemyType.enemyPrefab.name.ToLower().Contains("spider")).ToList();
-                    if(fuckingSpiders!=null && fuckingSpiders.Count > 0)
+                    if (fuckingSpiders != null && fuckingSpiders.Count > 0)
                     {
                         spawnedSpiders = fuckingSpiders;
                     }
@@ -185,37 +184,24 @@ namespace LethalRescueCompanyPlugin.Patches
                     //RoundManager.Instance.SpawnedEnemies.Add(spiderEnemyType.enemyPrefab.GetComponent<EnemyAI>());
                     spawnedSpiders = fuckingSpiders;
                     spawnedSpider = true;
-                    if (cooldown == null)
-                    {
-                        cooldown = new Stopwatch();
-                        cooldown.Start();
-                    }
+
                 }
             }
             else if (performingEmote)
             {
                 if (spawnedSpider && fuckingSpiders != null)
                 {
-                    if (cooldown != null)
+                    if (fuckingSpiders.Count > 0 && !hasKilledSpiders)
                     {
-                        if (cooldown.Elapsed.TotalSeconds > 5)
-                        {
-                            if (fuckingSpiders.Count > 0 && !hasKilledSpiders)
-                            {
-                                fuckingSpiders.ForEach(spider => Destroy(spider.gameObject));
-                                fuckingSpiders.ForEach(spider => Destroy(spider));
-                                RoundManager.Instance.SpawnedEnemies.RemoveAll(_ => true);
-                                hasKilledSpiders = true;
-                            }
-                        }
+                        fuckingSpiders.ForEach(spider => Destroy(spider.gameObject));
+                        fuckingSpiders.ForEach(spider => Destroy(spider));
+                        RoundManager.Instance.SpawnedEnemies.RemoveAll(_ => true);
+                        hasKilledSpiders = true;
                     }
                 }
 
-
-                if (cooldown != null && cooldown.Elapsed.TotalSeconds > 10 && hasKilledSpiders)
+                if (hasKilledSpiders)
                 {
-                    cooldown.Stop();
-                    cooldown = null;
                     spiderEnemyType = null;
                     spawnedSpider = false;
                     spawnedSpiders = null;
