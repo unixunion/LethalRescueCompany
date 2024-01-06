@@ -91,7 +91,7 @@ namespace LethalRescueCompanyPlugin.Patches
                         //log.LogInfo("body dropped in ship, checking if its warpped in a web");
                         if (deadBodyInfo.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat")
                         {
-
+                            if (Settings.isDebug) log.LogInfo("calling revivehelper");
                             reviveHelper.startCoroutine(deadBodyInfo, playersManager);
                             //log.LogInfo("webbed body dropped in ship");
                             //if (reviveTimer == null)

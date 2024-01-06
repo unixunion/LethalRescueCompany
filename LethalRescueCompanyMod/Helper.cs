@@ -24,6 +24,7 @@ namespace LethalRescueCompanyMod
 
         public void startCoroutine(DeadBodyInfo deadbody, StartOfRound startOfRound)
         {
+            if (Settings.isDebug) log.LogInfo("calling coroutine");
             ((MonoBehaviour)this).StartCoroutine(deadBodyRespawn(deadbody, startOfRound));
         }
 
