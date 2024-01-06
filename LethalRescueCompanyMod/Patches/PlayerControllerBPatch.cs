@@ -159,11 +159,16 @@ namespace LethalRescueCompanyPlugin.Patches
                     if (fuckingSpiders != null && fuckingSpiders.Count > 0)
                     {
                         spawnedSpiders = fuckingSpiders;
+                        spawnedSpider = true;
+                    }
+                    else
+                    {
+                        spawnedSpider = false;
                     }
                 }
                 catch { };
             }
-            if (performingEmote && !spawnedSpider)
+            if (!spawnedSpider)
             {
                 if (spiderEnemyType == null)
                 {
@@ -184,12 +189,11 @@ namespace LethalRescueCompanyPlugin.Patches
                     //RoundManager.Instance.SpawnedEnemies.Add(spiderEnemyType.enemyPrefab.GetComponent<EnemyAI>());
                     spawnedSpiders = fuckingSpiders;
                     spawnedSpider = true;
-
                 }
             }
-            else if (performingEmote)
+            else
             {
-                if (spawnedSpider && fuckingSpiders != null)
+                if (fuckingSpiders != null)
                 {
                     if (fuckingSpiders.Count > 0 && !hasKilledSpiders)
                     {
@@ -209,21 +213,6 @@ namespace LethalRescueCompanyPlugin.Patches
                 }
             }
         }
-
-        //public static void GetHost(StartOfRound startOfRound)
-        //{
-        //    if (_host == null)
-        //    {
-        //        startOfRound.allPlayerScripts.ToList().ForEach(p =>
-        //        {
-        //            if (p.IsOwner)
-        //            {
-        //                _host = p;
-        //            }
-        //        });
-        //    }
-        //}
-
 
         public static void KillPlayer(PlayerControllerB player, Vector3 bodyVelocity, bool spawnBody = true, CauseOfDeath causeOfDeath = CauseOfDeath.Unknown, int deathAnimation = 0)
         {
