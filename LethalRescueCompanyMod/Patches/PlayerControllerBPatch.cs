@@ -139,12 +139,22 @@ namespace LethalRescueCompanyPlugin.Patches
         private static List<EnemyAI> spawnedSpiders = null;
         private static EnemyType spiderEnemyType = null;
         private static Stopwatch cooldown = null;
+        private static bool hasKilledSpiders = false;
         private static void DebugHacks(bool performingEmote, Transform thisPlayerBody)
         {
-
-            var fuckingspiders = RoundManager.Instance.SpawnedEnemies.Where(x => x.enemyType.enemyPrefab.name.ToLower().Contains("spider")).ToList();
-            log.LogInfo($"count of spiders: {fuckingspiders.Count}");
-
+            List<EnemyAI> fuckingSpiders = null;
+            if (RoundManager.Instance.SpawnedEnemies.Count > 0)
+            {
+                try
+                {
+                    fuckingSpiders = RoundManager.Instance.SpawnedEnemies.Where(x => x.enemyType.enemyPrefab.name.ToLower().Contains("spider")).ToList();
+                    if(fuckingSpiders!=null && fuckingSpiders.Count > 0)
+                    {
+                        spawnedSpiders = fuckingSpiders;
+                    }
+                }
+                catch { };
+            }
             if (performingEmote && !spawnedSpider)
             {
                 if (spiderEnemyType == null)
@@ -162,42 +172,46 @@ namespace LethalRescueCompanyPlugin.Patches
                 if (spiderEnemyType != null && spawnedSpiders == null)
                 {
                     log.LogInfo($"Spawning spider at: {thisPlayerBody.position}");
-
                     var n = RoundManager.Instance.SpawnEnemyGameObject(thisPlayerBody.position, 0, 99, spiderEnemyType);
-                    //GameObject thespider = UnityEngine.Object.Instantiate(enemyType.enemyPrefab, thisPlayerBody.position, Quaternion.Euler(new Vector3(0f, 0, 0f)));
-                    //thespider.GetComponentInChildren<NetworkObject>().Spawn(destroyWithScene: true);
-                    RoundManager.Instance.SpawnedEnemies.Add(spiderEnemyType.enemyPrefab.GetComponent<EnemyAI>());
-                    spawnedSpiders = fuckingspiders;
-
+                    //RoundManager.Instance.SpawnedEnemies.Add(spiderEnemyType.enemyPrefab.GetComponent<EnemyAI>());
+                    spawnedSpiders = fuckingSpiders;
                     spawnedSpider = true;
                     if (cooldown == null)
                     {
                         cooldown = new Stopwatch();
                         cooldown.Start();
                     }
-
                 }
             }
-            else if(performingEmote)
+            else if (performingEmote)
             {
-                if (spawnedSpider && fuckingspiders != null)
+                if (spawnedSpider && fuckingSpiders != null)
                 {
                     if (cooldown != null)
                     {
                         if (cooldown.Elapsed.TotalSeconds > 5)
                         {
-                            if (fuckingspiders.Count > 0)
+                            if (fuckingSpiders.Count > 0 && !hasKilledSpiders)
                             {
-                                fuckingspiders.ForEach(spider => Destroy(spider.gameObject));
-                                spiderEnemyType = null;
-                                spawnedSpider = false;
-                                cooldown.Stop();
-                                cooldown = null;
-                                spawnedSpiders = null;
+                                fuckingSpiders.ForEach(spider => Destroy(spider.gameObject));
+                                fuckingSpiders.ForEach(spider => Destroy(spider));
+                                RoundManager.Instance.SpawnedEnemies.RemoveAll(_ => true);
+                                hasKilledSpiders = true;
                             }
                         }
                     }
                     return;
+                }
+
+
+                if (cooldown.Elapsed.TotalSeconds > 10 && hasKilledSpiders)
+                {
+                    cooldown.Stop();
+                    cooldown = null;
+                    spiderEnemyType = null;
+                    spawnedSpider = false;
+                    spawnedSpiders = null;
+                    hasKilledSpiders = false;
                 }
             }
         }
