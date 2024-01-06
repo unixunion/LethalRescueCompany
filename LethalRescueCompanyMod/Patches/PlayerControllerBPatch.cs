@@ -128,10 +128,12 @@ namespace LethalRescueCompanyPlugin.Patches
         private static Stopwatch cooldown = null;
         private static void DebugHacks(bool performingEmote, Transform thisPlayerBody)
         {
+
+            var fuckingspiders = RoundManager.Instance.SpawnedEnemies.Where(x => x.enemyType.enemyPrefab.name.ToLower().Contains("spider")).ToList();
+            log.LogInfo($"count of spiders: {fuckingspiders.Count}");
+
             if (performingEmote && !spawnedSpider)
             {
-                var fuckingspiders = RoundManager.Instance.SpawnedEnemies.Where(x => x.enemyType.enemyPrefab.name.ToLower().Contains("spider")).ToList();
-
                 if (spiderEnemyType == null)
                 {
                     RoundManager.Instance.currentLevel.Enemies.ForEach(enemy =>
@@ -165,15 +167,15 @@ namespace LethalRescueCompanyPlugin.Patches
             }
             else if(performingEmote)
             {
-                if (spawnedSpider && spawnedSpiders != null)
+                if (spawnedSpider && fuckingspiders != null)
                 {
                     if (cooldown != null)
                     {
                         if (cooldown.Elapsed.TotalSeconds > 5)
                         {
-                            if (spawnedSpiders.Count > 0)
+                            if (fuckingspiders.Count > 0)
                             {
-                                spawnedSpiders.ForEach(spider => Destroy(spider.gameObject));
+                                fuckingspiders.ForEach(spider => Destroy(spider.gameObject));
                                 spiderEnemyType = null;
                                 spawnedSpider = false;
                                 cooldown.Stop();
