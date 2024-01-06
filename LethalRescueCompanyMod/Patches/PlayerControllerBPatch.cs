@@ -159,6 +159,7 @@ namespace LethalRescueCompanyPlugin.Patches
                                 spawnedSpider = false;
                                 cooldown.Stop();
                                 cooldown = null;
+                                spawnedSpiders = null;
                             }
                         }
                     }
