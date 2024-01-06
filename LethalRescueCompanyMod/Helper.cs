@@ -19,17 +19,18 @@ namespace LethalRescueCompanyMod
 
         public Helper()
         {
-
+            
         }
 
         public void startCoroutine(DeadBodyInfo deadbody, StartOfRound startOfRound)
         {
             StartCoroutine(deadBodyRespawn(deadbody, startOfRound));
-        }   
+        }
 
-       
         public IEnumerator deadBodyRespawn(DeadBodyInfo deadbody, StartOfRound startOfRound)
         {
+            if(Settings.isDebug) log.LogInfo($"Starting deadBodyRespawn coroutine");
+
             if (stopwatch == null)
             {
                 stopwatch = new Stopwatch();
@@ -38,6 +39,7 @@ namespace LethalRescueCompanyMod
 
             if (stopwatch.Elapsed.TotalSeconds > 5)
             {
+                if (Settings.isDebug) log.LogInfo($"Reviving Player");
                 ReviveRescuedPlayer(deadbody, startOfRound);
                 stopwatch = null;
                 yield break;
@@ -51,7 +53,7 @@ namespace LethalRescueCompanyMod
         {
             try
             {
-
+                if (Settings.isDebug) log.LogInfo($"starting ReviveRescuedPlayer");
                 // get the PlayerControllerB from the deadbody
                 var ps = deadbody.playerScript;
 
@@ -79,6 +81,7 @@ namespace LethalRescueCompanyMod
                 {
                     componentsInChildren[i].enabled = true;
                 }
+
                 ps.thisPlayerModelArms.enabled = false; // not sure if this is fix for goro arms
 
                 // more init stuff
@@ -98,7 +101,6 @@ namespace LethalRescueCompanyMod
                 ps.DisableJetpackControlsLocally();
                 ps.movementSpeed = 4.6f;
                 ps.mapRadarDotAnimator.SetBool("dead", value: false);
-
 
                 HUDManager.Instance.gasHelmetAnimator.SetBool("gasEmitting", value: false);
                 ps.hasBegunSpectating = false;
@@ -122,6 +124,7 @@ namespace LethalRescueCompanyMod
 
                 // destroy deadbody
                 Destroy(deadbody.gameObject);
+                if (Settings.isDebug) log.LogInfo($"end ReviveRescuedPlayer");
             }
             catch (Exception ex)
             {
