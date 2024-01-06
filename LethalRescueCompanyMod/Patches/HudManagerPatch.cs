@@ -32,7 +32,7 @@ namespace LethalRescueCompanyMod.Patches
         private static bool hasKilledSpiders = false;
         private static bool spidersExist = false;
 
-        [HarmonyPatch("OnEnable")]
+        [HarmonyPatch("RemoveSpectateUI")]
         [HarmonyPostfix]
         static void unsetSpiderEntity()
         {
