@@ -37,6 +37,38 @@ namespace LethalRescueCompanyPlugin.Patches
         static Helper reviveHelper = new Helper();
         static bool isDebug = Settings.isDebug;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
+
+        [HarmonyPatch("Update")]
+        [HarmonyPostfix]
+        static void udpatePatch(ref bool ___isPlayerDead,
+                               ref float ___movementSpeed,
+                               ref int ___isMovementHindered,
+                               ref float ___hinderedMultiplier,
+                               ref string ___playerUsername,
+                               ref bool ___performingEmote,
+                               ref Transform ___thisPlayerBody,
+                               ref StartOfRound ___playersManager,
+                               ref DeadBodyInfo ___deadBody)
+        {
+            // nope out if not a body
+            if (___deadBody == null) return;
+
+            // fix to make spider hung bodies grabbable.
+            // todo fixme, need to grab it, drop it and grab it again to release it.
+            // check if body is wrapped in a spider web material,
+            if (___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat" && !___deadBody.grabBodyObject.grabbable && ___deadBody.attachedTo != null)
+            {
+                if (___deadBody.attachedTo.name != "MouthTarget")
+                {
+                    log.LogInfo($"Making wrapped body grabbable, currently attached to: {___deadBody.attachedTo.name}");
+                    ___deadBody.grabBodyObject.grabbable = true;
+                    ___deadBody.canBeGrabbedBackByPlayers = true;
+
+                }
+            }
+        }
+
+
         //static PlayerControllerB _host = null;
         [HarmonyPatch("Emote2_performed")]
         [HarmonyPostfix]
@@ -64,22 +96,7 @@ namespace LethalRescueCompanyPlugin.Patches
             {
 
 
-                // nope out if not a body
-                if (___deadBody == null) return;
-
-                // fix to make spider hung bodies grabbable.
-                // todo fixme, need to grab it, drop it and grab it again to release it.
-                // check if body is wrapped in a spider web material,
-                if (___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat" && !___deadBody.grabBodyObject.grabbable && ___deadBody.attachedTo != null)
-                {
-                    if (___deadBody.attachedTo.name != "MouthTarget")
-                    {
-                        log.LogInfo($"Making wrapped body grabbable, currently attached to: {___deadBody.attachedTo.name}");
-                        ___deadBody.grabBodyObject.grabbable = true;
-                        ___deadBody.canBeGrabbedBackByPlayers = true;
-
-                    }
-                }
+               
 
                 // ignore dead bodies not in the ship
                 if (!___deadBody.isInShip) return;
