@@ -32,8 +32,8 @@ namespace LethalRescueCompanyPlugin.Patches
     [HarmonyPatch(typeof(PlayerControllerB))]
     internal class PlayerControllerBPatch : BaseUnityPlugin
     {
-        static bool logEnabled = false;
-        static bool isDebug = true;
+
+        static bool isDebug = false;
         static bool spawnedSpider = false;
 
         static Stopwatch reviveTimer;
@@ -54,7 +54,10 @@ namespace LethalRescueCompanyPlugin.Patches
             try
             {
                 // spider debugging stuff
-                DebugHacks(___performingEmote, ___thisPlayerBody);
+                if (isDebug)
+                {
+                    DebugHacks(___performingEmote, ___thisPlayerBody);
+                }
 
                 // nope out if not a body
                 if (___deadBody == null) return;
@@ -76,7 +79,7 @@ namespace LethalRescueCompanyPlugin.Patches
                 // ignore dead bodies not in the ship
                 if (!___deadBody.isInShip) return;
 
-                if (logEnabled)
+                if (isDebug)
                 {
                     log.LogInfo(
                         $"name: {___playerUsername}, " +
@@ -97,30 +100,33 @@ namespace LethalRescueCompanyPlugin.Patches
                 //&& ___playerUsername == "marzubus"
                 if (___isPlayerDead)
                 {
-                    log.LogInfo($"db.isInShip: {___deadBody.isInShip}, " +
-                                $"db.sharedMaterial.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name}, " +
-                                $"db.sharedMesh.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh.name}, " +
-                                $"db.causeOfDeath: {___deadBody.causeOfDeath}, " +
-                                $"db.canBeGrabbedBackByPlayers: {___deadBody.grabBodyObject.grabbable}");
+                    if (isDebug)
+                    {
+                        log.LogInfo($"db.isInShip: {___deadBody.isInShip}, " +
+                                    $"db.sharedMaterial.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name}, " +
+                                    $"db.sharedMesh.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh.name}, " +
+                                    $"db.causeOfDeath: {___deadBody.causeOfDeath}, " +
+                                    $"db.canBeGrabbedBackByPlayers: {___deadBody.grabBodyObject.grabbable}");
+                    }
 
 
                     // detect if its dropped
                     if (___deadBody.isInShip && ___deadBody.grabBodyObject.grabbable)
                     {
-                        log.LogInfo("body dropped in ship, checking if its warpped in a web");
+                        //log.LogInfo("body dropped in ship, checking if its warpped in a web");
                         if (___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat")
                         {
-                            log.LogInfo("webbed body dropped in ship");
+                            //log.LogInfo("webbed body dropped in ship");
                             if (reviveTimer == null)
                             {
-                                log.LogInfo("starting revive timer");
+                                //log.LogInfo("starting revive timer");
                                 reviveTimer = new Stopwatch();
                                 reviveTimer.Start();
                             }
 
                             if (reviveTimer.Elapsed.TotalSeconds > 5)
                             {
-                                log.LogInfo("revive timer elapsed, reviving player");
+                                //log.LogInfo("revive timer elapsed, reviving player");
                                 ReviveRescuedPlayer(___deadBody, ___playersManager);
                                 reviveTimer = null;
                             }
@@ -161,7 +167,7 @@ namespace LethalRescueCompanyPlugin.Patches
                 {
                     RoundManager.Instance.currentLevel.Enemies.ForEach(enemy =>
                     {
-                        log.LogInfo(enemy.enemyType.enemyPrefab.name);
+                        //log.LogInfo(enemy.enemyType.enemyPrefab.name);
                         if (enemy.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
                         {
                             spiderEnemyType = enemy.enemyType;
@@ -171,7 +177,7 @@ namespace LethalRescueCompanyPlugin.Patches
 
                 if (spiderEnemyType != null && spawnedSpiders == null)
                 {
-                    log.LogInfo($"Spawning spider at: {thisPlayerBody.position}");
+                    //log.LogInfo($"Spawning spider at: {thisPlayerBody.position}");
                     var n = RoundManager.Instance.SpawnEnemyGameObject(thisPlayerBody.position, 0, 99, spiderEnemyType);
                     //RoundManager.Instance.SpawnedEnemies.Add(spiderEnemyType.enemyPrefab.GetComponent<EnemyAI>());
                     spawnedSpiders = fuckingSpiders;
