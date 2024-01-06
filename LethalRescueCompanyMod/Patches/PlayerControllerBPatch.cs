@@ -131,32 +131,58 @@ namespace LethalRescueCompanyPlugin.Patches
         }
 
 
-
+        private static GameObject spawnedSpiderEnemy = null;
+        private static Stopwatch cooldown = null;
         private static void DebugHacks(bool performingEmote, Transform thisPlayerBody)
         {
-            
+
             if (performingEmote && !spawnedSpider)
             {
 
                 EnemyType enemyType = null;
-                RoundManager.Instance.SpawnedEnemies.ForEach(x =>
+                if (enemyType == null)
                 {
-                    log.LogInfo(x.enemyType.enemyPrefab.name);
-                    if (x.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
+                    RoundManager.Instance.SpawnedEnemies.ForEach(x =>
                     {
-                        enemyType = x.enemyType;
+                        log.LogInfo(x.enemyType.enemyPrefab.name);
+                        if (x.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
+                        {
+                            enemyType = x.enemyType;
+                        }
+
+                    });
+                }
+
+
+                if (spawnedSpider)
+                {
+                    if (cooldown != null)
+                    {
+                        if (cooldown.Elapsed.TotalSeconds > 5)
+                        {
+                            Destroy(spawnedSpiderEnemy);
+                            enemyType = null;
+                            spawnedSpider = false;
+                            cooldown.Stop();
+                            cooldown = null;
+                        }
                     }
-
-                });
-
+                }
 
                 if (enemyType != null)
                 {
                     log.LogInfo($"Spawning spider at: {thisPlayerBody.position}");
-                    GameObject gameObject4 = UnityEngine.Object.Instantiate(enemyType.enemyPrefab, thisPlayerBody.position, Quaternion.Euler(new Vector3(0f, 0, 0f)));
-                    gameObject4.GetComponentInChildren<NetworkObject>().Spawn(destroyWithScene: true);
-                    RoundManager.Instance.SpawnedEnemies.Add(gameObject4.GetComponent<EnemyAI>());
+                    GameObject thespider = UnityEngine.Object.Instantiate(enemyType.enemyPrefab, thisPlayerBody.position, Quaternion.Euler(new Vector3(0f, 0, 0f)));
+                    thespider.GetComponentInChildren<NetworkObject>().Spawn(destroyWithScene: true);
+                    RoundManager.Instance.SpawnedEnemies.Add(thespider.GetComponent<EnemyAI>());
+                    spawnedSpiderEnemy = thespider;
                     spawnedSpider = true;
+                    if (cooldown == null)
+                    {
+                        cooldown = new Stopwatch();
+                        cooldown.Start();
+                    }
+
                 }
             }
         }
