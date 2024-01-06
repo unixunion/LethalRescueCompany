@@ -130,6 +130,7 @@ namespace LethalRescueCompanyPlugin.Patches
 
             if (performingEmote && !spawnedSpider)
             {
+                var fuckingspiders = RoundManager.Instance.SpawnedEnemies.Where(x => x.enemyType.enemyPrefab.name.ToLower().Contains("spider")).ToList();
 
                 EnemyType enemyType = null;
                 if (enemyType == null)
@@ -172,7 +173,6 @@ namespace LethalRescueCompanyPlugin.Patches
                     //GameObject thespider = UnityEngine.Object.Instantiate(enemyType.enemyPrefab, thisPlayerBody.position, Quaternion.Euler(new Vector3(0f, 0, 0f)));
                     //thespider.GetComponentInChildren<NetworkObject>().Spawn(destroyWithScene: true);
                     //RoundManager.Instance.SpawnedEnemies.Add(thespider.GetComponent<EnemyAI>());
-                    var fuckingspiders = RoundManager.Instance.SpawnedEnemies.Where(x => x.enemyType.enemyPrefab.name.ToLower().Contains("spider")).ToList();
                     spawnedSpiders = fuckingspiders;
 
                     spawnedSpider = true;
