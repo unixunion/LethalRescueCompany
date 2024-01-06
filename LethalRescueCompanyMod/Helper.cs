@@ -24,7 +24,7 @@ namespace LethalRescueCompanyMod
 
         public void startCoroutine(DeadBodyInfo deadbody, StartOfRound startOfRound)
         {
-            StartCoroutine(deadBodyRespawn(deadbody, startOfRound));
+            ((MonoBehaviour)this).StartCoroutine(deadBodyRespawn(deadbody, startOfRound));
         }
 
         public IEnumerator deadBodyRespawn(DeadBodyInfo deadbody, StartOfRound startOfRound)
