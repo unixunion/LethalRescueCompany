@@ -14,8 +14,16 @@ using System.Reflection;
 using Unity.Netcode;
 using Dissonance.Integrations.Unity_NFGO;
 using Newtonsoft.Json;
+using DunGen;
 
 //round manager has spawn enemies
+
+// Interesting Files
+//
+// DeadBodyInfo
+// PlayerControllerBPatch
+// SandSpiderAI
+// https://thunderstore.io/c/lethal-company/p/Noop/UnityExplorer/
 
 
 namespace LethalRescueCompanyPlugin.Patches
@@ -48,6 +56,11 @@ namespace LethalRescueCompanyPlugin.Patches
 
                 // nope out if not a body
                 if (___deadBody == null) return;
+                if (___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat" && !___deadBody.grabBodyObject.grabbable)
+                {
+                    log.LogInfo("Making wrapped body grabbable");
+                    ___deadBody.grabBodyObject.grabbable = true;
+                }
                 if (!___deadBody.isInShip) return;
 
                 if (logEnabled)
@@ -60,7 +73,7 @@ namespace LethalRescueCompanyPlugin.Patches
                         $"hinderedMultiplier: {___hinderedMultiplier}");
                 }
 
-                if(_host == null)
+                if (_host == null)
                 {
                     ___playersManager.allPlayerScripts.ToList().ForEach(p =>
                     {
@@ -85,20 +98,22 @@ namespace LethalRescueCompanyPlugin.Patches
                                 $"db.sharedMesh.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh.name}, " +
                                 $"db.causeOfDeath: {___deadBody.causeOfDeath}, " +
                                 $"db.canBeGrabbedBackByPlayers: {___deadBody.grabBodyObject.grabbable}");
-             
+
 
                     if (___deadBody.isInShip && ___deadBody.grabBodyObject.grabbable)
                     {
 
                         //:LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch] deadBody.isInShip: False sharedMaterial.name: SpooledPlayerMat, sharedMesh.name: Circle
-                        if(___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat") { 
+                        if (___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat")
+                        {
                             if (reviveTimer == null)
                             {
                                 reviveTimer = new Stopwatch();
                                 reviveTimer.Start();
                             }
 
-                            if(reviveTimer.Elapsed.TotalSeconds > 5) { 
+                            if (reviveTimer.Elapsed.TotalSeconds > 5)
+                            {
                                 ReviveRescuedPlayer(___deadBody, ___playersManager);
                                 reviveTimer = null;
                             }
@@ -115,14 +130,34 @@ namespace LethalRescueCompanyPlugin.Patches
             }
         }
 
+
+
         private static void DebugHacks(bool performingEmote, Transform thisPlayerBody)
         {
+            
             if (performingEmote && !spawnedSpider)
             {
-                EnemyType n = new EnemyType();
-                n.enemyPrefab = Resources.Load<GameObject>("Prefabs/Enemies/Spider");
-                RoundManager.Instance.SpawnEnemyGameObject(thisPlayerBody.localPosition, 0f, 55, n);
-                spawnedSpider = true;
+
+                EnemyType enemyType = null;
+                RoundManager.Instance.SpawnedEnemies.ForEach(x =>
+                {
+                    log.LogInfo(x.enemyType.enemyPrefab.name);
+                    if (x.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
+                    {
+                        enemyType = x.enemyType;
+                    }
+
+                });
+
+
+                if (enemyType != null)
+                {
+                    log.LogInfo($"Spawning spider at: {thisPlayerBody.position}");
+                    GameObject gameObject4 = UnityEngine.Object.Instantiate(enemyType.enemyPrefab, thisPlayerBody.position, Quaternion.Euler(new Vector3(0f, 0, 0f)));
+                    gameObject4.GetComponentInChildren<NetworkObject>().Spawn(destroyWithScene: true);
+                    RoundManager.Instance.SpawnedEnemies.Add(gameObject4.GetComponent<EnemyAI>());
+                    spawnedSpider = true;
+                }
             }
         }
 
@@ -130,17 +165,16 @@ namespace LethalRescueCompanyPlugin.Patches
         {
             try
             {
-                // playerbcontroller.playersManager.
-                // look what reset blood objects does
 
+                // get the PlayerControllerB from the deadbody
                 var ps = deadbody.playerScript;
 
+                // this is stolen from the spawn logic
                 ps.isClimbingLadder = false;
                 ps.ResetZAndXRotation();
                 ps.thisController.enabled = true;
                 ps.health = 40;
                 ps.disableLookInput = false;
-
                 ps.isPlayerDead = false;
                 ps.isPlayerControlled = true;
                 ps.isInElevator = true;
@@ -150,9 +184,6 @@ namespace LethalRescueCompanyPlugin.Patches
                 ps.carryWeight = 1f;
                 ps.isFreeCamera = false;
                 ps.playerHudUIContainer.gameObject.SetActive(value: true);
-                // look what set player object extrapolate does 
-
-                // transform.GetComponent<Rigidbody>().position
                 ps.TeleportPlayer(deadbody.transform.GetComponent<Rigidbody>().position);
                 ps.setPositionOfDeadPlayer = false;
 
@@ -162,11 +193,11 @@ namespace LethalRescueCompanyPlugin.Patches
                 {
                     componentsInChildren[i].enabled = true;
                 }
-                ps.thisPlayerModelArms.enabled = false;
+                ps.thisPlayerModelArms.enabled = false; // not sure if this is fix for goro arms
 
+                // more init stuff
                 ps.helmetLight.enabled = false;
                 ps.Crouch(crouch: false);
-
                 ps.playerBodyAnimator.SetBool("Limp", value: false);
                 ps.bleedingHeavily = false;
                 ps.activatingItem = false;
@@ -174,15 +205,14 @@ namespace LethalRescueCompanyPlugin.Patches
                 ps.inSpecialInteractAnimation = false;
                 ps.holdingWalkieTalkie = false;
                 ps.speakingToWalkieTalkie = false;
-
                 ps.isSinking = false;
                 ps.isUnderwater = false;
                 ps.sinkingValue = 0f;
                 ps.statusEffectAudio.Stop();
                 ps.DisableJetpackControlsLocally();
                 ps.movementSpeed = 4.6f;
-
                 ps.mapRadarDotAnimator.SetBool("dead", value: false);
+
 
                 HUDManager.Instance.gasHelmetAnimator.SetBool("gasEmitting", value: false);
                 ps.hasBegunSpectating = false;
@@ -200,10 +230,10 @@ namespace LethalRescueCompanyPlugin.Patches
                 ps.MakeCriticallyInjured(false);
 
                 HUDManager.Instance.UpdateHealthUI(40, hurtPlayer: false);
-                //playerControllerB.spectatedPlayerScript = null;
                 HUDManager.Instance.audioListenerLowPass.enabled = false;
                 playersManager.livingPlayers = playersManager.livingPlayers + 1;
                 HUDManager.Instance.HideHUD(hide: false);
+
                 // destroy deadbody
                 Destroy(deadbody.gameObject);
             }
