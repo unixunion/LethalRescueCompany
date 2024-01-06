@@ -81,7 +81,7 @@ namespace LethalRescueCompanyMod.Patches
                     Vector3 playerPos = thisPlayerBody.transform.position;
                     Vector3 playerDirection = thisPlayerBody.transform.forward;
                     Quaternion playerRotation = thisPlayerBody.transform.rotation;
-                    float spawnDistance = 2;
+                    float spawnDistance = 10;
 
                     Vector3 spawnPos = playerPos + playerDirection * spawnDistance;
 
