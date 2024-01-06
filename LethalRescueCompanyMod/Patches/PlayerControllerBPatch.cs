@@ -16,6 +16,8 @@ using Dissonance.Integrations.Unity_NFGO;
 using Newtonsoft.Json;
 using DunGen;
 using System.Collections.Generic;
+using System.Collections;
+using LethalRescueCompanyMod;
 
 //round manager has spawn enemies
 
@@ -32,7 +34,7 @@ namespace LethalRescueCompanyPlugin.Patches
     [HarmonyPatch(typeof(PlayerControllerB))]
     internal class PlayerControllerBPatch : BaseUnityPlugin
     {
-
+        static Helper reviveHelper = new Helper() ;
         static bool isDebug = true;
         static bool spawnedSpider = false;
 
@@ -132,20 +134,22 @@ namespace LethalRescueCompanyPlugin.Patches
                         //log.LogInfo("body dropped in ship, checking if its warpped in a web");
                         if (___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat")
                         {
-                            //log.LogInfo("webbed body dropped in ship");
-                            if (reviveTimer == null)
-                            {
-                                //log.LogInfo("starting revive timer");
-                                reviveTimer = new Stopwatch();
-                                reviveTimer.Start();
-                            }
 
-                            if (reviveTimer.Elapsed.TotalSeconds > 5)
-                            {
-                                //log.LogInfo("revive timer elapsed, reviving player");
-                                ReviveRescuedPlayer(___deadBody, ___playersManager);
-                                reviveTimer = null;
-                            }
+                            reviveHelper.startCoroutine(___deadBody, ___playersManager);
+                            //log.LogInfo("webbed body dropped in ship");
+                            //if (reviveTimer == null)
+                            //{
+                            //    //log.LogInfo("starting revive timer");
+                            //    reviveTimer = new Stopwatch();
+                            //    reviveTimer.Start();
+                            //}
+
+                            //if (reviveTimer.Elapsed.TotalSeconds > 5)
+                            //{
+                            //    //log.LogInfo("revive timer elapsed, reviving player");
+                            //    ReviveRescuedPlayer(___deadBody, ___playersManager);
+                            //    reviveTimer = null;
+                            //}
                         }
                     }
 
@@ -236,89 +240,6 @@ namespace LethalRescueCompanyPlugin.Patches
                 }
             }
         }
-
-        private static void ReviveRescuedPlayer(DeadBodyInfo deadbody, StartOfRound playersManager)
-        {
-            try
-            {
-
-                // get the PlayerControllerB from the deadbody
-                var ps = deadbody.playerScript;
-
-                // this is stolen from the spawn logic
-                ps.isClimbingLadder = false;
-                ps.ResetZAndXRotation();
-                ps.thisController.enabled = true;
-                ps.health = 40;
-                ps.disableLookInput = false;
-                ps.isPlayerDead = false;
-                ps.isPlayerControlled = true;
-                ps.isInElevator = true;
-                ps.isInHangarShipRoom = true;
-                ps.isInsideFactory = false;
-                ps.wasInElevatorLastFrame = false;
-                ps.carryWeight = 1f;
-                ps.isFreeCamera = false;
-                ps.playerHudUIContainer.gameObject.SetActive(value: true);
-                ps.TeleportPlayer(deadbody.transform.GetComponent<Rigidbody>().position);
-                ps.setPositionOfDeadPlayer = false;
-
-                // this is the disable player model 
-                SkinnedMeshRenderer[] componentsInChildren = ps.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
-                for (int i = 0; i < componentsInChildren.Length; i++)
-                {
-                    componentsInChildren[i].enabled = true;
-                }
-                ps.thisPlayerModelArms.enabled = false; // not sure if this is fix for goro arms
-
-                // more init stuff
-                ps.helmetLight.enabled = false;
-                ps.Crouch(crouch: false);
-                ps.playerBodyAnimator.SetBool("Limp", value: false);
-                ps.bleedingHeavily = false;
-                ps.activatingItem = false;
-                ps.twoHanded = false;
-                ps.inSpecialInteractAnimation = false;
-                ps.holdingWalkieTalkie = false;
-                ps.speakingToWalkieTalkie = false;
-                ps.isSinking = false;
-                ps.isUnderwater = false;
-                ps.sinkingValue = 0f;
-                ps.statusEffectAudio.Stop();
-                ps.DisableJetpackControlsLocally();
-                ps.movementSpeed = 4.6f;
-                ps.mapRadarDotAnimator.SetBool("dead", value: false);
-
-
-                HUDManager.Instance.gasHelmetAnimator.SetBool("gasEmitting", value: false);
-                ps.hasBegunSpectating = false;
-                HUDManager.Instance.RemoveSpectateUI();
-
-
-                HUDManager.Instance.gameOverAnimator.SetTrigger("revive");
-                ps.hinderedMultiplier = 1f;
-                ps.isMovementHindered = 0;
-                ps.sourcesCausingSinking = 0;
-
-                SoundManager.Instance.earsRingingTimer = 0f;
-                ps.voiceMuffledByEnemy = false;
-                ps.spectatedPlayerScript = null;
-                ps.MakeCriticallyInjured(false);
-
-                HUDManager.Instance.UpdateHealthUI(40, hurtPlayer: false);
-                HUDManager.Instance.audioListenerLowPass.enabled = false;
-                playersManager.livingPlayers = playersManager.livingPlayers + 1;
-                HUDManager.Instance.HideHUD(hide: false);
-
-                // destroy deadbody
-                Destroy(deadbody.gameObject);
-            }
-            catch (Exception ex)
-            {
-                log.LogError($"Error in ReviveRescuedPlayer: {ex.Message}");
-            }
-        }
-
 
         public static void GetHost(StartOfRound startOfRound)
         {
