@@ -66,66 +66,46 @@ namespace LethalRescueCompanyPlugin.Patches
 
                 }
             }
+
+            playerIsDeadAndWebbedInShipCheck(___deadBody, ___playersManager, ___isPlayerDead);
         }
 
-
-        //static PlayerControllerB _host = null;
-        [HarmonyPatch("Emote2_performed")]
-        [HarmonyPostfix]
-        static void emote1performedPatch(ref bool ___isPlayerDead,
-                               ref float ___movementSpeed,
-                               ref int ___isMovementHindered,
-                               ref float ___hinderedMultiplier,
-                               ref string ___playerUsername,
-                               ref bool ___performingEmote,
-                               ref Transform ___thisPlayerBody,
-                               ref StartOfRound ___playersManager,
-                               ref DeadBodyInfo ___deadBody)
-        {
-
-        }
-
-
-        [HarmonyPatch("DropItemAheadOfPlayer")]
-        [HarmonyPostfix]
-        static void dropItemAheadOfPlayerPatch(ref bool ___isPlayerDead,
-                                ref StartOfRound ___playersManager,
-                                ref DeadBodyInfo ___deadBody)
+        private static void playerIsDeadAndWebbedInShipCheck(DeadBodyInfo deadBodyInfo, StartOfRound playersManager, bool isPlayerDead)
         {
             try
             {
                 // ignore dead bodies not in the ship
-                if (!___deadBody.isInShip) return;
+                if (!deadBodyInfo.isInShip) return;
 
                 // GetHost(___playersManager);
 
-                if (___playersManager == null)
+                if (playersManager == null)
                 {
                     log.LogError($"playersManager is null");
                     return;
                 }
 
                 //&& ___playerUsername == "marzubus"
-                if (___isPlayerDead)
+                if (isPlayerDead)
                 {
                     if (isDebug)
                     {
-                        log.LogInfo($"db.isInShip: {___deadBody.isInShip}, " +
-                                    $"db.sharedMaterial.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name}, " +
-                                    $"db.sharedMesh.name: {___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh.name}, " +
-                                    $"db.causeOfDeath: {___deadBody.causeOfDeath}, " +
-                                    $"db.canBeGrabbedBackByPlayers: {___deadBody.grabBodyObject.grabbable}");
+                        log.LogInfo($"db.isInShip: {deadBodyInfo.isInShip}, " +
+                                    $"db.sharedMaterial.name: {deadBodyInfo.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name}, " +
+                                    $"db.sharedMesh.name: {deadBodyInfo.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh.name}, " +
+                                    $"db.causeOfDeath: {deadBodyInfo.causeOfDeath}, " +
+                                    $"db.canBeGrabbedBackByPlayers: {deadBodyInfo.grabBodyObject.grabbable}");
                     }
 
 
                     // detect if its dropped
-                    if (___deadBody.isInShip && ___deadBody.grabBodyObject.grabbable)
+                    if (deadBodyInfo.isInShip && deadBodyInfo.grabBodyObject.grabbable)
                     {
                         //log.LogInfo("body dropped in ship, checking if its warpped in a web");
-                        if (___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat")
+                        if (deadBodyInfo.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat")
                         {
 
-                            reviveHelper.startCoroutine(___deadBody, ___playersManager);
+                            reviveHelper.startCoroutine(deadBodyInfo, playersManager);
                             //log.LogInfo("webbed body dropped in ship");
                             //if (reviveTimer == null)
                             //{
@@ -150,9 +130,6 @@ namespace LethalRescueCompanyPlugin.Patches
                 log.LogError(JsonConvert.SerializeObject(ex));
             }
         }
-
-
-       
 
         public static void KillPlayer(PlayerControllerB player, Vector3 bodyVelocity, bool spawnBody = true, CauseOfDeath causeOfDeath = CauseOfDeath.Unknown, int deathAnimation = 0)
         {
