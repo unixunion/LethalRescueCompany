@@ -34,13 +34,12 @@ namespace LethalRescueCompanyPlugin.Patches
     [HarmonyPatch(typeof(PlayerControllerB))]
     internal class PlayerControllerBPatch : BaseUnityPlugin
     {
-        static Helper reviveHelper = new Helper() ;
+        static Helper reviveHelper = new Helper();
         static bool isDebug = true;
         static bool spawnedSpider = false;
 
-        static Stopwatch reviveTimer;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
-        static PlayerControllerB _host = null;
+        //static PlayerControllerB _host = null;
         [HarmonyPatch("Emote1_performed")]
         [HarmonyPostfix]
         static void emote1performedPatch(ref bool ___isPlayerDead,
@@ -64,12 +63,6 @@ namespace LethalRescueCompanyPlugin.Patches
         [HarmonyPatch("DropItemAheadOfPlayer")]
         [HarmonyPostfix]
         static void dropItemAheadOfPlayerPatch(ref bool ___isPlayerDead,
-                                ref float ___movementSpeed,
-                                ref int ___isMovementHindered,
-                                ref float ___hinderedMultiplier,
-                                ref string ___playerUsername,
-                                ref bool ___performingEmote,
-                                ref Transform ___thisPlayerBody,
                                 ref StartOfRound ___playersManager,
                                 ref DeadBodyInfo ___deadBody)
         {
@@ -97,17 +90,7 @@ namespace LethalRescueCompanyPlugin.Patches
                 // ignore dead bodies not in the ship
                 if (!___deadBody.isInShip) return;
 
-                if (isDebug)
-                {
-                    log.LogInfo(
-                        $"name: {___playerUsername}, " +
-                        $"isPlayerDead: {___isPlayerDead}, " +
-                        $"movementSpeed: {___movementSpeed}, " +
-                        $"isMovementHindered: {___isMovementHindered}, " +
-                        $"hinderedMultiplier: {___hinderedMultiplier}");
-                }
-
-                GetHost(___playersManager);
+                // GetHost(___playersManager);
 
                 if (___playersManager == null)
                 {
@@ -241,19 +224,19 @@ namespace LethalRescueCompanyPlugin.Patches
             }
         }
 
-        public static void GetHost(StartOfRound startOfRound)
-        {
-            if (_host == null)
-            {
-                startOfRound.allPlayerScripts.ToList().ForEach(p =>
-                {
-                    if (p.IsOwner)
-                    {
-                        _host = p;
-                    }
-                });
-            }
-        }
+        //public static void GetHost(StartOfRound startOfRound)
+        //{
+        //    if (_host == null)
+        //    {
+        //        startOfRound.allPlayerScripts.ToList().ForEach(p =>
+        //        {
+        //            if (p.IsOwner)
+        //            {
+        //                _host = p;
+        //            }
+        //        });
+        //    }
+        //}
 
 
         public static void KillPlayer(PlayerControllerB player, Vector3 bodyVelocity, bool spawnBody = true, CauseOfDeath causeOfDeath = CauseOfDeath.Unknown, int deathAnimation = 0)
