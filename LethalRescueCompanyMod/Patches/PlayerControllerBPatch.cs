@@ -33,15 +33,15 @@ namespace LethalRescueCompanyPlugin.Patches
     internal class PlayerControllerBPatch : BaseUnityPlugin
     {
 
-        static bool isDebug = false;
+        static bool isDebug = true;
         static bool spawnedSpider = false;
 
         static Stopwatch reviveTimer;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
         static PlayerControllerB _host = null;
-        [HarmonyPatch("Update")]
+        [HarmonyPatch("DropItemAheadOfPlayer")]
         [HarmonyPostfix]
-        static void updatePatch(ref bool ___isPlayerDead,
+        static void dropItemAheadOfPlayerPatch(ref bool ___isPlayerDead,
                                 ref float ___movementSpeed,
                                 ref int ___isMovementHindered,
                                 ref float ___hinderedMultiplier,
