@@ -73,16 +73,7 @@ namespace LethalRescueCompanyPlugin.Patches
                         $"hinderedMultiplier: {___hinderedMultiplier}");
                 }
 
-                if (_host == null)
-                {
-                    ___playersManager.allPlayerScripts.ToList().ForEach(p =>
-                    {
-                        if (p.IsOwner)
-                        {
-                            _host = p;
-                        }
-                    });
-                }
+                GetHost(___playersManager);
 
                 if (___playersManager == null)
                 {
@@ -150,20 +141,10 @@ namespace LethalRescueCompanyPlugin.Patches
                             enemyType = enemy.enemyType;
                         }
                     });
-
-                    //RoundManager.Instance.SpawnedEnemies.ForEach(x =>
-                    //{
-                    //    log.LogInfo(x.enemyType.enemyPrefab.name);
-                    //    if (x.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
-                    //    {
-                    //        enemyType = x.enemyType;
-                    //    }
-
-                    //});
                 }
 
 
-                if (spawnedSpider)
+                if (spawnedSpider && spawnedSpiderEnemy != null)
                 {
                     if (cooldown != null)
                     {
@@ -176,6 +157,7 @@ namespace LethalRescueCompanyPlugin.Patches
                             cooldown = null;
                         }
                     }
+                    return;
                 }
 
                 if (enemyType != null && spawnedSpiderEnemy == null)
@@ -278,6 +260,22 @@ namespace LethalRescueCompanyPlugin.Patches
                 log.LogError($"Error in ReviveRescuedPlayer: {ex.Message}");
             }
         }
+
+
+        public static void GetHost(StartOfRound startOfRound)
+        {
+            if (_host == null)
+            {
+                startOfRound.allPlayerScripts.ToList().ForEach(p =>
+                {
+                    if (p.IsOwner)
+                    {
+                        _host = p;
+                    }
+                });
+            }
+        }
+
 
         public static void KillPlayer(PlayerControllerB player, Vector3 bodyVelocity, bool spawnBody = true, CauseOfDeath causeOfDeath = CauseOfDeath.Unknown, int deathAnimation = 0)
         {
