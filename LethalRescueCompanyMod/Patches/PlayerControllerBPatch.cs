@@ -39,6 +39,26 @@ namespace LethalRescueCompanyPlugin.Patches
         static Stopwatch reviveTimer;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
         static PlayerControllerB _host = null;
+        [HarmonyPatch("Emote1_performed")]
+        [HarmonyPostfix]
+        static void emote1performedPatch(ref bool ___isPlayerDead,
+                               ref float ___movementSpeed,
+                               ref int ___isMovementHindered,
+                               ref float ___hinderedMultiplier,
+                               ref string ___playerUsername,
+                               ref bool ___performingEmote,
+                               ref Transform ___thisPlayerBody,
+                               ref StartOfRound ___playersManager,
+                               ref DeadBodyInfo ___deadBody)
+        {
+            // spider debugging stuff
+            if (isDebug)
+            {
+                DebugHacks(___performingEmote, ___thisPlayerBody);
+            }
+        }
+
+
         [HarmonyPatch("DropItemAheadOfPlayer")]
         [HarmonyPostfix]
         static void dropItemAheadOfPlayerPatch(ref bool ___isPlayerDead,
@@ -53,11 +73,7 @@ namespace LethalRescueCompanyPlugin.Patches
         {
             try
             {
-                // spider debugging stuff
-                if (isDebug)
-                {
-                    DebugHacks(___performingEmote, ___thisPlayerBody);
-                }
+                
 
                 // nope out if not a body
                 if (___deadBody == null) return;
