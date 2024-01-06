@@ -77,7 +77,15 @@ namespace LethalRescueCompanyMod.Patches
                 if (spiderEnemyType != null && spawnedSpiders == null)
                 {
                     log.LogInfo($"Spawning spider at: {thisPlayerBody.position}");
-                    var n = RoundManager.Instance.SpawnEnemyGameObject(thisPlayerBody.position, 0, 99, spiderEnemyType);
+                    
+                    Vector3 playerPos = thisPlayerBody.transform.position;
+                    Vector3 playerDirection = thisPlayerBody.transform.forward;
+                    Quaternion playerRotation = thisPlayerBody.transform.rotation;
+                    float spawnDistance = 2;
+
+                    Vector3 spawnPos = playerPos + playerDirection * spawnDistance;
+
+                    var n = RoundManager.Instance.SpawnEnemyGameObject(spawnPos, 0, 99, spiderEnemyType);
                     spawnedSpiders = fuckingSpiders;
                 }
             }
