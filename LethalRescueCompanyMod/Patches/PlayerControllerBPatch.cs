@@ -178,7 +178,7 @@ namespace LethalRescueCompanyPlugin.Patches
                     }
                 }
 
-                if (enemyType != null)
+                if (enemyType != null && spawnedSpiderEnemy == null)
                 {
                     log.LogInfo($"Spawning spider at: {thisPlayerBody.position}");
                     GameObject thespider = UnityEngine.Object.Instantiate(enemyType.enemyPrefab, thisPlayerBody.position, Quaternion.Euler(new Vector3(0f, 0, 0f)));
