@@ -142,15 +142,24 @@ namespace LethalRescueCompanyPlugin.Patches
                 EnemyType enemyType = null;
                 if (enemyType == null)
                 {
-                    RoundManager.Instance.SpawnedEnemies.ForEach(x =>
+                    RoundManager.Instance.currentLevel.Enemies.ForEach(enemy =>
                     {
-                        log.LogInfo(x.enemyType.enemyPrefab.name);
-                        if (x.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
+                        log.LogInfo(enemy.enemyType.enemyPrefab.name);
+                        if (enemy.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
                         {
-                            enemyType = x.enemyType;
+                            enemyType = enemy.enemyType;
                         }
-
                     });
+
+                    //RoundManager.Instance.SpawnedEnemies.ForEach(x =>
+                    //{
+                    //    log.LogInfo(x.enemyType.enemyPrefab.name);
+                    //    if (x.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
+                    //    {
+                    //        enemyType = x.enemyType;
+                    //    }
+
+                    //});
                 }
 
 
