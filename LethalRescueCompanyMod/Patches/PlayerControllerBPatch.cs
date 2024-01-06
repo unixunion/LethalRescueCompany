@@ -53,10 +53,15 @@ namespace LethalRescueCompanyPlugin.Patches
         {
             try
             {
+                // spider debugging stuff
                 DebugHacks(___performingEmote, ___thisPlayerBody);
 
                 // nope out if not a body
                 if (___deadBody == null) return;
+
+                // fix to make spider hung bodies grabbable.
+                // todo fixme, need to grab it, drop it and grab it again to release it.
+                // check if body is wrapped in a spider web material,
                 if (___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat" && !___deadBody.grabBodyObject.grabbable && ___deadBody.attachedTo != null)
                 {
                     if (___deadBody.attachedTo.name != "MouthTarget")
@@ -64,8 +69,11 @@ namespace LethalRescueCompanyPlugin.Patches
                         log.LogInfo($"Making wrapped body grabbable, currently attached to: {___deadBody.attachedTo.name}");
                         ___deadBody.grabBodyObject.grabbable = true;
                         ___deadBody.canBeGrabbedBackByPlayers = true;
+                        
                     }
                 }
+
+                // ignore dead bodies not in the ship
                 if (!___deadBody.isInShip) return;
 
                 if (logEnabled)
@@ -96,28 +104,29 @@ namespace LethalRescueCompanyPlugin.Patches
                                 $"db.canBeGrabbedBackByPlayers: {___deadBody.grabBodyObject.grabbable}");
 
 
+                    // detect if its dropped
                     if (___deadBody.isInShip && ___deadBody.grabBodyObject.grabbable)
                     {
-
-                        //:LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch] deadBody.isInShip: False sharedMaterial.name: SpooledPlayerMat, sharedMesh.name: Circle
+                        log.LogInfo("body dropped in ship, checking if its warpped in a web");
                         if (___deadBody.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat")
                         {
+                            log.LogInfo("webbed body dropped in ship");
                             if (reviveTimer == null)
                             {
+                                log.LogInfo("starting revive timer");
                                 reviveTimer = new Stopwatch();
                                 reviveTimer.Start();
                             }
 
                             if (reviveTimer.Elapsed.TotalSeconds > 5)
                             {
+                                log.LogInfo("revive timer elapsed, reviving player");
                                 ReviveRescuedPlayer(___deadBody, ___playersManager);
                                 reviveTimer = null;
                             }
                         }
                     }
 
-                    // cacoon 
-                    //___deadBody.ChangeMesh()
                 }
             }
             catch (Exception ex)
