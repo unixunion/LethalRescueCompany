@@ -94,10 +94,6 @@ namespace LethalRescueCompanyPlugin.Patches
         {
             try
             {
-
-
-               
-
                 // ignore dead bodies not in the ship
                 if (!___deadBody.isInShip) return;
 
