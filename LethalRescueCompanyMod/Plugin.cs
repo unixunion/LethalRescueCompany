@@ -26,6 +26,7 @@ namespace LethalRescueCompanyPlugin
 
             log.LogInfo("I am alive!");
             harmony.PatchAll(typeof(LethalCompanyMemorableMomentsPlugin));
+            harmony.PatchAll(typeof(SandSpiderAIPatch));
             harmony.PatchAll(typeof(PlayerControllerBPatch));
             harmony.PatchAll(typeof(HudManagerPatch));
 

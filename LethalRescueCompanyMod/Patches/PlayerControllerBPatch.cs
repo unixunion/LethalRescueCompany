@@ -53,30 +53,10 @@ namespace LethalRescueCompanyPlugin.Patches
             // nope out if not a body
             if (___deadBody == null) return;
 
-            // fix to make spider hung bodies grabbable.
-            // todo fixme, need to grab it, drop it and grab it again to release it.
-            // check if body is wrapped in a spider web material,
-            makeWebbedBodyGrabbable(___deadBody);
             playerIsDeadAndWebbedInShipCheck(___deadBody, ___playersManager, ___isPlayerDead);
         }
 
-        private static void makeWebbedBodyGrabbable(DeadBodyInfo deadBodyInfo)
-        {
-            // fix to make spider hung bodies grabbable.
-            // todo fixme, need to grab it, drop it and grab it again to release it.
-            // check if body is wrapped in a spider web material,
-            if (deadBodyInfo.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat" && !deadBodyInfo.grabBodyObject.grabbable && deadBodyInfo.attachedTo != null)
-            {
-                if (deadBodyInfo.attachedTo.name != "MouthTarget")
-                {
-                    log.LogInfo($"Making wrapped body grabbable, currently attached to: {deadBodyInfo.attachedTo.name}");
-                    deadBodyInfo.grabBodyObject.grabbable = true;
-                    deadBodyInfo.canBeGrabbedBackByPlayers = true;
-
-                }
-            }
-        }
-
+        
         private static void playerIsDeadAndWebbedInShipCheck(DeadBodyInfo deadBodyInfo, StartOfRound playersManager, bool isPlayerDead)
         {
             try
