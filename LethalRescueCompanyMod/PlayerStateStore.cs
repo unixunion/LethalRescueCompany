@@ -9,7 +9,9 @@ namespace LethalRescueCompanyMod
 {
     public static class PlayerStateStore
     {
-        public static PlayerControllerB? playerControllerB = GameNetworkManager.Instance.localPlayerController;
-
+        public static PlayerControllerB? playerControllerB => GameNetworkManager.Instance.localPlayerController;
+        public static DeadBodyInfo? deadBodyInfo => playerControllerB?.deadBody;
+        public static StartOfRound? playersManager => playerControllerB?.playersManager;
+        public static bool isDebug = Settings.isDebug;
     }
 }

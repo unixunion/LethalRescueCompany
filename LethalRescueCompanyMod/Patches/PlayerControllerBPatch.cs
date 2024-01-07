@@ -71,7 +71,7 @@ namespace LethalRescueCompanyPlugin.Patches
                 log.LogWarning("revivable trait is null");
                 return;
             }
-            revivabletrait.playerIsDeadInShipAndRevivable(___deadBody, ___playersManager);
+            revivabletrait.playerIsDeadInShipAndRevivable();
 
         }
 
