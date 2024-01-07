@@ -53,11 +53,11 @@ namespace LethalRescueCompanyPlugin.Patches
             // nope out if not a body
             if (___deadBody == null) return;
 
-            playerIsDeadAndWebbedInShipCheck(___deadBody, ___playersManager, ___isPlayerDead);
+            playerIsDeadAndWebbedInShipCheck(___deadBody, ___playersManager);
         }
 
-        
-        private static void playerIsDeadAndWebbedInShipCheck(DeadBodyInfo deadBodyInfo, StartOfRound playersManager, bool isPlayerDead)
+
+        private static void playerIsDeadAndWebbedInShipCheck(DeadBodyInfo deadBodyInfo, StartOfRound playersManager)
         {
             try
             {
@@ -72,45 +72,44 @@ namespace LethalRescueCompanyPlugin.Patches
                     return;
                 }
 
+                //ReviveScript component = ((Component)this).GetComponent<ReviveScript>();
+
                 //&& ___playerUsername == "marzubus"
-                if (isPlayerDead)
+
+                if (isDebug)
                 {
-                    if (isDebug)
-                    {
-                        log.LogInfo($"db.isInShip: {deadBodyInfo.isInShip}, " +
-                                    $"db.sharedMaterial.name: {deadBodyInfo.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name}, " +
-                                    $"db.sharedMesh.name: {deadBodyInfo.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh.name}, " +
-                                    $"db.causeOfDeath: {deadBodyInfo.causeOfDeath}, " +
-                                    $"db.canBeGrabbedBackByPlayers: {deadBodyInfo.grabBodyObject.grabbable}");
-                    }
-
-
-                    // detect if its dropped
-                    if (deadBodyInfo.isInShip && deadBodyInfo.grabBodyObject.grabbable)
-                    {
-                        //log.LogInfo("body dropped in ship, checking if its warpped in a web");
-                        if (deadBodyInfo.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat")
-                        {
-                            if (Settings.isDebug) log.LogInfo("calling revivehelper");
-                            reviveHelper.startCoroutine(deadBodyInfo, playersManager);
-                            //log.LogInfo("webbed body dropped in ship");
-                            //if (reviveTimer == null)
-                            //{
-                            //    //log.LogInfo("starting revive timer");
-                            //    reviveTimer = new Stopwatch();
-                            //    reviveTimer.Start();
-                            //}
-
-                            //if (reviveTimer.Elapsed.TotalSeconds > 5)
-                            //{
-                            //    //log.LogInfo("revive timer elapsed, reviving player");
-                            //    ReviveRescuedPlayer(___deadBody, ___playersManager);
-                            //    reviveTimer = null;
-                            //}
-                        }
-                    }
-
+                    log.LogInfo($"db.isInShip: {deadBodyInfo.isInShip}, " +
+                                $"db.sharedMaterial.name: {deadBodyInfo.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name}, " +
+                                $"db.sharedMesh.name: {deadBodyInfo.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh.name}, " +
+                                $"db.causeOfDeath: {deadBodyInfo.causeOfDeath}, " +
+                                $"db.canBeGrabbedBackByPlayers: {deadBodyInfo.grabBodyObject.grabbable}, " + 
+                                $"db....hasHitGround: {deadBodyInfo.grabBodyObject.hasHitGround}, " +
+                                $"db....magnitude: {deadBodyInfo.grabBodyObject.propBody.velocity.magnitude}");
                 }
+
+
+               
+
+                // detect if its dropped
+                if (deadBodyInfo.isInShip && deadBodyInfo.grabBodyObject.grabbable && deadBodyInfo.grabBodyObject.hasHitGround && deadBodyInfo.grabBodyObject.propBody.velocity.magnitude == 0)
+                {
+
+
+                    //log.LogInfo("body dropped in ship, checking if its warpped in a web");
+                    if (deadBodyInfo.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat")
+                    {
+                        if (Settings.isDebug) log.LogInfo("calling revivehelper");
+                        //reviveHelper.startCoroutine(deadBodyInfo, playersManager);
+                        RescueCompany.instance.RevivePlayer(deadBodyInfo.playerScript);
+
+                    } else if (Settings.isDebug)
+                    {
+                        log.LogInfo("Debug Respawn unconditional drop of dead body in ship");
+                        RescueCompany.instance.RevivePlayer(deadBodyInfo.playerScript);
+                    }
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -164,4 +163,7 @@ namespace LethalRescueCompanyPlugin.Patches
             }
         }
     }
+
+    
+
 }

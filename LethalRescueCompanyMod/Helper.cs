@@ -133,5 +133,27 @@ namespace LethalRescueCompanyMod
             }
         }
 
+        public PlayerControllerB GetPlayerById(ulong playerId)
+        {
+            PlayerControllerB[] players = StartOfRound.Instance.allPlayerScripts;
+            List<PlayerControllerB> list = new List<PlayerControllerB>();
+            PlayerControllerB[] array = players;
+            foreach (PlayerControllerB val in array)
+            {
+                if (val.isPlayerDead)
+                {
+                    list.Add(val);
+                }
+            }
+            foreach (PlayerControllerB item in list)
+            {
+                if (item.playerClientId == playerId)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+
     }
 }
