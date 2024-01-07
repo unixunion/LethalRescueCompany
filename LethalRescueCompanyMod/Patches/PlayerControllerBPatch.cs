@@ -76,7 +76,7 @@ namespace LethalRescueCompanyPlugin.Patches
                 }
 
                 // detect if its dropped
-                if (deadBodyInfo.grabBodyObject.grabbable && deadBodyInfo.grabBodyObject.hasHitGround && deadBodyInfo.bodyParts[0].velocity.magnitude==0)
+                if (deadBodyInfo.grabBodyObject.grabbable && deadBodyInfo.grabBodyObject.hasHitGround && deadBodyInfo.bodyParts[0].velocity.magnitude<0.02)
                 {
 
 
