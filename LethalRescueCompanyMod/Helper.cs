@@ -137,6 +137,7 @@ namespace LethalRescueCompanyMod
         {
             if (Settings.isDebug) { log.LogInfo($"GetPlayerByName: {playerName}"); }
             PlayerControllerB[] players = playersManager.allPlayerScripts; //  StartOfRound.Instance.allPlayerScripts;
+            if (Settings.isDebug) { log.LogInfo($"got all player scripts: {players}"); }
             List<PlayerControllerB> list = new List<PlayerControllerB>();
             PlayerControllerB[] array = players;
             foreach (PlayerControllerB val in array)

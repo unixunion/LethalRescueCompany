@@ -37,11 +37,7 @@ namespace LethalRescueCompanyPlugin
             harmony.PatchAll(typeof(PlayerControllerBPatch));
             harmony.PatchAll(typeof(HudManagerPatch));
 
-            // trying stuff
-            GameObject rescueCompany = new GameObject("RescueCompany");
-            rescueCompany.AddComponent<RescueCompany>();
-            Object.DontDestroyOnLoad((Object)(object)rescueCompany);
-            log.LogInfo("Rescue Company Initialized!");
+ 
 
 
         }

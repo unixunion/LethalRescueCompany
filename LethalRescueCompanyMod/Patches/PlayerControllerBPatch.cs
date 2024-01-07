@@ -85,12 +85,14 @@ namespace LethalRescueCompanyPlugin.Patches
                     if (deadBodyInfo.gameObject.GetComponentInChildren<RevivableTrait>() != null)
                     {
                         if (Settings.isDebug) log.LogInfo("trait found, reviving");
-                        RescueCompany.instance.RevivePlayer(deadBodyInfo.playerScript);
+                        //RescueCompany.instance.RevivePlayer(deadBodyInfo.playerScript);
+                        deadBodyInfo.playerScript.HealClientRpc();
 
                     } else if (Settings.isDebug)
                     {
                         log.LogInfo("isDebug=true, unconditional respawn drop of dead body in ship");
-                        RescueCompany.instance.RevivePlayer(deadBodyInfo.playerScript);
+                        // RescueCompany.instance.RevivePlayer(deadBodyInfo.playerScript);
+                        deadBodyInfo.playerScript.HealClientRpc();
                     }
                 } else
                 {
