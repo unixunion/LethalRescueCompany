@@ -58,12 +58,25 @@ namespace LethalRescueCompanyPlugin.Patches
             }
             // nope out if not a body
             if (___deadBody == null) return;
-            if(__instance == null)
+            if (__instance == null)
             {
                 log.LogError("instance is null");
                 return;
             }
-            __instance.gameObject.GetComponentInChildren<RevivableTrait>()?.playerIsDeadInShipAndRevivable(___deadBody, ___playersManager);
+            var deadbodyinfo = __instance.gameObject.GetComponentInChildren<DeadBodyInfo>();
+            if (deadbodyinfo == null)
+            {
+                log.LogWarning("deadbody info is null");
+                return;
+            }
+
+            var revivabletrait = deadbodyinfo.gameObject.GetComponentInChildren<RevivableTrait>();
+            if (revivabletrait == null)
+            {
+                log.LogWarning("revivable trait is null");
+                return;
+            }
+            revivabletrait.playerIsDeadInShipAndRevivable(___deadBody, ___playersManager);
 
         }
 
