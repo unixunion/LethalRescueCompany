@@ -19,7 +19,7 @@ namespace LethalRescueCompanyMod
         DeadBodyInfo _deadBodyInfo;
         StartOfRound _startOfRound;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RevivableTrait");
-        public void Start()
+        void Awake()
         {
             var deadBodyInfo = gameObject.GetComponentInParent<DeadBodyInfo>();
             var startOfRound = gameObject.GetComponentInParent<StartOfRound>();
