@@ -178,7 +178,7 @@
   <ItemGroup>
     <Compile Include="NetworkBehaviors\SpiderSpawnBehavior.cs" />
     <Compile Include="Patches\StartOfRoundPatch.cs" />
-    <Compile Include="RevivableTrait.cs" />
+    <Compile Include="Traits\RevivableTrait.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Patches\HudManagerPatch.cs" />
     <Compile Include="Patches\PlayerControllerBPatch.cs" />
