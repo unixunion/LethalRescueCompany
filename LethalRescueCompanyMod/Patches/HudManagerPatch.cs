@@ -26,6 +26,10 @@ namespace LethalRescueCompanyMod.Patches
             // spider debugging stuff
             if (isDebug && ___localPlayer.IsServer)
             {
+                //log.LogMessage($"playerName: {PlayerStateStore.playerControllerB?.name}");
+                //log.LogMessage($"hasDeadBody: {PlayerStateStore.deadBodyInfo != null}");
+                //log.LogMessage($"hasPlayerManager: {PlayerStateStore.playersManager != null}");
+
                 var spiderSpawnBehaviorComponent = ___localPlayer.gameObject.GetComponent<SpiderSpawnBehavior>();
                 if(spiderSpawnBehaviorComponent!=null) spiderSpawnBehaviorComponent.DebugHacks(___localPlayer.thisPlayerBody, ___lastChatMessage, ___playersManager);
             }
