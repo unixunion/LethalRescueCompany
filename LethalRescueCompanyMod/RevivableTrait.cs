@@ -19,10 +19,6 @@ namespace LethalRescueCompanyMod
         Helper helper = new Helper();
         public bool isRespawning = false;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RevivableTrait");
-        void Awake()
-        {
-        }
-
         public void playerIsDeadInShipAndRevivable(DeadBodyInfo deadBodyInfo, StartOfRound playersManager)
         {
             try
