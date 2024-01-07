@@ -42,7 +42,7 @@ namespace LethalRescueCompanyPlugin.Patches
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
         static void updatePatch(
-            ref PlayerControllerB ___instance,
+            ref PlayerControllerB __instance,
             ref StartOfRound ___playersManager,
             ref DeadBodyInfo ___deadBody)
         {
