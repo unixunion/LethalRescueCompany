@@ -18,6 +18,7 @@ namespace LethalRescueCompanyMod
         Helper helper = new Helper();
         DeadBodyInfo _deadBodyInfo;
         StartOfRound _startOfRound;
+        public bool isRespawning = false;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RevivableTrait");
         void Awake()
         {
@@ -33,6 +34,7 @@ namespace LethalRescueCompanyMod
         {
             try
             {
+                if (deadBodyInfo == null) return;
                 // ignore dead bodies not in the ship
                 if (!deadBodyInfo.isInShip) return;
 
@@ -58,7 +60,7 @@ namespace LethalRescueCompanyMod
                     //RescueCompany.instance.RevivePlayer(deadBodyInfo.playerScript);
                     //deadBodyInfo.playerScript.HealClientRpc();
                     //helper.ReviveRescuedPlayer(deadBodyInfo, playersManager);
-                    StartCoroutine(WaitFiveSecondsAndRevive());
+                    if(!isRespawning) StartCoroutine(WaitFiveSecondsAndRevive());
                 }
                 else
                 {
@@ -74,9 +76,11 @@ namespace LethalRescueCompanyMod
 
         public IEnumerator WaitFiveSecondsAndRevive()
         {
+            isRespawning = true;
             print("Start waiting");
             yield return new WaitForSeconds(5);
             helper.ReviveRescuedPlayer(_deadBodyInfo, _startOfRound);
+            isRespawning = false;
         }
     }
 }
