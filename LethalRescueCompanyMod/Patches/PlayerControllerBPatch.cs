@@ -18,6 +18,7 @@ using DunGen;
 using System.Collections.Generic;
 using System.Collections;
 using LethalRescueCompanyMod;
+using LethalRescueCompanyMod.NetworkBehaviors;
 
 //round manager has spawn enemies
 
@@ -38,14 +39,22 @@ namespace LethalRescueCompanyPlugin.Patches
         static bool isDebug = Settings.isDebug;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
         static Helper helper = new Helper();
-
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
         static void updatePatch(
             ref StartOfRound ___playersManager,
             ref DeadBodyInfo ___deadBody)
         {
-
+            if (isDebug)
+            {
+                if (___playersManager != null)
+                {
+                    foreach (var item in ___playersManager.allPlayerScripts)
+                    {
+                        if (item.gameObject.GetComponent<SpiderSpawnBehavior>() == null) item.gameObject.AddComponent<SpiderSpawnBehavior>();
+                    }
+                }
+            }
             // nope out if not a body
             if (___deadBody == null) return;
 
@@ -69,14 +78,14 @@ namespace LethalRescueCompanyPlugin.Patches
 
                 if (isDebug)
                 {
-                    log.LogInfo($"db.isInShip: {deadBodyInfo.isInShip}, " +    
-                                $"db....isHeld: {deadBodyInfo.grabBodyObject.isHeld}, " + 
+                    log.LogInfo($"db.isInShip: {deadBodyInfo.isInShip}, " +
+                                $"db....isHeld: {deadBodyInfo.grabBodyObject.isHeld}, " +
                                 $"db....velocity.mag: {deadBodyInfo.bodyParts[0].velocity.magnitude}, " +
                                 $"db<ReviveTrait>: {deadBodyInfo.GetComponent<RevivableTrait>()}");
                 }
 
                 // detect if its dropped deadBodyInfo.grabBodyObject.hasHitGround  // && deadBodyInfo.bodyParts[0].velocity.magnitude<0.02
-                if (!deadBodyInfo.grabBodyObject.isHeld ) // might be 6
+                if (!deadBodyInfo.grabBodyObject.isHeld) // might be 6
                 {
 
 
@@ -89,14 +98,16 @@ namespace LethalRescueCompanyPlugin.Patches
                         //deadBodyInfo.playerScript.HealClientRpc();
                         helper.ReviveRescuedPlayer(deadBodyInfo, playersManager);
 
-                    } else if (Settings.isDebug)
+                    }
+                    else if (Settings.isDebug)
                     {
                         log.LogInfo("isDebug=true, unconditional respawn drop of dead body in ship");
                         // RescueCompany.instance.RevivePlayer(deadBodyInfo.playerScript);
                         //deadBodyInfo.playerScript.HealClientRpc();
                         helper.ReviveRescuedPlayer(deadBodyInfo, playersManager);
                     }
-                } else
+                }
+                else
                 {
                     if (Settings.isDebug) log.LogInfo("waiting for body to drop, be grabbable and not move");
                 }
@@ -156,6 +167,6 @@ namespace LethalRescueCompanyPlugin.Patches
         //}
     }
 
-    
+
 
 }
