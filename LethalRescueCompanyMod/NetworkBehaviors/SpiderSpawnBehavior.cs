@@ -1,8 +1,10 @@
 ﻿using BepInEx.Logging;
 using Dissonance;
+using GameNetcodeStuff;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using Unity.Netcode;
@@ -54,7 +56,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                         if (enemy.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
                         {
                             spiderEnemyType = enemy.enemyType;
-                            // how to break out ?
+                            return;//breaks out
                         }
                     });
                 }
@@ -71,23 +73,41 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                     Vector3 spawnPos = playerPos + playerDirection * spawnDistance;
 
                     var n = RoundManager.Instance.SpawnEnemyGameObject(spawnPos, 0, 99, spiderEnemyType);
+                    //if (Settings.isDebug)
+                    //{
+                    //    PlayerControllerB dummycontroller = thisPlayerBody.GetComponentInParent<PlayerControllerB>();
+                    //    var spawnedDummy = UnityEngine.Object.Instantiate(dummycontroller, spawnPos, Quaternion.Euler(new Vector3(0f, 0f, 0f)));
+                    //    try
+                    //    {
+                    //        var foundPlayerScript = spawnedDummy.GetComponent<PlayerControllerB>();
+                    //        FindObjectsOfType<EnemyAI>().ToList().ForEach(enemy =>
+                    //        {
+                    //            if (enemy.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
+                    //            {
+                    //                SandSpiderAI x = (SandSpiderAI)enemy;
+                    //                if (foundPlayerScript != null)
+                    //                {
+                    //                    x.TriggerChaseWithPlayer(foundPlayerScript);
+                    //                }
+                    //                else
+                    //                {
+                    //                    if (Settings.isDebug) log.LogWarning($"We could not find a playerscript");
+                    //                }
+                    //                return;
+                    //            }
+                    //        });
+                            
+
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        if (Settings.isDebug) log.LogWarning($"Unable to target player, ignore this, {ex}");
+                    //    }
+                    //}
+
                     spawnedSpiders = fuckingSpiders;
 
-                    try
-                    {
 
-                        // get the spawned spooder
-                        SandSpiderAI x = (SandSpiderAI)RoundManager.Instance.SpawnedEnemies.Last();
-
-                        // to make a spider target someone / body 
-                        //SetterHandler targetPlayer, currentBehaviourStateIndex = 2
-                        //if (Settings.isDebug) log.LogInfo($"choosing target: {lastChatMessage}");
-                        //x.TriggerChaseWithPlayer(helper.GetPlayerByName(lastChatMessage, playersManager));
-                    }
-                    catch (Exception ex)
-                    {
-                        if (Settings.isDebug) log.LogWarning($"Unable to target player, ignore this, {ex}");
-                    }
                 }
             }
             else if (spidersExist)
