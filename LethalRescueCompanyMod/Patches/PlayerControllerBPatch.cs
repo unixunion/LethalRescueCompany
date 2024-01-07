@@ -89,11 +89,11 @@ namespace LethalRescueCompanyPlugin.Patches
                     db.attachedTo = null;
                 } else
                 {
-                    log.LogWarning("no deadbody");
+                    log.LogWarning("no deadbody attached");
                 }
             } else
             {
-                log.LogWarning("no revivable trait found, cant grab this");
+                log.LogDebug("no revivable trait found, cant grab this");
             }
         }
 
