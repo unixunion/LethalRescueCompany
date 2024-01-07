@@ -20,12 +20,12 @@ namespace LethalRescueCompanyMod.Patches
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.HudManagerPatch");
         [HarmonyPatch("AddTextToChatOnServer")]
         [HarmonyPostfix]
-        static void AddTextToChatOnServerPatch(ref PlayerControllerB ___localPlayer, ref String ___lastChatMessage)
+        static void AddTextToChatOnServerPatch(ref PlayerControllerB ___localPlayer, ref String ___lastChatMessage, ref StartOfRound ___playersManager)
         {
             // spider debugging stuff
             if (isDebug)
             {
-                DebugHacks(___localPlayer.thisPlayerBody, ___lastChatMessage);
+                DebugHacks(___localPlayer.thisPlayerBody, ___lastChatMessage, ___playersManager);
             }
         }
 
@@ -46,7 +46,7 @@ namespace LethalRescueCompanyMod.Patches
 
 
         
-        private static void DebugHacks(Transform thisPlayerBody, string lastChatMessage)
+        private static void DebugHacks(Transform thisPlayerBody, string lastChatMessage, StartOfRound playersManager)
         {
             List<EnemyAI> fuckingSpiders = null;
             try
@@ -101,7 +101,7 @@ namespace LethalRescueCompanyMod.Patches
                         // to make a spider target someone / body 
                         //SetterHandler targetPlayer, currentBehaviourStateIndex = 2
                         if (Settings.isDebug) log.LogInfo($"choosing target: {lastChatMessage}");
-                        x.TriggerChaseWithPlayer(helper.GetPlayerByName(lastChatMessage));
+                        x.TriggerChaseWithPlayer(helper.GetPlayerByName(lastChatMessage, playersManager));
                     } catch (Exception ex) { 
                         if (Settings.isDebug) log.LogWarning($"Unable to target player, ignore this, {ex}");    
                     }
