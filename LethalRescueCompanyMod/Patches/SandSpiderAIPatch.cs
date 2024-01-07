@@ -45,7 +45,7 @@ namespace LethalRescueCompanyMod.Patches
             deadBodyInfo.grabBodyObject.grabbable = true;
             deadBodyInfo.canBeGrabbedBackByPlayers = true;
 
-            if (deadBodyInfo.gameObject != null)
+            if (deadBodyInfo.gameObject != null && deadBodyInfo.gameObject.GetComponent<RevivableTrait>() == null)
             {
                 if (Settings.isDebug) log.LogInfo("adding revivable trait");
                 deadBodyInfo.gameObject.AddComponent<RevivableTrait>();
