@@ -51,6 +51,7 @@ namespace LethalRescueCompanyMod
                     {
                         if (Settings.isDebug) log.LogInfo("no respawning yet, and trait found, reviving");
                         StartCoroutine(WaitFiveSecondsAndRevive(deadBodyInfo, playersManager));
+                        isRespawning = false;
                     }
                 }
                 else
@@ -68,10 +69,10 @@ namespace LethalRescueCompanyMod
         public IEnumerator WaitFiveSecondsAndRevive(DeadBodyInfo deadBodyInfo, StartOfRound playersManager)
         {
             isRespawning = true;
-            print("Start waiting");
+            log.LogMessage("Start waiting");
             yield return new WaitForSeconds(5);
+            log.LogMessage("Done waiting");
             helper.ReviveRescuedPlayer(deadBodyInfo, playersManager);
-            isRespawning = false;
         }
     }
 }
