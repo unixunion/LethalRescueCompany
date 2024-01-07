@@ -25,6 +25,10 @@ namespace LethalRescueCompanyMod.Patches
         static void hangBodyFromCeilingPrePatch(ref DeadBodyInfo ___currentlyHeldBody)
         {
             currentlyHeldBody = ___currentlyHeldBody;
+            for (int i = 0; i < currentlyHeldBody.bodyBloodDecals.Length; i++)
+            {
+                currentlyHeldBody.bodyBloodDecals[i].SetActive(value: false);
+            }
         }
 
         [HarmonyPatch("HangBodyFromCeiling")]
