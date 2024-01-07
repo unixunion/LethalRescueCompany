@@ -87,6 +87,7 @@ namespace LethalRescueCompanyPlugin.Patches
                 if (db != null)
                 {
                     db.attachedTo = null;
+                    db.deactivated = false;
                 } else
                 {
                     log.LogWarning("no deadbody attached");
