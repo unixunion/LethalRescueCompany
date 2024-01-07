@@ -84,21 +84,12 @@ namespace LethalRescueCompanyPlugin.Patches
             if (___currentlyGrabbingObject.GetComponentInChildren<RevivableTrait>() != null)
             {
                 var db = ___currentlyGrabbingObject.GetComponentInParent<DeadBodyInfo>();
-                var strungup = db.GetComponent<SetLineRendererPoints>();
                 if (db != null)
                 {
                     db.attachedTo = null;
                 } else
                 {
                     log.LogWarning("no deadbody attached");
-                }
-                if (strungup != null)
-                {
-                    Destroy(strungup);
-                }
-                else
-                {
-                    log.LogWarning("no strungup attached");
                 }
 
             } else
