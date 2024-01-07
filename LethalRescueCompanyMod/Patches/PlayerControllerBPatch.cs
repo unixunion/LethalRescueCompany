@@ -63,14 +63,8 @@ namespace LethalRescueCompanyPlugin.Patches
                 log.LogError("instance is null");
                 return;
             }
-            var deadbodyinfo = __instance.gameObject.GetComponentInChildren<DeadBodyInfo>();
-            if (deadbodyinfo == null)
-            {
-                log.LogWarning("deadbody info is null");
-                return;
-            }
 
-            var revivabletrait = deadbodyinfo.gameObject.GetComponentInChildren<RevivableTrait>();
+            var revivabletrait = ___deadBody.gameObject.GetComponent<RevivableTrait>();
             if (revivabletrait == null)
             {
                 log.LogWarning("revivable trait is null");
