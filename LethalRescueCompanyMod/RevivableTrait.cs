@@ -55,11 +55,14 @@ namespace LethalRescueCompanyMod
                 // detect if its dropped deadBodyInfo.grabBodyObject.hasHitGround  // && deadBodyInfo.bodyParts[0].velocity.magnitude<0.02
                 if (!deadBodyInfo.grabBodyObject.isHeld) // might be 6
                 {
-                    if (Settings.isDebug) log.LogInfo("trait found, reviving");
                     //RescueCompany.instance.RevivePlayer(deadBodyInfo.playerScript);
                     //deadBodyInfo.playerScript.HealClientRpc();
                     //helper.ReviveRescuedPlayer(deadBodyInfo, playersManager);
-                    if(!isRespawning) StartCoroutine(WaitFiveSecondsAndRevive());
+                    if (!isRespawning)
+                    {
+                        if (Settings.isDebug) log.LogInfo("no respawning yet, and trait found, reviving");
+                        StartCoroutine(WaitFiveSecondsAndRevive());
+                    }
                 }
                 else
                 {

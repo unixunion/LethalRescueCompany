@@ -125,6 +125,7 @@ namespace LethalRescueCompanyMod
 
                 // destroy deadbody
                 Destroy(deadbody.gameObject);
+
                 if (Settings.isDebug) log.LogInfo($"end ReviveRescuedPlayer");
             }
             catch (Exception ex)
