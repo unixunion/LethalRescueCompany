@@ -22,34 +22,6 @@ namespace LethalRescueCompanyMod
             
         }
 
-        public void startCoroutine(DeadBodyInfo deadbody, StartOfRound startOfRound)
-        {
-            if (Settings.isDebug) log.LogInfo("calling coroutine");
-            ((MonoBehaviour)this).StartCoroutine(deadBodyRespawn(deadbody, startOfRound));
-        }
-
-        public IEnumerator deadBodyRespawn(DeadBodyInfo deadbody, StartOfRound startOfRound)
-        {
-            if(Settings.isDebug) log.LogInfo($"Starting deadBodyRespawn coroutine");
-
-            if (stopwatch == null)
-            {
-                stopwatch = new Stopwatch();
-                stopwatch.Start();
-            }
-
-            if (stopwatch.Elapsed.TotalSeconds > 5)
-            {
-                if (Settings.isDebug) log.LogInfo($"Reviving Player");
-                ReviveRescuedPlayer(deadbody, startOfRound);
-                stopwatch = null;
-                yield break;
-            }
-
-
-            yield return (object) new WaitForSeconds(0.9f);
-        }
-
         public void ReviveRescuedPlayer(DeadBodyInfo deadbody, StartOfRound playersManager)
         {
             try
