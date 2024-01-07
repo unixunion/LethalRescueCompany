@@ -135,6 +135,7 @@ namespace LethalRescueCompanyMod
 
         public PlayerControllerB GetPlayerByName(string playerName)
         {
+            if (Settings.isDebug) { log.LogInfo($"GetPlayerByName: {playerName}"); }
             PlayerControllerB[] players = StartOfRound.Instance.allPlayerScripts;
             List<PlayerControllerB> list = new List<PlayerControllerB>();
             PlayerControllerB[] array = players;
@@ -147,8 +148,9 @@ namespace LethalRescueCompanyMod
             }
             foreach (PlayerControllerB item in list)
             {
-                if (item.playerUsername == playerName)
+                if (item.playerUsername.Equals(playerName))
                 {
+                    if (Settings.isDebug) log.LogInfo($"GetPlayerByName found player: {item}");
                     return item;
                 }
             }

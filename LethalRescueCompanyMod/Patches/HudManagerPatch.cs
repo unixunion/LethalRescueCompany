@@ -94,14 +94,16 @@ namespace LethalRescueCompanyMod.Patches
 
                     try
                     {
+                        
                         // get the spawned spooder
                         SandSpiderAI x = (SandSpiderAI)RoundManager.Instance.SpawnedEnemies.Last();
 
                         // to make a spider target someone / body 
                         //SetterHandler targetPlayer, currentBehaviourStateIndex = 2
+                        if (Settings.isDebug) log.LogInfo($"choosing target: {lastChatMessage}");
                         x.TriggerChaseWithPlayer(helper.GetPlayerByName(lastChatMessage));
-                    } catch {
-                        if (Settings.isDebug) log.LogWarning("Unable to target player, ignore this");    
+                    } catch (Exception ex) { 
+                        if (Settings.isDebug) log.LogWarning($"Unable to target player, ignore this, {ex}");    
                     }
                 }
             }
