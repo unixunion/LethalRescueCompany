@@ -80,6 +80,7 @@ namespace LethalRescueCompanyPlugin.Patches
         [HarmonyPostfix]
         static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject)
         {
+            if (___currentlyGrabbingObject == null) return;
             if (___currentlyGrabbingObject.GetComponentInChildren<RevivableTrait>() != null)
             {
                 var db = ___currentlyGrabbingObject.GetComponentInParent<DeadBodyInfo>();
