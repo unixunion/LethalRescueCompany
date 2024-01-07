@@ -24,7 +24,7 @@ namespace LethalRescueCompanyMod.Patches
         static void AddTextToChatOnServerPatch(ref PlayerControllerB ___localPlayer, ref String ___lastChatMessage, ref StartOfRound ___playersManager)
         {
             // spider debugging stuff
-            if (isDebug)
+            if (isDebug && ___localPlayer.IsServer)
             {
                 var spiderSpawnBehaviorComponent = ___localPlayer.gameObject.GetComponent<SpiderSpawnBehavior>();
                 if(spiderSpawnBehaviorComponent!=null) spiderSpawnBehaviorComponent.DebugHacks(___localPlayer.thisPlayerBody, ___lastChatMessage, ___playersManager);
