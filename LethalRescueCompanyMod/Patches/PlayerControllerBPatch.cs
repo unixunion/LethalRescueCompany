@@ -70,14 +70,13 @@ namespace LethalRescueCompanyPlugin.Patches
                 if (isDebug)
                 {
                     log.LogInfo($"db.isInShip: {deadBodyInfo.isInShip}, " +    
-                                $"db....grabbable: {deadBodyInfo.grabBodyObject.grabbable}, " + 
-                                $"db....hasHitGround: {deadBodyInfo.grabBodyObject.hasHitGround}, " +
+                                $"db....isHeld: {deadBodyInfo.grabBodyObject.isHeld}, " + 
                                 $"db....velocity.mag: {deadBodyInfo.bodyParts[0].velocity.magnitude}, " +
                                 $"db<ReviveTrait>: {deadBodyInfo.GetComponent<RevivableTrait>()}");
                 }
 
-                // detect if its dropped deadBodyInfo.grabBodyObject.hasHitGround 
-                if (deadBodyInfo.grabBodyObject.grabbable && deadBodyInfo.bodyParts[0].velocity.magnitude<0.02) // might be 6
+                // detect if its dropped deadBodyInfo.grabBodyObject.hasHitGround  // && deadBodyInfo.bodyParts[0].velocity.magnitude<0.02
+                if (!deadBodyInfo.grabBodyObject.isHeld ) // might be 6
                 {
 
 
