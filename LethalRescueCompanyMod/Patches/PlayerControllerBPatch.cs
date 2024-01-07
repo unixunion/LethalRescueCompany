@@ -75,8 +75,8 @@ namespace LethalRescueCompanyPlugin.Patches
                                 $"db<ReviveTrait>: {deadBodyInfo.GetComponent<RevivableTrait>()}");
                 }
 
-                // detect if its dropped
-                if (deadBodyInfo.grabBodyObject.grabbable && deadBodyInfo.grabBodyObject.hasHitGround && deadBodyInfo.bodyParts[0].velocity.magnitude<0.02)
+                // detect if its dropped deadBodyInfo.grabBodyObject.hasHitGround 
+                if (deadBodyInfo.grabBodyObject.grabbable && deadBodyInfo.bodyParts[0].velocity.magnitude<0.02) // might be 6
                 {
 
 
