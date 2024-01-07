@@ -86,7 +86,7 @@ namespace LethalRescueCompanyPlugin.Patches
                 var db = ___currentlyGrabbingObject.GetComponentInParent<DeadBodyInfo>();
                 if (db != null)
                 {
-                    db.attachedTo = null;
+                    Destroy(db.attachedTo);
                     db.deactivated = false;
                 } else
                 {
