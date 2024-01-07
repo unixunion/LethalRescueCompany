@@ -15,18 +15,20 @@ namespace LethalRescueCompanyMod.Patches
     [HarmonyPatch(typeof(HUDManager))]
     internal class HudManagerPatch : BaseUnityPlugin
     {
+        static Helper helper = new Helper();
         static bool isDebug = Settings.isDebug;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.HudManagerPatch");
         [HarmonyPatch("AddTextToChatOnServer")]
         [HarmonyPostfix]
-        static void AddTextToChatOnServerPatch(ref PlayerControllerB ___localPlayer)
+        static void AddTextToChatOnServerPatch(ref PlayerControllerB ___localPlayer, ref String ___lastChatMessage)
         {
             // spider debugging stuff
             if (isDebug)
             {
-                DebugHacks(___localPlayer.thisPlayerBody);
+                DebugHacks(___localPlayer.thisPlayerBody, ___lastChatMessage);
             }
         }
+
         private static List<EnemyAI> spawnedSpiders = null;
         private static EnemyType spiderEnemyType = null;
         private static bool hasKilledSpiders = false;
@@ -42,7 +44,9 @@ namespace LethalRescueCompanyMod.Patches
             spidersExist = false;
         }
 
-        private static void DebugHacks(Transform thisPlayerBody)
+
+        
+        private static void DebugHacks(Transform thisPlayerBody, string lastChatMessage)
         {
             List<EnemyAI> fuckingSpiders = null;
             try
@@ -66,10 +70,10 @@ namespace LethalRescueCompanyMod.Patches
                 {
                     RoundManager.Instance.currentLevel.Enemies.ForEach(enemy =>
                     {
-                        //log.LogInfo(enemy.enemyType.enemyPrefab.name);
                         if (enemy.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
                         {
                             spiderEnemyType = enemy.enemyType;
+                            // how to break out ?
                         }
                     });
                 }
@@ -87,6 +91,18 @@ namespace LethalRescueCompanyMod.Patches
 
                     var n = RoundManager.Instance.SpawnEnemyGameObject(spawnPos, 0, 99, spiderEnemyType);
                     spawnedSpiders = fuckingSpiders;
+
+                    try
+                    {
+                        // get the spawned spooder
+                        SandSpiderAI x = (SandSpiderAI)RoundManager.Instance.SpawnedEnemies.Last();
+
+                        // to make a spider target someone / body 
+                        //SetterHandler targetPlayer, currentBehaviourStateIndex = 2
+                        x.TriggerChaseWithPlayer(helper.GetPlayerByName(lastChatMessage));
+                    } catch {
+                        if (Settings.isDebug) log.LogWarning("Unable to target player, ignore this");    
+                    }
                 }
             }
             else if (spidersExist)
@@ -105,7 +121,6 @@ namespace LethalRescueCompanyMod.Patches
                 if (hasKilledSpiders)
                 {
                     spiderEnemyType = null;
-                    //spidersExist = false;
                     spawnedSpiders = null;
                     hasKilledSpiders = false;
                 }

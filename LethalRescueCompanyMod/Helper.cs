@@ -133,7 +133,7 @@ namespace LethalRescueCompanyMod
             }
         }
 
-        public PlayerControllerB GetPlayerById(ulong playerId)
+        public PlayerControllerB GetPlayerByName(string playerName)
         {
             PlayerControllerB[] players = StartOfRound.Instance.allPlayerScripts;
             List<PlayerControllerB> list = new List<PlayerControllerB>();
@@ -147,7 +147,7 @@ namespace LethalRescueCompanyMod
             }
             foreach (PlayerControllerB item in list)
             {
-                if (item.playerClientId == playerId)
+                if (item.playerUsername == playerName)
                 {
                     return item;
                 }

@@ -34,22 +34,17 @@ namespace LethalRescueCompanyPlugin.Patches
     [HarmonyPatch(typeof(PlayerControllerB))]
     internal class PlayerControllerBPatch : BaseUnityPlugin
     {
-        static Helper reviveHelper = new Helper();
+
         static bool isDebug = Settings.isDebug;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
 
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
-        static void updatePatch(ref bool ___isPlayerDead,
-                               ref float ___movementSpeed,
-                               ref int ___isMovementHindered,
-                               ref float ___hinderedMultiplier,
-                               ref string ___playerUsername,
-                               ref bool ___performingEmote,
-                               ref Transform ___thisPlayerBody,
-                               ref StartOfRound ___playersManager,
-                               ref DeadBodyInfo ___deadBody)
+        static void updatePatch(
+            ref StartOfRound ___playersManager,
+            ref DeadBodyInfo ___deadBody)
         {
+
             // nope out if not a body
             if (___deadBody == null) return;
 
@@ -64,7 +59,6 @@ namespace LethalRescueCompanyPlugin.Patches
                 // ignore dead bodies not in the ship
                 if (!deadBodyInfo.isInShip) return;
 
-                // GetHost(___playersManager);
 
                 if (playersManager == null)
                 {
@@ -72,27 +66,17 @@ namespace LethalRescueCompanyPlugin.Patches
                     return;
                 }
 
-                //ReviveScript component = ((Component)this).GetComponent<ReviveScript>();
-
-                //&& ___playerUsername == "marzubus"
-
                 if (isDebug)
                 {
-                    log.LogInfo($"db.isInShip: {deadBodyInfo.isInShip}, " +
-                                $"db.sharedMaterial.name: {deadBodyInfo.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name}, " +
-                                $"db.sharedMesh.name: {deadBodyInfo.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh.name}, " +
-                                $"db.causeOfDeath: {deadBodyInfo.causeOfDeath}, " +
-                                $"db.canBeGrabbedBackByPlayers: {deadBodyInfo.grabBodyObject.grabbable}, " + 
+                    log.LogInfo($"db.isInShip: {deadBodyInfo.isInShip}, " +    
+                                $"db....grabbable: {deadBodyInfo.grabBodyObject.grabbable}, " + 
                                 $"db....hasHitGround: {deadBodyInfo.grabBodyObject.hasHitGround}, " +
-                                $"db....magnitude: {deadBodyInfo.grabBodyObject.propBody.velocity.magnitude}, " +
+                                $"db....velocity.mag: {deadBodyInfo.bodyParts[0].velocity.magnitude}, " +
                                 $"db<ReviveTrait>: {deadBodyInfo.GetComponent<RevivableTrait>()}");
                 }
 
-
-               
-
                 // detect if its dropped
-                if (deadBodyInfo.isInShip && deadBodyInfo.grabBodyObject.grabbable && deadBodyInfo.grabBodyObject.hasHitGround && deadBodyInfo.grabBodyObject.propBody.velocity.magnitude == 0)
+                if (deadBodyInfo.grabBodyObject.grabbable && deadBodyInfo.grabBodyObject.hasHitGround && deadBodyInfo.bodyParts[0].velocity.magnitude==0)
                 {
 
 
@@ -108,6 +92,9 @@ namespace LethalRescueCompanyPlugin.Patches
                         log.LogInfo("isDebug=true, unconditional respawn drop of dead body in ship");
                         RescueCompany.instance.RevivePlayer(deadBodyInfo.playerScript);
                     }
+                } else
+                {
+                    if (Settings.isDebug) log.LogInfo("waiting for body to drop, be grabbable and not move");
                 }
 
 
@@ -118,51 +105,51 @@ namespace LethalRescueCompanyPlugin.Patches
             }
         }
 
-        public static void KillPlayer(PlayerControllerB player, Vector3 bodyVelocity, bool spawnBody = true, CauseOfDeath causeOfDeath = CauseOfDeath.Unknown, int deathAnimation = 0)
-        {
+        //public static void KillPlayer(PlayerControllerB player, Vector3 bodyVelocity, bool spawnBody = true, CauseOfDeath causeOfDeath = CauseOfDeath.Unknown, int deathAnimation = 0)
+        //{
 
-            if (player.IsOwner && !player.isPlayerDead && player.AllowPlayerDeath())
-            {
-                player.isPlayerDead = true;
-                player.isPlayerControlled = false;
-                player.thisPlayerModelArms.enabled = false;
-                player.localVisor.position = player.playersManager.notSpawnedPosition.position;
-                player.DisablePlayerModel(player.gameObject);
-                player.isInsideFactory = false;
-                player.IsInspectingItem = false;
-                player.inTerminalMenu = false;
-                player.twoHanded = false;
-                player.carryWeight = 1f;
-                player.fallValue = 0f;
-                player.fallValueUncapped = 0f;
-                player.takingFallDamage = false;
-                player.isSinking = false;
-                player.isUnderwater = false;
-                StartOfRound.Instance.drowningTimer = 1f;
-                HUDManager.Instance.setUnderwaterFilter = false;
-                player.sourcesCausingSinking = 0;
-                player.sinkingValue = 0f;
-                player.hinderedMultiplier = 1f;
-                player.isMovementHindered = 0;
-                player.inAnimationWithEnemy = null;
-                UnityEngine.Object.FindObjectOfType<Terminal>().terminalInUse = false;
-                SoundManager.Instance.SetDiageticMixerSnapshot();
-                HUDManager.Instance.SetNearDepthOfFieldEnabled(enabled: true);
-                HUDManager.Instance.HUDAnimator.SetBool("biohazardDamage", value: false);
-                HUDManager.Instance.gameOverAnimator.SetTrigger("gameOver");
-                HUDManager.Instance.HideHUD(hide: true);
-                if (spawnBody)
-                {
-                    player.SpawnDeadBody((int)player.playerClientId, bodyVelocity, (int)causeOfDeath, player, deathAnimation);
-                }
-                StartOfRound.Instance.SwitchCamera(StartOfRound.Instance.spectateCamera);
-                player.isInGameOverAnimation = 1.5f;
-                player.cursorTip.text = "";
-                player.cursorIcon.enabled = false;
-                player.DropAllHeldItems(spawnBody);
-                player.DisableJetpackControlsLocally();
-            }
-        }
+        //    if (player.IsOwner && !player.isPlayerDead && player.AllowPlayerDeath())
+        //    {
+        //        player.isPlayerDead = true;
+        //        player.isPlayerControlled = false;
+        //        player.thisPlayerModelArms.enabled = false;
+        //        player.localVisor.position = player.playersManager.notSpawnedPosition.position;
+        //        player.DisablePlayerModel(player.gameObject);
+        //        player.isInsideFactory = false;
+        //        player.IsInspectingItem = false;
+        //        player.inTerminalMenu = false;
+        //        player.twoHanded = false;
+        //        player.carryWeight = 1f;
+        //        player.fallValue = 0f;
+        //        player.fallValueUncapped = 0f;
+        //        player.takingFallDamage = false;
+        //        player.isSinking = false;
+        //        player.isUnderwater = false;
+        //        StartOfRound.Instance.drowningTimer = 1f;
+        //        HUDManager.Instance.setUnderwaterFilter = false;
+        //        player.sourcesCausingSinking = 0;
+        //        player.sinkingValue = 0f;
+        //        player.hinderedMultiplier = 1f;
+        //        player.isMovementHindered = 0;
+        //        player.inAnimationWithEnemy = null;
+        //        UnityEngine.Object.FindObjectOfType<Terminal>().terminalInUse = false;
+        //        SoundManager.Instance.SetDiageticMixerSnapshot();
+        //        HUDManager.Instance.SetNearDepthOfFieldEnabled(enabled: true);
+        //        HUDManager.Instance.HUDAnimator.SetBool("biohazardDamage", value: false);
+        //        HUDManager.Instance.gameOverAnimator.SetTrigger("gameOver");
+        //        HUDManager.Instance.HideHUD(hide: true);
+        //        if (spawnBody)
+        //        {
+        //            player.SpawnDeadBody((int)player.playerClientId, bodyVelocity, (int)causeOfDeath, player, deathAnimation);
+        //        }
+        //        StartOfRound.Instance.SwitchCamera(StartOfRound.Instance.spectateCamera);
+        //        player.isInGameOverAnimation = 1.5f;
+        //        player.cursorTip.text = "";
+        //        player.cursorIcon.enabled = false;
+        //        player.DropAllHeldItems(spawnBody);
+        //        player.DisableJetpackControlsLocally();
+        //    }
+        //}
     }
 
     
