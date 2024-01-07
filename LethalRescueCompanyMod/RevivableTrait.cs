@@ -49,7 +49,7 @@ namespace LethalRescueCompanyMod
                     //helper.ReviveRescuedPlayer(deadBodyInfo, playersManager);
                     if (!isRespawning)
                     {
-                        if (Settings.isDebug) log.LogInfo("no respawning yet, and trait found, reviving");
+                        if (Settings.isDebug) log.LogInfo("not respawning yet, and trait found, reviving");
                         StartCoroutine(WaitFiveSecondsAndRevive(deadBodyInfo, playersManager));
                     }
                 }

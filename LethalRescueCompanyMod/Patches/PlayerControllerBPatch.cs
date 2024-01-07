@@ -76,6 +76,25 @@ namespace LethalRescueCompanyPlugin.Patches
         }
 
 
-       
+        [HarmonyPatch("BeginGrabObject")]
+        [HarmonyPostfix]
+        static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject)
+        {
+            if (___currentlyGrabbingObject.GetComponentInChildren<RevivableTrait>() != null)
+            {
+                var db = ___currentlyGrabbingObject.GetComponentInParent<DeadBodyInfo>();
+                if (db != null)
+                {
+                    db.attachedTo = null;
+                } else
+                {
+                    log.LogWarning("no deadbody");
+                }
+            } else
+            {
+                log.LogWarning("no revivable trait found, cant grab this");
+            }
+        }
+
     }
 }

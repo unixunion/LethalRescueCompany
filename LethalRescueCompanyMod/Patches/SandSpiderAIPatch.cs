@@ -38,9 +38,9 @@ namespace LethalRescueCompanyMod.Patches
         {
             if (Settings.isDebug) log.LogInfo($"Making wrapped body grabbable, currently attached to: {deadBodyInfo.attachedTo.name}");
 
-            deadBodyInfo.secondaryAttachedTo = deadBodyInfo.attachedTo;
-            deadBodyInfo.attachedTo = null;
-            if (Settings.isDebug) log.LogInfo($"reattached via secondary to the primary attachment point");
+            //deadBodyInfo.secondaryAttachedTo = deadBodyInfo.attachedTo;
+            //deadBodyInfo.attachedTo = null;
+            //if (Settings.isDebug) log.LogInfo($"reattached via secondary to the primary attachment point");
 
             deadBodyInfo.grabBodyObject.grabbable = true;
             deadBodyInfo.canBeGrabbedBackByPlayers = true;
