@@ -38,7 +38,6 @@ namespace LethalRescueCompanyMod
                 // ignore dead bodies not in the ship
                 if (!deadBodyInfo.isInShip) return;
 
-
                 if (playersManager == null)
                 {
                     log.LogError($"playersManager is null");

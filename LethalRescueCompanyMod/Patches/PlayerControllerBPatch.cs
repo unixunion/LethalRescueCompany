@@ -58,6 +58,7 @@ namespace LethalRescueCompanyPlugin.Patches
             }
             // nope out if not a body
             if (___deadBody == null) return;
+            if (!__instance.isPlayerDead) return;
             if (__instance == null)
             {
                 log.LogError("instance is null");
