@@ -5,6 +5,7 @@ using GameNetcodeStuff;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,9 +36,34 @@ namespace LethalRescueCompanyMod.Patches
 
         private static void makeWebbedBodyGrabbable(DeadBodyInfo deadBodyInfo)
         {
-            log.LogInfo($"Making wrapped body grabbable, currently attached to: {deadBodyInfo.attachedTo.name}");
+            if (Settings.isDebug) log.LogInfo($"Making wrapped body grabbable, currently attached to: {deadBodyInfo.attachedTo.name}");
+
+            deadBodyInfo.secondaryAttachedTo = deadBodyInfo.attachedTo;
+            deadBodyInfo.attachedTo = null;
+            if (Settings.isDebug) log.LogInfo($"reattached via secondary to the primary attachment point");
+
             deadBodyInfo.grabBodyObject.grabbable = true;
             deadBodyInfo.canBeGrabbedBackByPlayers = true;
+
+            if (deadBodyInfo.gameObject != null)
+            {
+                if (Settings.isDebug) log.LogInfo("adding revivable trait");
+                deadBodyInfo.gameObject.AddComponent<RevivableTrait>();
+            }
+            else
+            {
+                log.LogWarning("deadbody gameobject was null");
+            }
+
+            if (Settings.isDebug)
+            {
+                log.LogInfo("lets inspect...");
+                log.LogInfo($"db....grabbable: {deadBodyInfo.grabBodyObject.grabbable}, " +
+                            $"db.canBeGrabbedBackByPlayers: {deadBodyInfo.canBeGrabbedBackByPlayers}, " +
+                            $"db....hasHitGround: {deadBodyInfo.grabBodyObject.hasHitGround}, " +
+                            $"db<ReviveTrait>: {deadBodyInfo.gameObject.GetComponent<RevivableTrait>()}");
+            }
+
         }
 
     }

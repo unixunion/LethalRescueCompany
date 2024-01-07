@@ -84,7 +84,8 @@ namespace LethalRescueCompanyPlugin.Patches
                                 $"db.causeOfDeath: {deadBodyInfo.causeOfDeath}, " +
                                 $"db.canBeGrabbedBackByPlayers: {deadBodyInfo.grabBodyObject.grabbable}, " + 
                                 $"db....hasHitGround: {deadBodyInfo.grabBodyObject.hasHitGround}, " +
-                                $"db....magnitude: {deadBodyInfo.grabBodyObject.propBody.velocity.magnitude}");
+                                $"db....magnitude: {deadBodyInfo.grabBodyObject.propBody.velocity.magnitude}, " +
+                                $"db<ReviveTrait>: {deadBodyInfo.GetComponent<RevivableTrait>()}");
                 }
 
 
@@ -96,15 +97,15 @@ namespace LethalRescueCompanyPlugin.Patches
 
 
                     //log.LogInfo("body dropped in ship, checking if its warpped in a web");
-                    if (deadBodyInfo.gameObject.GetComponentInChildren<SkinnedMeshRenderer>().sharedMaterial.name == "SpooledPlayerMat")
+                    if (Settings.isDebug) log.LogInfo("checking dropped body has revivable trait");
+                    if (deadBodyInfo.gameObject.GetComponentInChildren<RevivableTrait>() != null)
                     {
-                        if (Settings.isDebug) log.LogInfo("calling revivehelper");
-                        //reviveHelper.startCoroutine(deadBodyInfo, playersManager);
+                        if (Settings.isDebug) log.LogInfo("trait found, reviving");
                         RescueCompany.instance.RevivePlayer(deadBodyInfo.playerScript);
 
                     } else if (Settings.isDebug)
                     {
-                        log.LogInfo("Debug Respawn unconditional drop of dead body in ship");
+                        log.LogInfo("isDebug=true, unconditional respawn drop of dead body in ship");
                         RescueCompany.instance.RevivePlayer(deadBodyInfo.playerScript);
                     }
                 }

@@ -159,6 +159,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RevivableTrait.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Patches\HudManagerPatch.cs" />
     <Compile Include="Patches\PlayerControllerBPatch.cs" />
