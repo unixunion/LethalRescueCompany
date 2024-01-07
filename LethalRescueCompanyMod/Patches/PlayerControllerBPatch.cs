@@ -18,6 +18,7 @@ using DunGen;
 using System.Collections.Generic;
 using System.Collections;
 using LethalRescueCompanyMod;
+using LethalRescueCompanyMod.NetworkBehaviors;
 
 //round manager has spawn enemies
 
@@ -93,20 +94,6 @@ namespace LethalRescueCompanyPlugin.Patches
                         {
                             if (Settings.isDebug) log.LogInfo("calling revivehelper");
                             reviveHelper.startCoroutine(deadBodyInfo, playersManager);
-                            //log.LogInfo("webbed body dropped in ship");
-                            //if (reviveTimer == null)
-                            //{
-                            //    //log.LogInfo("starting revive timer");
-                            //    reviveTimer = new Stopwatch();
-                            //    reviveTimer.Start();
-                            //}
-
-                            //if (reviveTimer.Elapsed.TotalSeconds > 5)
-                            //{
-                            //    //log.LogInfo("revive timer elapsed, reviving player");
-                            //    ReviveRescuedPlayer(___deadBody, ___playersManager);
-                            //    reviveTimer = null;
-                            //}
                         }
                     }
 
@@ -118,50 +105,6 @@ namespace LethalRescueCompanyPlugin.Patches
             }
         }
 
-        public static void KillPlayer(PlayerControllerB player, Vector3 bodyVelocity, bool spawnBody = true, CauseOfDeath causeOfDeath = CauseOfDeath.Unknown, int deathAnimation = 0)
-        {
-
-            if (player.IsOwner && !player.isPlayerDead && player.AllowPlayerDeath())
-            {
-                player.isPlayerDead = true;
-                player.isPlayerControlled = false;
-                player.thisPlayerModelArms.enabled = false;
-                player.localVisor.position = player.playersManager.notSpawnedPosition.position;
-                player.DisablePlayerModel(player.gameObject);
-                player.isInsideFactory = false;
-                player.IsInspectingItem = false;
-                player.inTerminalMenu = false;
-                player.twoHanded = false;
-                player.carryWeight = 1f;
-                player.fallValue = 0f;
-                player.fallValueUncapped = 0f;
-                player.takingFallDamage = false;
-                player.isSinking = false;
-                player.isUnderwater = false;
-                StartOfRound.Instance.drowningTimer = 1f;
-                HUDManager.Instance.setUnderwaterFilter = false;
-                player.sourcesCausingSinking = 0;
-                player.sinkingValue = 0f;
-                player.hinderedMultiplier = 1f;
-                player.isMovementHindered = 0;
-                player.inAnimationWithEnemy = null;
-                UnityEngine.Object.FindObjectOfType<Terminal>().terminalInUse = false;
-                SoundManager.Instance.SetDiageticMixerSnapshot();
-                HUDManager.Instance.SetNearDepthOfFieldEnabled(enabled: true);
-                HUDManager.Instance.HUDAnimator.SetBool("biohazardDamage", value: false);
-                HUDManager.Instance.gameOverAnimator.SetTrigger("gameOver");
-                HUDManager.Instance.HideHUD(hide: true);
-                if (spawnBody)
-                {
-                    player.SpawnDeadBody((int)player.playerClientId, bodyVelocity, (int)causeOfDeath, player, deathAnimation);
-                }
-                StartOfRound.Instance.SwitchCamera(StartOfRound.Instance.spectateCamera);
-                player.isInGameOverAnimation = 1.5f;
-                player.cursorTip.text = "";
-                player.cursorIcon.enabled = false;
-                player.DropAllHeldItems(spawnBody);
-                player.DisableJetpackControlsLocally();
-            }
-        }
+        
     }
 }

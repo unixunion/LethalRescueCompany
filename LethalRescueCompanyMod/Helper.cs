@@ -31,23 +31,16 @@ namespace LethalRescueCompanyMod
         public IEnumerator deadBodyRespawn(DeadBodyInfo deadbody, StartOfRound startOfRound)
         {
             if(Settings.isDebug) log.LogInfo($"Starting deadBodyRespawn coroutine");
-
-            if (stopwatch == null)
+            bool isDone = false;
+            while (true || isDone)
             {
-                stopwatch = new Stopwatch();
-                stopwatch.Start();
-            }
-
-            if (stopwatch.Elapsed.TotalSeconds > 5)
-            {
+                yield return new WaitForSeconds(5);
                 if (Settings.isDebug) log.LogInfo($"Reviving Player");
                 ReviveRescuedPlayer(deadbody, startOfRound);
                 stopwatch = null;
+                isDone = true;
                 yield break;
             }
-
-
-            yield return (object) new WaitForSeconds(0.9f);
         }
 
         private void ReviveRescuedPlayer(DeadBodyInfo deadbody, StartOfRound playersManager)

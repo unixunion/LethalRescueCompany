@@ -1,8 +1,12 @@
 ﻿using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using HarmonyLib;
+using LethalRescueCompanyMod.NetworkBehaviors;
 using LethalRescueCompanyMod.Patches;
 using LethalRescueCompanyPlugin.Patches;
+using System.Reflection;
+using UnityEngine;
 
 namespace LethalRescueCompanyPlugin
 {
@@ -29,6 +33,10 @@ namespace LethalRescueCompanyPlugin
             harmony.PatchAll(typeof(SandSpiderAIPatch));
             harmony.PatchAll(typeof(PlayerControllerBPatch));
             harmony.PatchAll(typeof(HudManagerPatch));
+
+            GameObject reviveStoreGameObject = new GameObject("ReviveStore");
+            reviveStoreGameObject.AddComponent<ReviveStore>();
+            DontDestroyOnLoad(reviveStoreGameObject);
 
         }
     }

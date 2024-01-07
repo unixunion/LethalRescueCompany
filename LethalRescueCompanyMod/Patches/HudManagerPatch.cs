@@ -3,6 +3,7 @@ using BepInEx.Logging;
 using Dissonance;
 using GameNetcodeStuff;
 using HarmonyLib;
+using LethalRescueCompanyMod.NetworkBehaviors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,15 +17,24 @@ namespace LethalRescueCompanyMod.Patches
     internal class HudManagerPatch : BaseUnityPlugin
     {
         static bool isDebug = Settings.isDebug;
+        static Helper helper = new Helper();
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.HudManagerPatch");
         [HarmonyPatch("AddTextToChatOnServer")]
         [HarmonyPostfix]
-        static void AddTextToChatOnServerPatch(ref PlayerControllerB ___localPlayer)
+        static void AddTextToChatOnServerPatch()
         {
             // spider debugging stuff
             if (isDebug)
             {
-                DebugHacks(___localPlayer.thisPlayerBody);
+                //DebugHacks(___localPlayer.thisPlayerBody);
+                KillPlayer(GameNetworkManager.Instance.localPlayerController, Vector3.zero, false, CauseOfDeath.Unknown, 0);
+                if (ReviveStore.instance == null) log.LogMessage("ReviveStore is null");
+                if (ReviveStore.instance!=null) ReviveStore.instance.RequestReviveServerRpc(GameNetworkManager.Instance.localPlayerController.actualClientId);
+
+                var foundstore = GameObject.Find("ReviveStore");
+                if(foundstore == null) log.LogMessage("foundstore is null");
+                if (foundstore != null) log.LogMessage("foundstore is not null");
+                //helper.startCoroutine(___localPlayer.deadBody, ___playersManager);
             }
         }
         private static List<EnemyAI> spawnedSpiders = null;
@@ -41,6 +51,12 @@ namespace LethalRescueCompanyMod.Patches
             spawnedSpiders = null;
             spidersExist = false;
         }
+
+        public static void KillPlayer(PlayerControllerB player, Vector3 bodyVelocity, bool spawnBody = true, CauseOfDeath causeOfDeath = CauseOfDeath.Unknown, int deathAnimation = 0)
+        {
+            player.KillPlayer(bodyVelocity, spawnBody, causeOfDeath, deathAnimation);
+        }
+
 
         private static void DebugHacks(Transform thisPlayerBody)
         {
