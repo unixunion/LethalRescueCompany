@@ -17,28 +17,25 @@ namespace LethalRescueCompanyMod
         bool isDebug = Settings.isDebug;
         Helper helper = new Helper();
         DeadBodyInfo _deadBodyInfo;
-        StartOfRound _startOfRound;
+        StartOfRound _playersManager;
         public bool isRespawning = false;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RevivableTrait");
         void Awake()
         {
-            var deadBodyInfo = gameObject.GetComponentInParent<DeadBodyInfo>();
-            var startOfRound = gameObject.GetComponentInParent<StartOfRound>();
-
-
-            _deadBodyInfo = deadBodyInfo;
-            _startOfRound = startOfRound;
+            var player = GameNetworkManager.Instance.localPlayerController;
+            var _deadBodyInfo = player.deadBody;
+            var _playersManager = player.playersManager;
         }
 
-        public void playerIsDeadInShipAndRevivable(DeadBodyInfo deadBodyInfo, StartOfRound playersManager)
+        public void playerIsDeadInShipAndRevivable()
         {
             try
             {
-                if (deadBodyInfo == null) return;
+                if (_deadBodyInfo == null) return;
                 // ignore dead bodies not in the ship
-                if (!deadBodyInfo.isInShip) return;
+                if (!_deadBodyInfo.isInShip) return;
 
-                if (playersManager == null)
+                if (_playersManager == null)
                 {
                     log.LogError($"playersManager is null");
                     return;
@@ -46,14 +43,14 @@ namespace LethalRescueCompanyMod
 
                 if (isDebug)
                 {
-                    log.LogInfo($"db.isInShip: {deadBodyInfo.isInShip}, " +
-                                $"db....isHeld: {deadBodyInfo.grabBodyObject.isHeld}, " +
-                                $"db....velocity.mag: {deadBodyInfo.bodyParts[0].velocity.magnitude}, " +
-                                $"db<ReviveTrait>: {deadBodyInfo.GetComponent<RevivableTrait>()}");
+                    log.LogInfo($"db.isInShip: {_deadBodyInfo.isInShip}, " +
+                                $"db....isHeld: {_deadBodyInfo.grabBodyObject.isHeld}, " +
+                                $"db....velocity.mag: {_deadBodyInfo.bodyParts[0].velocity.magnitude}, " +
+                                $"db<ReviveTrait>: {_deadBodyInfo.GetComponent<RevivableTrait>()}");
                 }
 
                 // detect if its dropped deadBodyInfo.grabBodyObject.hasHitGround  // && deadBodyInfo.bodyParts[0].velocity.magnitude<0.02
-                if (!deadBodyInfo.grabBodyObject.isHeld) // might be 6
+                if (!_deadBodyInfo.grabBodyObject.isHeld) // might be 6
                 {
                     if (Settings.isDebug) log.LogInfo("trait found, reviving");
                     //RescueCompany.instance.RevivePlayer(deadBodyInfo.playerScript);
@@ -78,7 +75,7 @@ namespace LethalRescueCompanyMod
             isRespawning = true;
             print("Start waiting");
             yield return new WaitForSeconds(5);
-            helper.ReviveRescuedPlayer(_deadBodyInfo, _startOfRound);
+            helper.ReviveRescuedPlayer(_deadBodyInfo, _playersManager);
             isRespawning = false;
         }
     }
