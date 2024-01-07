@@ -1,4 +1,5 @@
 ﻿using BepInEx.Logging;
+using GameNetcodeStuff;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -22,9 +23,14 @@ namespace LethalRescueCompanyMod
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RevivableTrait");
         void Awake()
         {
-            var player = GameNetworkManager.Instance.localPlayerController;
-            var _deadBodyInfo = player.deadBody;
-            var _playersManager = player.playersManager;
+            var theParentOfThisComponent = this.gameObject.GetComponentInParent<PlayerControllerB>();
+            log.LogMessage($"playerName: {theParentOfThisComponent.name}");
+            log.LogMessage($"hasDeadBody: {theParentOfThisComponent.deadBody != null}");
+            log.LogMessage($"hasPlayerManager: {theParentOfThisComponent.playersManager != null}");
+
+            var player = theParentOfThisComponent;
+            _deadBodyInfo = player.deadBody;
+            _playersManager = player.playersManager;
         }
 
         public void playerIsDeadInShipAndRevivable()
