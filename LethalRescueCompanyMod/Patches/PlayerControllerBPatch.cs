@@ -37,6 +37,7 @@ namespace LethalRescueCompanyPlugin.Patches
 
         static bool isDebug = Settings.isDebug;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
+        static Helper helper = new Helper();
 
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
@@ -86,13 +87,15 @@ namespace LethalRescueCompanyPlugin.Patches
                     {
                         if (Settings.isDebug) log.LogInfo("trait found, reviving");
                         //RescueCompany.instance.RevivePlayer(deadBodyInfo.playerScript);
-                        deadBodyInfo.playerScript.HealClientRpc();
+                        //deadBodyInfo.playerScript.HealClientRpc();
+                        helper.ReviveRescuedPlayer(deadBodyInfo, playersManager);
 
                     } else if (Settings.isDebug)
                     {
                         log.LogInfo("isDebug=true, unconditional respawn drop of dead body in ship");
                         // RescueCompany.instance.RevivePlayer(deadBodyInfo.playerScript);
-                        deadBodyInfo.playerScript.HealClientRpc();
+                        //deadBodyInfo.playerScript.HealClientRpc();
+                        helper.ReviveRescuedPlayer(deadBodyInfo, playersManager);
                     }
                 } else
                 {

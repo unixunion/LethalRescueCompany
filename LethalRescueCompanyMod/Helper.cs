@@ -50,7 +50,7 @@ namespace LethalRescueCompanyMod
             yield return (object) new WaitForSeconds(0.9f);
         }
 
-        private void ReviveRescuedPlayer(DeadBodyInfo deadbody, StartOfRound playersManager)
+        public void ReviveRescuedPlayer(DeadBodyInfo deadbody, StartOfRound playersManager)
         {
             try
             {
