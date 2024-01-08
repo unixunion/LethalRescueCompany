@@ -81,15 +81,21 @@ namespace LethalRescueCompanyPlugin.Patches
         static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject)
         {
             if (___currentlyGrabbingObject == null) return;
+
+            log.LogInfo($"BeginGrabbbing: {___currentlyGrabbingObject.name}");
+
             if (___currentlyGrabbingObject.GetComponentInChildren<RevivableTrait>() != null)
             {
+                log.LogInfo($"BeginGrabbbing: has trait: {___currentlyGrabbingObject.name}");
                 var db = ___currentlyGrabbingObject.GetComponentInParent<DeadBodyInfo>();
                 if (db != null)
                 {
+                    log.LogInfo("BeginGrabbbing: It is indeed a dead body");
                     var strungup = db.GetComponent<SetLineRendererPoints>();
                     if (strungup != null)
                     {
                         Destroy(strungup);
+                        log.LogInfo("BeginGrabbbing: destroyed the string");
                     }
                     else
                     {
@@ -98,6 +104,7 @@ namespace LethalRescueCompanyPlugin.Patches
 
                     Destroy(db.attachedTo);
                     db.attachedTo = null;
+                    
                 }
                 else
                 {
@@ -110,6 +117,18 @@ namespace LethalRescueCompanyPlugin.Patches
                 log.LogDebug("no revivable trait found, cant grab this");
             }
         }
+
+        [HarmonyPatch("SpawnDeadBody")]
+        [HarmonyPostfix]
+        static void debugDeath(ref PlayerControllerB __instance)
+        {
+            if (isDebug)
+            {
+                log.LogInfo("making fucknut revivable");
+                __instance.deadBody.gameObject.AddComponent<RevivableTrait>();
+            }
+        }
+        
 
     }
 }
