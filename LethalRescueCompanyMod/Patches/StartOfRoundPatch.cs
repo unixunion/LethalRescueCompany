@@ -1,4 +1,5 @@
 ﻿using BepInEx.Logging;
+using DunGen;
 using GameNetcodeStuff;
 using HarmonyLib;
 using LethalRescueCompanyMod.NetworkBehaviors;
@@ -43,8 +44,12 @@ namespace LethalRescueCompanyMod.Patches
                     {
                         __instance.connectedPlayersAmount += 2;
                         __instance.livingPlayers += 2;
+
+                        
+
                         hasTriedToConnect = true;
                         __instance.StartGame();
+                     
                         
                     }
                 }

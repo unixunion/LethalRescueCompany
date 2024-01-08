@@ -36,6 +36,8 @@ namespace LethalRescueCompanyPlugin.Patches
     internal class PlayerControllerBPatch : BaseUnityPlugin
     {
 
+
+
         static bool isDebug = Settings.isDebug;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
         static Helper helper = new Helper();
@@ -80,59 +82,75 @@ namespace LethalRescueCompanyPlugin.Patches
         [HarmonyPostfix]
         static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject)
         {
+
+            // look at RagdollGrabbableObject
+            // RagdollGrabbableObject
+
             if (___currentlyGrabbingObject == null) return;
 
             log.LogInfo($"BeginGrabbbing: {___currentlyGrabbingObject.name}");
-
-            var trait = ___currentlyGrabbingObject.GetComponent<RevivableTrait>();
-            if (trait == null)
-            {
-                log.LogInfo("trait was not in GetComponent of the object");
-                trait = ___currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
-            } else
-            {
-                log.LogInfo("BeginGrabbing: found the trait via GetComponent");
-            }
-
-            if (trait == null)
-            {
-                log.LogInfo("trait was not in GetComponentInParent of the object");
-                trait = ___currentlyGrabbingObject.GetComponentInChildren<RevivableTrait>();
-            }
+            var trait = ___currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
 
             if (trait != null)
             {
                 log.LogInfo($"BeginGrabbbing: has trait: {___currentlyGrabbingObject.name}");
-                var db = ___currentlyGrabbingObject.GetComponentInParent<DeadBodyInfo>();
-                if (db != null)
+                var ragdollGrabbableObject = ___currentlyGrabbingObject.GetComponentInParent<RagdollGrabbableObject>();
+                if (ragdollGrabbableObject != null)
                 {
-                    log.LogInfo("BeginGrabbbing: It is indeed a dead body");
-                    var strungup = db.GetComponent<SetLineRendererPoints>();
-                    if (strungup != null)
-                    {
-                        Destroy(strungup);
-                        log.LogInfo("BeginGrabbbing: destroyed the string");
-                    }
-                    else
-                    {
-                        log.LogWarning("no strungup attached");
-                    }
+                    log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body");
+                    ragdollGrabbableObject.DiscardItemFromEnemy();
 
-                    Destroy(db.attachedTo);
-                    db.attachedTo = null;
+
+                    var db = ragdollGrabbableObject.ragdoll;
+
+                    if (db != null) 
+                    {
+                       
+
+                        log.LogInfo("BeginGrabbbing: destroy the attachedTo.gameObject");
+                        try
+                        {
+                            Destroy(db.attachedTo.gameObject);
+                        }
+                        catch
+                        {
+                            log.LogError("BeginGrabbbing: error detroying attachedTo");
+                        }
+                    }
                     
+
+                    log.LogInfo("BeginGrabbbing: destroy attachedTo");
+                    Destroy(db.attachedTo);
+
+                    db.attachedTo = null;
+
+                    ragdollGrabbableObject.FallToGround();
+
+                    // unsetting kinematics
+                    //log.LogInfo("BeginGrabbbing: setting kinematics");
+                    //db.SetBodyPartsKinematic(false);
+
+                    //db.grabBodyObject.OnHitGround();
+
                 }
                 else
                 {
-                    log.LogWarning("no deadbody attached");
+                    log.LogWarning("BeginGrabbbing: not ragdollGrabbableObject");
                 }
 
+                log.LogInfo("ive done all I can");
             }
+
+
+
             else
             {
                 log.LogDebug("no revivable trait found, cant grab patch this");
             }
         }
+
+
+
 
         [HarmonyPatch("SpawnDeadBody")]
         [HarmonyPostfix]
@@ -144,7 +162,8 @@ namespace LethalRescueCompanyPlugin.Patches
                 __instance.deadBody.gameObject.AddComponent<RevivableTrait>();
             }
         }
-        
+
+
 
     }
 }

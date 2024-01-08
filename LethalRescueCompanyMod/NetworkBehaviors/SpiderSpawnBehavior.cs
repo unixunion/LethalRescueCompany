@@ -73,37 +73,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                     Vector3 spawnPos = playerPos + playerDirection * spawnDistance;
 
                     var n = RoundManager.Instance.SpawnEnemyGameObject(spawnPos, 0, 99, spiderEnemyType);
-                    //if (Settings.isDebug)
-                    //{
-                    //    PlayerControllerB dummycontroller = thisPlayerBody.GetComponentInParent<PlayerControllerB>();
-                    //    var spawnedDummy = UnityEngine.Object.Instantiate(dummycontroller, spawnPos, Quaternion.Euler(new Vector3(0f, 0f, 0f)));
-                    //    try
-                    //    {
-                    //        var foundPlayerScript = spawnedDummy.GetComponent<PlayerControllerB>();
-                    //        FindObjectsOfType<EnemyAI>().ToList().ForEach(enemy =>
-                    //        {
-                    //            if (enemy.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
-                    //            {
-                    //                SandSpiderAI x = (SandSpiderAI)enemy;
-                    //                if (foundPlayerScript != null)
-                    //                {
-                    //                    x.TriggerChaseWithPlayer(foundPlayerScript);
-                    //                }
-                    //                else
-                    //                {
-                    //                    if (Settings.isDebug) log.LogWarning($"We could not find a playerscript");
-                    //                }
-                    //                return;
-                    //            }
-                    //        });
-                            
-
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        if (Settings.isDebug) log.LogWarning($"Unable to target player, ignore this, {ex}");
-                    //    }
-                    //}
+                    
 
                     spawnedSpiders = fuckingSpiders;
 

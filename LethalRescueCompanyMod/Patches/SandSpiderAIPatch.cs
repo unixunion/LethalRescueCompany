@@ -32,6 +32,8 @@ namespace LethalRescueCompanyMod.Patches
             }
         }
 
+        
+
         [HarmonyPatch("HangBodyFromCeiling")]
         [HarmonyPostfix]
         static void hangBodyFromCeilingPostPatch(ref DeadBodyInfo ___currentlyHeldBody, ref SandSpiderAI __instance)
@@ -42,6 +44,11 @@ namespace LethalRescueCompanyMod.Patches
                 log.LogInfo("debug and solo, spider hacks to revive player");
                 // spawn the player
                 helper.ReviveRescuedPlayer(currentlyHeldBody, StartOfRound.Instance);
+
+                RoundManager.Instance.SpawnedEnemies.Clear();
+                RoundManager.Instance.currentLevel.Enemies.Clear();
+                RoundManager.Instance.currentLevel.OutsideEnemies.Clear();
+                RoundManager.Instance.currentLevel.DaytimeEnemies.Clear();
 
                 log.LogInfo("Destroying Self");
                 Destroy(__instance);
