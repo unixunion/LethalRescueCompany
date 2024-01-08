@@ -18,6 +18,9 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 
         public void Awake()
         {
+            log.LogInfo($"WAKING UP {IsServer} {IsOwner} ");
+
+
             if (!IsServer && IsOwner) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
             {
                 log.LogInfo($"STARTING RPC CHIT SHAT");
