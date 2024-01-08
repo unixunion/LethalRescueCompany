@@ -45,12 +45,12 @@ namespace LethalRescueCompanyMod.Patches
                 // spawn the player
                 helper.ReviveRescuedPlayer(currentlyHeldBody, StartOfRound.Instance);
 
-                RoundManager.Instance.SpawnedEnemies.Clear();
                 RoundManager.Instance.currentLevel.Enemies.Clear();
                 RoundManager.Instance.currentLevel.OutsideEnemies.Clear();
                 RoundManager.Instance.currentLevel.DaytimeEnemies.Clear();
 
                 log.LogInfo("Destroying Self");
+                Destroy(__instance.gameObject);
                 Destroy(__instance);
             }
         }
