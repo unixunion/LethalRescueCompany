@@ -20,10 +20,13 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         {
             NetworkManager networkManager = base.NetworkManager;
             var networkObject = base.gameObject.GetComponent<NetworkObject>();
-            if(networkObject == null)
+            if (networkObject == null)
             {
                 log.LogInfo($"NETWORK OBJECT IS NULL, KEEP LOOKING  BRUH");
             }
+
+            log.LogInfo($"TESTING DEBUG: {networkManager.IsServer} || {networkObject.IsOwner}");
+
 
             if (!networkManager.IsServer && networkObject.IsOwner) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
             {
