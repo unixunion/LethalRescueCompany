@@ -18,22 +18,49 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 
         public void Awake()
         {
-            NetworkManager networkManager = base.NetworkManager;
-            var networkObject = base.gameObject.GetComponent<NetworkObject>();
+            NetworkManager networkManager = NetworkManager;
+            networkManager.NetworkConfig.ForceSamePrefabs = false;
+            networkManager.AddNetworkPrefab(this.gameObject);
+            var networkObject = gameObject.GetComponent<NetworkObject>();
             if (networkObject == null)
             {
                 log.LogInfo($"NETWORK OBJECT IS NULL, KEEP LOOKING  BRUH");
             }
 
-            log.LogInfo($"TESTING DEBUG: {networkManager.IsServer} || {networkObject.IsOwner}");
+            log.LogInfo($"TESTING DEBUG: isServer:{networkManager.IsServer} || " +
+                $"isOwner:{networkObject.IsOwner} || " +
+                $"isClient:{networkManager.IsClient} ||" +
+                $"ownerClientId:{ base.OwnerClientId} || " +
+                $"networkManagerClientId: {networkManager.LocalClientId}");
+
+            log.LogInfo($"TESTING DEBUG: isServer:{networkManager.IsServer} || " +
+                $"isOwner:{networkObject.IsOwner} || " +
+                $"isClient:{networkManager.IsClient} ||" +
+                $"ownerClientId:{base.IsOwner} || " +
+                $"networkManagerClientId: {networkManager.LocalClientId}");
 
 
-            if (!networkManager.IsServer && networkObject.IsOwner) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
+            if (!networkManager.IsServer && networkManager.IsClient) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
             {
                 log.LogInfo($"STARTING RPC CHIT SHAT");
                 StartCoroutine(delayAndSendRPC());
             }
         }
+
+        public bool IsOwner
+        {
+            get
+            {
+                if (NetworkManager != null)
+                {
+                    return OwnerClientId == NetworkManager.LocalClientId;
+                }
+
+                log.LogInfo($"Unfortunately the Network Manager are fucking null");
+                return false;
+            }
+        }
+
 
         private IEnumerator delayAndSendRPC()
         {
@@ -48,7 +75,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         void TestClientRpc(string value, ulong sourceNetworkObjectId)
         {
             log.LogInfo($"Client Received the RPC #{value} on NetworkObject #{sourceNetworkObjectId}");
-            if (IsOwner) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
+            if (base.IsOwner) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
             {
                 TestServerRpc(value + 1, sourceNetworkObjectId);
             }
