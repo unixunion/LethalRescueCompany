@@ -87,7 +87,7 @@ namespace LethalRescueCompanyPlugin.Patches
             // RagdollGrabbableObject
 
             if (___currentlyGrabbingObject == null) return;
-            if (___currentlyGrabbingObject == ___currentlyHeldObject) return;
+            if (___currentlyHeldObject != null) return;
 
             log.LogInfo($"BeginGrabbbing: {___currentlyGrabbingObject.name}");
             var trait = ___currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
