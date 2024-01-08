@@ -16,7 +16,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
     {
         string jsonBody = "{}";
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RescueCompanyPingPong");
-
+        NetworkObject _networkObject = null;
         public void Start()
         {
             var networkManager = NetworkManager.Singleton;
@@ -27,37 +27,20 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
             {
                 log.LogInfo($"NETWORK OBJECT IS NULL, KEEP LOOKING  BRUH");
             }
+            _networkObject = networkObject;
 
             log.LogInfo($"TESTING DEBUG: isServer:{networkManager.IsServer} || " +
                 $"isOwner:{networkObject.IsOwner} || " +
                 $"isClient:{networkManager.IsClient} ||" +
-                $"ownerClientId:{ base.OwnerClientId} || " +
                 $"networkManagerClientId: {networkManager.LocalClientId}");
 
 
-            if (!networkManager.IsServer && networkManager.IsClient) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
+            if (!networkManager.IsServer && networkObject.IsOwner) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
             {
                 log.LogInfo($"STARTING RPC CHIT SHAT");
                 StartCoroutine(delayAndSendRPC());
             }
         }
-
-
-
-        public bool IsOwner
-        {
-            get
-            {
-                if (NetworkManager != null)
-                {
-                    return OwnerClientId == NetworkManager.LocalClientId;
-                }
-
-                log.LogInfo($"Unfortunately the Network Manager are fucking null");
-                return false;
-            }
-        }
-
 
         private IEnumerator delayAndSendRPC()
         {
@@ -72,7 +55,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         void TestClientRpc(string value, ulong sourceNetworkObjectId)
         {
             log.LogInfo($"Client Received the RPC #{value} on NetworkObject #{sourceNetworkObjectId}");
-            if (base.IsOwner) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
+            if (_networkObject.IsOwner) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
             {
                 TestServerRpc(value + 1, sourceNetworkObjectId);
             }
