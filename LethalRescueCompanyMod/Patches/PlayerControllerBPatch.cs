@@ -71,7 +71,7 @@ namespace LethalRescueCompanyPlugin.Patches
                 log.LogWarning("revivable trait is null");
                 return;
             }
-            revivabletrait.playerIsDeadInShipAndRevivable(___deadBody, ___playersManager);  
+            revivabletrait.playerIsDeadInShipAndRevivable(___deadBody, ___playersManager);
 
         }
 
@@ -86,17 +86,26 @@ namespace LethalRescueCompanyPlugin.Patches
                 var db = ___currentlyGrabbingObject.GetComponentInParent<DeadBodyInfo>();
                 if (db != null)
                 {
+                    var strungup = db.GetComponent<SetLineRendererPoints>();
+                    if (strungup != null)
+                    {
+                        Destroy(strungup);
+                    }
+                    else
+                    {
+                        log.LogWarning("no strungup attached");
+                    }
+
                     Destroy(db.attachedTo);
-                    db.secondaryAttachedTo = null;
                     db.attachedTo = null;
-                    db.SetBodyPartsKinematic(false);
-                    db.grabBodyObject.EnablePhysics(enable: false);
-                } else
+                }
+                else
                 {
                     log.LogWarning("no deadbody attached");
                 }
 
-            } else
+            }
+            else
             {
                 log.LogDebug("no revivable trait found, cant grab this");
             }
