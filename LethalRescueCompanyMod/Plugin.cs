@@ -2,12 +2,14 @@
 using BepInEx.Logging;
 using HarmonyLib;
 using LethalRescueCompanyMod;
+using LethalRescueCompanyMod.NetworkBehaviors;
 using LethalRescueCompanyMod.Patches;
 using LethalRescueCompanyPlugin.Patches;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
+using Unity.Netcode;
 using UnityEngine;
 
 
@@ -37,6 +39,15 @@ namespace LethalRescueCompanyPlugin
             harmony.PatchAll(typeof(PlayerControllerBPatch));
             harmony.PatchAll(typeof(HudManagerPatch));
             harmony.PatchAll(typeof(StartOfRoundPatch));
+
+            log.LogInfo("Initializing the ping pooog");
+            NetworkManager.Singleton.NetworkConfig.ForceSamePrefabs = false;
+            GameObject reviveStoreGameObject = new GameObject("RescueCompanyPingPong");
+            reviveStoreGameObject.AddComponent<RescueCompanyPingPong>();
+            DontDestroyOnLoad(reviveStoreGameObject);
+
+            NetworkManager.Singleton.AddNetworkPrefab(reviveStoreGameObject.gameObject);
+
         }
     }
 }

@@ -19,9 +19,6 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 
         public void Awake()
         {
-            NetworkManager.Singleton.NetworkConfig.ForceSamePrefabs = false;
-            NetworkManager.Singleton.AddNetworkPrefab(this.gameObject);
-
             var networkManager = NetworkManager.Singleton;
             //networkManager.NetworkConfig.ForceSamePrefabs = false;
             //networkManager.AddNetworkPrefab(this.gameObject);
