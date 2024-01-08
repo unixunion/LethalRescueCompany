@@ -84,7 +84,23 @@ namespace LethalRescueCompanyPlugin.Patches
 
             log.LogInfo($"BeginGrabbbing: {___currentlyGrabbingObject.name}");
 
-            if (___currentlyGrabbingObject.GetComponentInChildren<RevivableTrait>() != null)
+            var trait = ___currentlyGrabbingObject.GetComponent<RevivableTrait>();
+            if (trait == null)
+            {
+                log.LogInfo("trait was not in GetComponent of the object");
+                trait = ___currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
+            } else
+            {
+                log.LogInfo("BeginGrabbing: found the trait via GetComponent");
+            }
+
+            if (trait == null)
+            {
+                log.LogInfo("trait was not in GetComponentInParent of the object");
+                trait = ___currentlyGrabbingObject.GetComponentInChildren<RevivableTrait>();
+            }
+
+            if (trait != null)
             {
                 log.LogInfo($"BeginGrabbbing: has trait: {___currentlyGrabbingObject.name}");
                 var db = ___currentlyGrabbingObject.GetComponentInParent<DeadBodyInfo>();
@@ -114,7 +130,7 @@ namespace LethalRescueCompanyPlugin.Patches
             }
             else
             {
-                log.LogDebug("no revivable trait found, cant grab this");
+                log.LogDebug("no revivable trait found, cant grab patch this");
             }
         }
 
