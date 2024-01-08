@@ -78,7 +78,7 @@ namespace LethalRescueCompanyPlugin.Patches
         }
 
 
-        [HarmonyPatch("BeginGrabObject")]
+        [HarmonyPatch("GrabObject")]
         [HarmonyPostfix]
         static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject, ref GrabbableObject ___currentlyHeldObject)
         {
@@ -87,7 +87,8 @@ namespace LethalRescueCompanyPlugin.Patches
             // RagdollGrabbableObject
 
             if (___currentlyGrabbingObject == null) return;
-            if (___currentlyHeldObject != null) return;
+            //if (___currentlyHeldObject != null) return;
+
 
             log.LogInfo($"BeginGrabbbing: {___currentlyGrabbingObject.name}");
             var trait = ___currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
