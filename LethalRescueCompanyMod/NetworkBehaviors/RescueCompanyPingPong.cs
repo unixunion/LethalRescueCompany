@@ -1,4 +1,5 @@
 ﻿using BepInEx.Logging;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,10 +16,11 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         string jsonBody = "{}";
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RescueCompanyPingPong");
 
-        public override void OnNetworkSpawn()
+        public void Awake()
         {
             if (!IsServer && IsOwner) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
             {
+                log.LogMessage($"STARTING RPC CHIT SHAT");
                 StartCoroutine(delayAndSendRPC());
             }
         }
