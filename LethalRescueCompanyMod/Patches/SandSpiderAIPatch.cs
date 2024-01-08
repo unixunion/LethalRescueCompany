@@ -42,8 +42,8 @@ namespace LethalRescueCompanyMod.Patches
                 log.LogInfo("debug and solo, spider hacks to revive player");
                 // spawn the player
                 helper.ReviveRescuedPlayer(currentlyHeldBody, StartOfRound.Instance);
-
                 log.LogInfo("Destroying Self");
+                Destroy(__instance.gameObject);
                 Destroy(__instance);
             }
         }
