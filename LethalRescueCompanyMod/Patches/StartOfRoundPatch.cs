@@ -41,9 +41,11 @@ namespace LethalRescueCompanyMod.Patches
                 {
                     if (!hasTriedToConnect)
                     {
-                        __instance.connectedPlayersAmount += 1;
+                        __instance.connectedPlayersAmount += 2;
+                        __instance.livingPlayers += 2;
                         hasTriedToConnect = true;
                         __instance.StartGame();
+                        
                     }
                 }
             }
