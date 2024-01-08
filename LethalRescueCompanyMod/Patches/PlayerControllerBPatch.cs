@@ -58,6 +58,9 @@ namespace LethalRescueCompanyPlugin.Patches
                     }
                 }
             }
+            
+            AddWelcomeMessage(___playersManager);
+
             // nope out if not a body
             if (___deadBody == null) return;
             if (!__instance.isPlayerDead) return;
@@ -77,6 +80,16 @@ namespace LethalRescueCompanyPlugin.Patches
 
         }
 
+        private static void AddWelcomeMessage(StartOfRound playersManager)
+        {
+            if (playersManager != null)
+            {
+                foreach (var item in playersManager.allPlayerScripts)
+                {
+                    if (item.gameObject.GetComponent<WelcomeMessage>() == null) item.gameObject.AddComponent<WelcomeMessage>();
+                }
+            }
+        }
 
         [HarmonyPatch("GrabObject")]
         [HarmonyPostfix]
