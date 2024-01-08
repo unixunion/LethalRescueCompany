@@ -57,7 +57,6 @@ namespace LethalRescueCompanyPlugin.Patches
             }
             
             AddWelcomeMessage(___playersManager);
-            AddNetworkPingPong(___playersManager, __instance);
             
             // nope out if not a body
             if (___deadBody == null) return;
@@ -85,38 +84,6 @@ namespace LethalRescueCompanyPlugin.Patches
                 foreach (var item in playersManager.allPlayerScripts)
                 {
                     if (item.gameObject.GetComponent<WelcomeMessage>() == null) item.gameObject.AddComponent<WelcomeMessage>();
-                }
-            }
-        }
-
-        private static void AddNetworkPingPong(StartOfRound playersManager, PlayerControllerB instance)
-        {
-            if (playersManager != null)
-            {
-                foreach (var playerControllerBScript in playersManager.allPlayerScripts)
-                {
-                    if (playerControllerBScript.gameObject.GetComponent<RescueCompanyPingPong>() == null)
-                    {
-                        //GameObject fluffers = new GameObject();
-                        //NetworkPrefab p = new NetworkPrefab();
-                        //p.Prefab = fluffers;
-                        //var myNewObject = Instantiate(p.Prefab, Vector3.zero, Quaternion.identity);
-                        //myNewObject.GetComponent<NetworkObject>().SpawnWithOwnership(instance.playerClientId);
-                        //myNewObject.AddComponent<RescueCompanyPingPong>();
-                        //log.LogWarning("1");
-                        //GameObject ourThing = new GameObject("ourThing", typeof(NetworkObject), typeof(RescueCompanyPingPong));
-                        //log.LogWarning("2");
-                        //ourThing.AddComponent<RescueCompanyPingPong>();
-                        //log.LogWarning("3");
-                        //ourThing.AddComponent<NetworkObject>().SpawnWithOwnership(instance.playerClientId);
-                        //log.LogWarning("4");
-                        //NetworkPrefab p = new NetworkPrefab();
-                        //p.Prefab = ourThing;
-                        //log.LogWarning("5");
-                        //playerControllerBScript.gameObject.AddComponent();
-
-                        playerControllerBScript.gameObject.AddComponent<RescueCompanyPingPong>();
-                    };
                 }
             }
         }

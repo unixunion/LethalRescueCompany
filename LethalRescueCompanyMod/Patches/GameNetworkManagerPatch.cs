@@ -28,13 +28,13 @@ namespace LethalRescueCompanyMod.Patches
             log.LogInfo("Initializing the ping pooog");
             NetworkManager.Singleton.NetworkConfig.ForceSamePrefabs = false;
             log.LogInfo("Singling out the wingus");
-            GameObject reviveStoreGameObject = new GameObject("RescueCompanyPingPong");
-            reviveStoreGameObject.AddComponent<RescueCompanyPingPong>();
-            reviveStoreGameObject.AddComponent<NetworkObject>();
+            GameObject rescuePingPong = new GameObject("RescueCompanyPingPong");
+            rescuePingPong.AddComponent<RescueCompanyPingPong>();
+            rescuePingPong.AddComponent<NetworkObject>();
             log.LogInfo("Shaking the dog");
-            DontDestroyOnLoad(reviveStoreGameObject);
+            DontDestroyOnLoad(rescuePingPong);
             log.LogInfo("Whisking the mayo");
-            NetworkManager.Singleton.AddNetworkPrefab(reviveStoreGameObject);
+            NetworkManager.Singleton.AddNetworkPrefab(rescuePingPong);
         }
     }
 }

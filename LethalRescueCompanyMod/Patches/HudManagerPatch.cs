@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace LethalRescueCompanyMod.Patches
@@ -26,15 +27,18 @@ namespace LethalRescueCompanyMod.Patches
             // spider debugging stuff
             if (isDebug && ___localPlayer.IsServer)
             {
+                var sourceid = ___localPlayer.NetworkObjectId;
                 //log.LogMessage($"playerName: {PlayerStateStore.playerControllerB?.name}");
                 //log.LogMessage($"hasDeadBody: {PlayerStateStore.deadBodyInfo != null}");
                 //log.LogMessage($"hasPlayerManager: {PlayerStateStore.playersManager != null}");
+                RescueCompanyPingPong.instance.TestServerRpc("suckmaballs", sourceid);
 
-                var spiderSpawnBehaviorComponent = ___localPlayer.gameObject.GetComponent<SpiderSpawnBehavior>();
-                if(spiderSpawnBehaviorComponent!=null) spiderSpawnBehaviorComponent.DebugHacks(___localPlayer.thisPlayerBody, ___lastChatMessage, ___playersManager);
+
+                //var spiderSpawnBehaviorComponent = ___localPlayer.gameObject.GetComponent<SpiderSpawnBehavior>();
+                //if(spiderSpawnBehaviorComponent!=null) spiderSpawnBehaviorComponent.DebugHacks(___localPlayer.thisPlayerBody, ___lastChatMessage, ___playersManager);
             }
         }
 
-        
+
     }
 }
