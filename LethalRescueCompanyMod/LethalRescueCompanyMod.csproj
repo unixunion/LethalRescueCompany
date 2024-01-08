@@ -176,6 +176,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NetworkBehaviors\RescueCompanyPingPong.cs" />
     <Compile Include="NetworkBehaviors\SpiderSpawnBehavior.cs" />
     <Compile Include="Patches\StartOfRoundPatch.cs" />
     <Compile Include="Traits\RevivableTrait.cs" />
