@@ -47,7 +47,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
             yield return new WaitForSeconds(15);
             for (int i = 0; i < 5; i++)
             {
-                TestServerRpc(i.ToString(), NetworkObjectId);
+                TestServerRpc(i.ToString(), _networkObject.NetworkObjectId);
             }
         }
 
