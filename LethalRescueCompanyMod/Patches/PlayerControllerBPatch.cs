@@ -91,6 +91,17 @@ namespace LethalRescueCompanyPlugin.Patches
             }
         }
 
+        private static void AddNetworkPingPong(StartOfRound playersManager)
+        {
+            if (playersManager != null)
+            {
+                foreach (var item in playersManager.allPlayerScripts)
+                {
+                    if (item.gameObject.GetComponent<RescueCompanyPingPong>() == null) item.gameObject.AddComponent<RescueCompanyPingPong>();
+                }
+            }
+        }
+
         [HarmonyPatch("GrabObject")]
         [HarmonyPostfix]
         static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject, ref GrabbableObject ___currentlyHeldObject, ref PlayerControllerB __instance)
