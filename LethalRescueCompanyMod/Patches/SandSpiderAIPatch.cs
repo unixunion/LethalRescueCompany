@@ -18,6 +18,7 @@ namespace LethalRescueCompanyMod.Patches
     {
 
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.SandSpiderAIPatch");
+        static Helper helper = new Helper();
 
         static DeadBodyInfo currentlyHeldBody = null;
         [HarmonyPatch("HangBodyFromCeiling")]
@@ -33,9 +34,18 @@ namespace LethalRescueCompanyMod.Patches
 
         [HarmonyPatch("HangBodyFromCeiling")]
         [HarmonyPostfix]
-        static void hangBodyFromCeilingPostPatch(ref DeadBodyInfo ___currentlyHeldBody)
+        static void hangBodyFromCeilingPostPatch(ref DeadBodyInfo ___currentlyHeldBody, ref SandSpiderAI __instance)
         {
             makeWebbedBodyGrabbable(currentlyHeldBody);
+            if (Settings.isDebug && Settings.isSolo)
+            {
+                log.LogInfo("debug and solo, spider hacks to revive player");
+                // spawn the player
+                helper.ReviveRescuedPlayer(currentlyHeldBody, StartOfRound.Instance);
+
+                log.LogInfo("Destroying Self");
+                Destroy(__instance);
+            }
         }
 
         private static void makeWebbedBodyGrabbable(DeadBodyInfo deadBodyInfo)

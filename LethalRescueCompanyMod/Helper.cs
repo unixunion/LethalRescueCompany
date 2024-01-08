@@ -26,7 +26,10 @@ namespace LethalRescueCompanyMod
         {
             try
             {
-                if (Settings.isDebug) log.LogInfo($"starting ReviveRescuedPlayer");
+                if (Settings.isDebug)
+                {
+                    log.LogInfo($"ReviveRescuedPlayer called with db: {deadbody.name}, pm: {playersManager}");
+                }
                 // get the PlayerControllerB from the deadbody
                 var ps = deadbody.playerScript;
 
