@@ -16,12 +16,16 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         string jsonBody = "{}";
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RescueCompanyPingPong");
 
-        public override void OnNetworkSpawn()
+        public void Awake()
         {
-            log.LogInfo($"WAKING UP {IsServer} {IsOwner} ");
+            NetworkManager networkManager = base.NetworkManager;
+            var networkObject = base.gameObject.GetComponent<NetworkObject>();
+            if(networkObject == null)
+            {
+                log.LogInfo($"NETWORK OBJECT IS NULL, KEEP LOOKING  BRUH");
+            }
 
-
-            if (!IsServer && IsOwner) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
+            if (!networkManager.IsServer && networkObject.IsOwner) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
             {
                 log.LogInfo($"STARTING RPC CHIT SHAT");
                 StartCoroutine(delayAndSendRPC());

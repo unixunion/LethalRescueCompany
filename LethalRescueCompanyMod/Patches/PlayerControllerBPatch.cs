@@ -35,9 +35,6 @@ namespace LethalRescueCompanyPlugin.Patches
     [HarmonyPatch(typeof(PlayerControllerB))]
     internal class PlayerControllerBPatch : BaseUnityPlugin
     {
-
-
-
         static bool isDebug = Settings.isDebug;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
         static Helper helper = new Helper();
