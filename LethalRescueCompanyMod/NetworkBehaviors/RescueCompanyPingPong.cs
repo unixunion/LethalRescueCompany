@@ -20,7 +20,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         {
             if (!IsServer && IsOwner) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
             {
-                log.LogMessage($"STARTING RPC CHIT SHAT");
+                log.LogInfo($"STARTING RPC CHIT SHAT");
                 StartCoroutine(delayAndSendRPC());
             }
         }
@@ -37,7 +37,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         [ClientRpc]
         void TestClientRpc(string value, ulong sourceNetworkObjectId)
         {
-            log.LogMessage($"Client Received the RPC #{value} on NetworkObject #{sourceNetworkObjectId}");
+            log.LogInfo($"Client Received the RPC #{value} on NetworkObject #{sourceNetworkObjectId}");
             if (IsOwner) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
             {
                 TestServerRpc(value + 1, sourceNetworkObjectId);
@@ -47,7 +47,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         [ServerRpc]
         void TestServerRpc(string value, ulong sourceNetworkObjectId)
         {
-            log.LogMessage($"Server Received the RPC #{value} on NetworkObject #{sourceNetworkObjectId}");
+            log.LogInfo($"Server Received the RPC #{value} on NetworkObject #{sourceNetworkObjectId}");
             TestClientRpc(value, sourceNetworkObjectId);
         }
     }
