@@ -19,11 +19,10 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 
         public void Awake()
         {
-            var player = gameObject.GetComponentInParent<PlayerControllerB>();
-            player.NetworkManager.NetworkConfig.ForceSamePrefabs = false;
-            player.NetworkManager.AddNetworkPrefab(this.gameObject);
+            NetworkManager.Singleton.NetworkConfig.ForceSamePrefabs = false;
+            NetworkManager.Singleton.AddNetworkPrefab(this.gameObject);
 
-            var networkManager = player.NetworkManager;
+            var networkManager = NetworkManager.Singleton;
             //networkManager.NetworkConfig.ForceSamePrefabs = false;
             //networkManager.AddNetworkPrefab(this.gameObject);
             var networkObject = gameObject.GetComponent<NetworkObject>();
