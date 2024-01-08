@@ -19,10 +19,16 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         {
             if (!IsServer && IsOwner) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
             {
-                for(int i = 0; i < 5; i++)
-                {
-                    TestServerRpc(i.ToString(), NetworkObjectId);
-                }
+                StartCoroutine(delayAndSendRPC());
+            }
+        }
+
+        private IEnumerator delayAndSendRPC()
+        {
+            yield return new WaitForSeconds(15);
+            for (int i = 0; i < 5; i++)
+            {
+                TestServerRpc(i.ToString(), NetworkObjectId);
             }
         }
 
