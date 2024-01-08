@@ -1,4 +1,5 @@
 ﻿using BepInEx.Logging;
+using GameNetcodeStuff;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
@@ -18,9 +19,13 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 
         public void Awake()
         {
-            NetworkManager networkManager = NetworkManager;
-            networkManager.NetworkConfig.ForceSamePrefabs = false;
-            networkManager.AddNetworkPrefab(this.gameObject);
+            var player = gameObject.GetComponentInParent<PlayerControllerB>();
+            player.NetworkManager.NetworkConfig.ForceSamePrefabs = false;
+            player.NetworkManager.AddNetworkPrefab(this.gameObject);
+
+            var networkManager = player.NetworkManager;
+            //networkManager.NetworkConfig.ForceSamePrefabs = false;
+            //networkManager.AddNetworkPrefab(this.gameObject);
             var networkObject = gameObject.GetComponent<NetworkObject>();
             if (networkObject == null)
             {
