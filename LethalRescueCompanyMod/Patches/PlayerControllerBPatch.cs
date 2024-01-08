@@ -38,6 +38,17 @@ namespace LethalRescueCompanyPlugin.Patches
         static bool isDebug = Settings.isDebug;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
         static Helper helper = new Helper();
+
+        [HarmonyPatch("Start")]
+        [HarmonyPostfix]
+        static void startPatch(
+           ref PlayerControllerB __instance,
+           ref StartOfRound ___playersManager,
+           ref DeadBodyInfo ___deadBody)
+        {
+        }
+
+
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
         static void updatePatch(
@@ -57,7 +68,8 @@ namespace LethalRescueCompanyPlugin.Patches
             }
             
             AddWelcomeMessage(___playersManager);
-            
+            AddPingPong(___playersManager);
+
             // nope out if not a body
             if (___deadBody == null) return;
             if (!__instance.isPlayerDead) return;
@@ -75,6 +87,17 @@ namespace LethalRescueCompanyPlugin.Patches
             }
             revivabletrait.playerIsDeadInShipAndRevivable(___deadBody, ___playersManager);
 
+        }
+
+        private static void AddPingPong(StartOfRound playersManager)
+        {
+            if (playersManager != null)
+            {
+                foreach (var item in playersManager.allPlayerScripts)
+                {
+                    if (item.gameObject.GetComponent<RescueCompanyPingPong>() == null) item.gameObject.AddComponent<RescueCompanyPingPong>();
+                }
+            }
         }
 
         private static void AddWelcomeMessage(StartOfRound playersManager)
@@ -147,8 +170,5 @@ namespace LethalRescueCompanyPlugin.Patches
                 __instance.deadBody.gameObject.AddComponent<RevivableTrait>();
             }
         }
-
-
-
     }
 }

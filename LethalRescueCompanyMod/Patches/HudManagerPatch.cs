@@ -24,16 +24,15 @@ namespace LethalRescueCompanyMod.Patches
         [HarmonyPostfix]
         static void AddTextToChatOnServerPatch(ref PlayerControllerB ___localPlayer, ref String ___lastChatMessage, ref StartOfRound ___playersManager)
         {
+            if (___localPlayer == null ) return;
+            var sourceid = ___localPlayer.NetworkObjectId;
+            ___localPlayer.gameObject.GetComponent<RescueCompanyPingPong>().TestServerRpc("suckmaballs", sourceid);
             // spider debugging stuff
             if (isDebug && ___localPlayer.IsServer)
             {
-                var sourceid = ___localPlayer.NetworkObjectId;
                 //log.LogMessage($"playerName: {PlayerStateStore.playerControllerB?.name}");
                 //log.LogMessage($"hasDeadBody: {PlayerStateStore.deadBodyInfo != null}");
                 //log.LogMessage($"hasPlayerManager: {PlayerStateStore.playersManager != null}");
-                RescueCompanyPingPong.instance.TestServerRpc("suckmaballs", sourceid);
-
-
                 //var spiderSpawnBehaviorComponent = ___localPlayer.gameObject.GetComponent<SpiderSpawnBehavior>();
                 //if(spiderSpawnBehaviorComponent!=null) spiderSpawnBehaviorComponent.DebugHacks(___localPlayer.thisPlayerBody, ___lastChatMessage, ___playersManager);
             }

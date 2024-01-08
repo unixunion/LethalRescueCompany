@@ -21,20 +21,30 @@ namespace LethalRescueCompanyMod.Patches
 
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
-        static void startPatch(ref GameNetworkManager __instance)
+        static void startPatch(ref GameNetworkManager __instance, ref PlayerControllerB ___localPlayerController)
         {
             log.LogInfo("Dialing the donut");
-            var netman = __instance.GetComponent<NetworkManager>();
-            log.LogInfo("Initializing the ping pooog");
             NetworkManager.Singleton.NetworkConfig.ForceSamePrefabs = false;
+        }
+
+        [HarmonyPatch("SetLobbyJoinable")]
+        [HarmonyPostfix]
+        static void setLobbyJoinablePatch(ref GameNetworkManager __instance, ref PlayerControllerB ___localPlayerController)
+        {
+            log.LogInfo("Initializing the ping pooog");
             log.LogInfo("Singling out the wingus");
             GameObject rescuePingPong = new GameObject("RescueCompanyPingPong");
             rescuePingPong.AddComponent<RescueCompanyPingPong>();
             rescuePingPong.AddComponent<NetworkObject>();
             log.LogInfo("Shaking the dog");
-            DontDestroyOnLoad(rescuePingPong);
+            //DontDestroyOnLoad(rescuePingPong);
             log.LogInfo("Whisking the mayo");
-            NetworkManager.Singleton.AddNetworkPrefab(rescuePingPong);
+            if (___localPlayerController != null && ___localPlayerController.IsServer)
+            {
+                log.LogInfo("Adding the Prefibulation");
+                NetworkManager.Singleton.AddNetworkPrefab(rescuePingPong);
+            }
+
         }
     }
 }
