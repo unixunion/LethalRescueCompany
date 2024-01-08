@@ -38,7 +38,10 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         public void TestServerRpc(string value, ulong sourceNetworkObjectId)
         {
             log.LogInfo($"Server Received the RPC #{value} on NetworkObject #{sourceNetworkObjectId}");
-            TestClientRpc(value, sourceNetworkObjectId);
+            if (_networkObject.IsOwner && NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
+            {
+                TestClientRpc(value, sourceNetworkObjectId);
+            }
         }
     }
 }
