@@ -39,7 +39,7 @@ namespace LethalRescueCompanyMod.Patches
             log.LogInfo("Shaking the dog");
             //DontDestroyOnLoad(rescuePingPong);
             log.LogInfo("Whisking the mayo");
-            if (___localPlayerController != null && ___localPlayerController.IsServer)
+            if (___localPlayerController != null && NetworkManager.Singleton.IsServer)
             {
                 log.LogInfo("Adding the Prefibulation");
                 NetworkManager.Singleton.AddNetworkPrefab(rescuePingPong);
