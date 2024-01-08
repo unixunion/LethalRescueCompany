@@ -16,7 +16,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         string jsonBody = "{}";
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RescueCompanyPingPong");
 
-        public void Awake()
+        public override void OnNetworkSpawn()
         {
             log.LogInfo($"WAKING UP {IsServer} {IsOwner} ");
 
