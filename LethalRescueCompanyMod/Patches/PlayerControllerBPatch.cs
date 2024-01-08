@@ -80,7 +80,7 @@ namespace LethalRescueCompanyPlugin.Patches
 
         [HarmonyPatch("GrabObject")]
         [HarmonyPostfix]
-        static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject, ref GrabbableObject ___currentlyHeldObject)
+        static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject, ref GrabbableObject ___currentlyHeldObject, ref PlayerControllerB __instance)
         {
 
             // look at RagdollGrabbableObject
@@ -96,59 +96,16 @@ namespace LethalRescueCompanyPlugin.Patches
             if (trait != null)
             {
                 log.LogInfo($"BeginGrabbbing: has trait: {___currentlyGrabbingObject.name}");
+
+
+
                 var ragdollGrabbableObject = ___currentlyGrabbingObject.GetComponentInParent<RagdollGrabbableObject>();
                 if (ragdollGrabbableObject != null)
                 {
-                    log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body");
-
-                    ragdollGrabbableObject.ragdoll.bodyParts.ToList().ForEach(bodypart => {
-                        bodypart.interpolation = RigidbodyInterpolation.Extrapolate;
-                    }); 
-
-                    ragdollGrabbableObject.DiscardItemFromEnemy();
-                    
-
-
+                    log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
                     var db = ragdollGrabbableObject.ragdoll;
-                    db.attachedTo = null;
-
-                    //if (db != null) 
-                    //{
-                        
-                    //    var line = db.attachedTo.GetComponentInParent<SetLineRendererPoints>();
-                    //    if (line != null)
-                    //    {
-                    //        log.LogInfo("BeginGrabbbing: destroy the line");
-                    //        Destroy(line);
-                    //    } else
-                    //    {
-                    //        log.LogInfo("BeginGrabbbing: SetLineRendererPoints is null");
-                    //    }
-
-                    //    log.LogInfo("BeginGrabbbing: destroy the attachedTo.gameObject");
-                    //    try
-                    //    {
-                    //        Destroy(db.attachedTo.gameObject);
-                    //    }
-                    //    catch
-                    //    {
-                    //        log.LogError("BeginGrabbbing: error detroying attachedTo");
-                    //    }
-                    //}
-                    
-
-                    //log.LogInfo("BeginGrabbbing: destroy attachedTo");
-                    //Destroy(db.attachedTo);
-
-                    //db.attachedTo = null;
-
-                    ragdollGrabbableObject.FallToGround();
-
-                    // unsetting kinematics
-                    //log.LogInfo("BeginGrabbbing: setting kinematics");
-                    //db.SetBodyPartsKinematic(false);
-
-                    //db.grabBodyObject.OnHitGround();
+                    __instance.SpawnDeadBody(db.playerObjectId, db.transform.position, 0, db.playerScript);
+                    Destroy(___currentlyGrabbingObject);
 
                 }
                 else
