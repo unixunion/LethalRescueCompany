@@ -17,12 +17,12 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         string jsonBody = "{}";
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RescueCompanyPingPong");
 
-        public void Awake()
+        public void Start()
         {
             var networkManager = NetworkManager.Singleton;
             //networkManager.NetworkConfig.ForceSamePrefabs = false;
             //networkManager.AddNetworkPrefab(this.gameObject);
-            var networkObject = gameObject.GetComponent<NetworkObject>();
+            var networkObject = gameObject.GetComponentInParent<NetworkObject>();
             if (networkObject == null)
             {
                 log.LogInfo($"NETWORK OBJECT IS NULL, KEEP LOOKING  BRUH");
@@ -34,12 +34,6 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                 $"ownerClientId:{ base.OwnerClientId} || " +
                 $"networkManagerClientId: {networkManager.LocalClientId}");
 
-            log.LogInfo($"TESTING DEBUG: isServer:{networkManager.IsServer} || " +
-                $"isOwner:{networkObject.IsOwner} || " +
-                $"isClient:{networkManager.IsClient} ||" +
-                $"ownerClientId:{base.IsOwner} || " +
-                $"networkManagerClientId: {networkManager.LocalClientId}");
-
 
             if (!networkManager.IsServer && networkManager.IsClient) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
             {
@@ -47,6 +41,8 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                 StartCoroutine(delayAndSendRPC());
             }
         }
+
+
 
         public bool IsOwner
         {

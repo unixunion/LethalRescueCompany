@@ -39,14 +39,9 @@ namespace LethalRescueCompanyPlugin
             harmony.PatchAll(typeof(PlayerControllerBPatch));
             harmony.PatchAll(typeof(HudManagerPatch));
             harmony.PatchAll(typeof(StartOfRoundPatch));
+            harmony.PatchAll(typeof(GameNetworkManagerPatch));
 
-            log.LogInfo("Initializing the ping pooog");
-            NetworkManager.Singleton.NetworkConfig.ForceSamePrefabs = false;
-            GameObject reviveStoreGameObject = new GameObject("RescueCompanyPingPong");
-            reviveStoreGameObject.AddComponent<RescueCompanyPingPong>();
-            DontDestroyOnLoad(reviveStoreGameObject);
 
-            NetworkManager.Singleton.AddNetworkPrefab(reviveStoreGameObject.gameObject);
 
         }
     }
