@@ -34,7 +34,7 @@ namespace LethalRescueCompanyMod.Patches
                 //log.LogMessage($"hasDeadBody: {PlayerStateStore.deadBodyInfo != null}");
                 //log.LogMessage($"hasPlayerManager: {PlayerStateStore.playersManager != null}");
                 //var spiderSpawnBehaviorComponent = ___localPlayer.gameObject.GetComponent<SpiderSpawnBehavior>();
-                //if(spiderSpawnBehaviorComponent!=null) spiderSpawnBehaviorComponent.DebugHacks(___localPlayer.thisPlayerBody, ___lastChatMessage, ___playersManager);
+                //if(spiderSpawnBehaviorComponent!=null) spiderSpawnBehaviorComponent.DebugHacksServerRpc(___localPlayer.thisPlayerBody, ___lastChatMessage, ___playersManager);
             }
         }
 

@@ -35,7 +35,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void EventServerRPC(/*parameters here*/)
+        public void EventServerRpc(/*parameters here*/)
         {
             // code here
         }

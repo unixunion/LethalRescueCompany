@@ -29,7 +29,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         }
 
         [ServerRpc(RequireOwnership = true)]
-        public void DebugHacks(Transform thisPlayerBody, string lastChatMessage, StartOfRound playersManager)
+        public void DebugHacksServerRpc(Transform thisPlayerBody, string lastChatMessage, StartOfRound playersManager)
         {
             List<EnemyAI> fuckingSpiders = null;
             try
