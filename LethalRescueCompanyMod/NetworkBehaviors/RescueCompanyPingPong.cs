@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Unity.Netcode;
@@ -67,19 +68,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         public void ReceivedEvent(Event eventName)
         {
             log.LogInfo($"ReceivedEvent: event: {eventName}");
-            switch (eventName.command)
-            {
-                case CommandContract.Command.SpawnSpider:
-                    log.LogInfo("ReceivedEvent spawn action");
-                    GameObject go = Instantiate(LethalCompanyMemorableMomentsPlugin.instance.getTestPrefab(), transform.position, Quaternion.identity);
-                    go.GetComponent<NetworkObject>().Spawn(true);
-                    break;
-                
-                default:
-                    log.LogInfo($"ReceivedEvent unknown action: {eventName.command}");
-                    break;
-            }
-
+            
         }
 
         public void SendEventToClients(Event eventName)
@@ -95,9 +84,33 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         }
 
 
-        
+        public void SpawnSpiderEvent(Event e) {
+            if (IsServer)
+            {
+                log.LogInfo("ReceivedEvent spawn action");
+                PlayerControllerB[] players = GameObject.FindObjectsOfType<PlayerControllerB>();
 
-    }
+                foreach (PlayerControllerB item in players.ToList())
+                {
+                    if (!item.isPlayerDead)
+                    {
+                        log.LogInfo("spawning cube");
+                        GameObject go = Instantiate(LethalCompanyMemorableMomentsPlugin.instance.getTestPrefab(), item.transform.position, UnityEngine.Quaternion.identity);
+                        go.GetComponent<NetworkObject>().Spawn(true);
+                        break;
+                    }
+                }
+            }
+
+            if (IsClient)
+            {
+                // client event
+            }
+        }
+
+
+
+        }
 
     
 }
