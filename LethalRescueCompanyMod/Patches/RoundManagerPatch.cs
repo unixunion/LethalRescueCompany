@@ -20,6 +20,7 @@ namespace LethalRescueCompanyMod.Patches
         [HarmonyPostfix]
         static void SubscribeToHandler()
         {
+            log.LogInfo("subscribing to eventh handler");
             RescueCompanyPingPong.LevelEvent += ReceivedEventFromServer;
         }
 
@@ -27,6 +28,7 @@ namespace LethalRescueCompanyMod.Patches
         [HarmonyPostfix]
         static void UnsubscribeFromHandler()
         {
+            log.LogInfo("unsubscribing to eventh handler");
             RescueCompanyPingPong.LevelEvent -= ReceivedEventFromServer;
         }
 
@@ -35,11 +37,14 @@ namespace LethalRescueCompanyMod.Patches
             log.LogInfo($"event: {eventName}");
         }
 
-        static void SendEventToClients(string eventName)
+        public static void SendEventToClients(string eventName)
         {
             if (!(NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer))
+            {
+                log.LogInfo("noping out");
                 return;
-
+            }
+            log.LogInfo("sending event");
             RescueCompanyPingPong.Instance.EventClientRpc(eventName);
         }
 

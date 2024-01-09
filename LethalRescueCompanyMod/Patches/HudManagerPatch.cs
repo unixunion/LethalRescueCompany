@@ -29,6 +29,8 @@ namespace LethalRescueCompanyMod.Patches
 
             //RescueCompanyPingPong.Instance.ToggleServerRpc(0.1f);
 
+            RoundManagerPatch.SendEventToClients(___lastChatMessage);
+
             //___localPlayer.gameObject.GetComponent<RescueCompanyPingPong>().ToggleServerRpc(0.1f);
             // spider debugging stuff
             if (isDebug && ___localPlayer.IsServer)
