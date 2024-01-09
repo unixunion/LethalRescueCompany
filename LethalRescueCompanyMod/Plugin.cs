@@ -26,6 +26,7 @@ namespace LethalRescueCompanyPlugin
         private readonly Harmony harmony = new Harmony(modGUID);
         public static LethalCompanyMemorableMomentsPlugin instance;
         public static GameObject prefab {  get; private set; }
+        public static GameObject testPrefab { get; private set; }
 
         internal ManualLogSource log;
         void Awake()
@@ -69,9 +70,10 @@ namespace LethalRescueCompanyPlugin
             {
                 log.LogInfo("attempting to load prefab");
                 var MainAssetBundle = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "prefabs"));
-                var networkPrefab = (GameObject)MainAssetBundle.LoadAsset("assets/lethalrescuenetworkprefab.prefab");
-                prefab = networkPrefab;
+                prefab = (GameObject)MainAssetBundle.LoadAsset("assets/lethalrescuenetworkprefab.prefab");       
+                testPrefab = (GameObject)MainAssetBundle.LoadAsset("assets/cubeprefab.prefab");
                 log.LogInfo($"prefab set to {prefab}");
+                log.LogInfo($"testPrefab set to {testPrefab}");
             } 
         }
 
@@ -88,7 +90,21 @@ namespace LethalRescueCompanyPlugin
             }
 
             return null;
+        }
 
+        public GameObject getTestPrefab()
+        {
+            loadPrefab();
+            if (testPrefab != null)
+            {
+                return testPrefab;
+            }
+            else
+            {
+                log.LogError("failed to load the testPrefab");
+            }
+
+            return null;
         }
     }
 }

@@ -182,6 +182,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\CommandContract.cs" />
+    <Compile Include="Models\Event.cs" />
     <Compile Include="NetworkBehaviors\RescueCompanyPingPong.cs" />
     <Compile Include="NetworkBehaviors\SpiderSpawnBehavior.cs" />
     <Compile Include="Patches\GameNetworkManagerPatch.cs" />

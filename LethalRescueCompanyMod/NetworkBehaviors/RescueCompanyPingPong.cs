@@ -1,5 +1,7 @@
 ﻿using BepInEx.Logging;
 using GameNetcodeStuff;
+using LethalRescueCompanyMod.Models;
+using LethalRescueCompanyPlugin;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
@@ -10,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
+using static CommandContract;
 using static UnityEngine.CullingGroup;
 
 namespace LethalRescueCompanyMod.NetworkBehaviors
@@ -19,11 +22,10 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 
         internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RescueCompanyPingPong");
 
-        public static event Action<String> LevelEvent;
+        public static event Action<Event> LevelEvent;
 
         public static RescueCompanyPingPong Instance;
 
-     
         public override void OnNetworkSpawn()
         {
             log.LogInfo("network spawn");
@@ -49,82 +51,54 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         }
 
         [ClientRpc]
-        public void EventClientRpc(string eventName)
+        public void EventClientRpc(Event eventName)
         {
-            log.LogInfo("event client rpc");
+            log.LogInfo("EventClientRpc: ");
             LevelEvent?.Invoke(eventName); // If the event has subscribers (does not equal null), invoke the event
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void EventServerRpc(string eventName)
+        public void EventServerRpc(Event eventName)
         {
-            log.LogInfo("event server rpc");
+            log.LogInfo("where clients send event server rpc");
             LevelEvent?.Invoke(eventName); // If the event has subscribers (does not equal null), invoke the event
         }
 
-        public  void ReceivedEvent(string eventName)
+        public void ReceivedEvent(Event eventName)
         {
-            log.LogInfo($"event: {eventName}");
-            EventParser(eventName);
+            log.LogInfo($"ReceivedEvent: event: {eventName}");
+            switch (eventName.command)
+            {
+                case CommandContract.Command.SpawnSpider:
+                    log.LogInfo("ReceivedEvent spawn action");
+                    GameObject go = Instantiate(LethalCompanyMemorableMomentsPlugin.instance.getTestPrefab(), transform.position, Quaternion.identity);
+                    go.GetComponent<NetworkObject>().Spawn(true);
+                    break;
+                
+                default:
+                    log.LogInfo($"ReceivedEvent unknown action: {eventName.command}");
+                    break;
+            }
+
         }
 
-        public void SendEventToClients(string eventName)
+        public void SendEventToClients(Event eventName)
         {
             if (!(NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer))
             {
-                log.LogInfo("sending event to server");
-                // send to server only
+                log.LogInfo("i am client, sending event to server");
                 RescueCompanyPingPong.Instance.EventServerRpc(eventName);
                 return;
             }
-            log.LogInfo("sending event to clients");
+            log.LogInfo("i am server, sending event to clients");
             RescueCompanyPingPong.Instance.EventClientRpc(eventName);
         }
 
 
-        private void EventParser(string eventName)
-        {
-            if (!eventName.StartsWith("lrc")) return;
-            if (!NetworkManager.Singleton.IsHost) ClientEventParser(eventName);
-            if (NetworkManager.Singleton.IsHost) ServerEventParser(eventName);
-        }
+        
 
-        private void ClientEventParser(string eventName)
-        {
-            switch (eventName.Split().ElementAt(1).ToLower())
-            {
-                case "spider":
-                    log.LogInfo("ClientEventParser spider action");
-                    break;
-                case "deadbody":
-                    log.LogInfo("ClientEventParser deadbody action");
-                    break;
-                case "delete_deadbody":
-                    log.LogInfo("ClientEventParser delete_deadbody action");
-                    break;
-                default:
-                    log.LogInfo($"ClientEventParser unknown action: {eventName}");
-                    break;
-            }
-        }
-
-        private void ServerEventParser(string eventName)
-        {
-            switch (eventName.ToLower())
-            {
-                case "spider":
-                    log.LogInfo("ServerEventParser spider action");
-                    break;
-                case "deadbody":
-                    log.LogInfo("ServerEventParser deadbody action");
-                    break;
-                case "delete_deadbody":
-                    log.LogInfo("ServerEventParser delete_deadbody action");
-                    break;
-                default:
-                    log.LogInfo($"ServerEventParser unknown action: {eventName}");
-                    break;
-            }
-        }
     }
+
+    
 }
+       

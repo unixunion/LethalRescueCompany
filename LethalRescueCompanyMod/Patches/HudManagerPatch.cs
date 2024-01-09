@@ -3,7 +3,9 @@ using BepInEx.Logging;
 using Dissonance;
 using GameNetcodeStuff;
 using HarmonyLib;
+using LethalRescueCompanyMod.Models;
 using LethalRescueCompanyMod.NetworkBehaviors;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,9 +29,32 @@ namespace LethalRescueCompanyMod.Patches
             if (___localPlayer == null ) return;
             var sourceid = ___localPlayer.NetworkObjectId;
 
-            //RescueCompanyPingPong.Instance.ToggleServerRpc(0.1f);
+        
 
-            RescueCompanyPingPong.Instance.SendEventToClients(___lastChatMessage);
+            if (!___lastChatMessage.StartsWith("lrc")) return;
+            String command = ___lastChatMessage.Split().ElementAt(1).ToLower();
+
+
+            switch (command)
+            {
+                case "spawn":
+                    log.LogInfo("ClientEventParser spawn action");
+                    var commandObj = new Event(CommandContract.Command.SpawnSpider, Vector3.zero);
+                    RescueCompanyPingPong.Instance.SendEventToClients(commandObj);
+                    break;
+                case "destroy":
+                    log.LogInfo("ClientEventParser destory action");
+                    break;
+                case "clone":
+                    log.LogInfo("ClientEventParser clone action");
+                    break;
+                default:
+                    log.LogInfo($"ClientEventParser unknown action: {command}");
+                    break;
+            }
+
+
+            
 
             //___localPlayer.gameObject.GetComponent<RescueCompanyPingPong>().ToggleServerRpc(0.1f);
             // spider debugging stuff
