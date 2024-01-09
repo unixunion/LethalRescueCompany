@@ -58,7 +58,6 @@ namespace LethalRescueCompanyPlugin
             harmony.PatchAll(typeof(SandSpiderAIPatch));
             harmony.PatchAll(typeof(PlayerControllerBPatch));
             harmony.PatchAll(typeof(HudManagerPatch));
-            //harmony.PatchAll(typeof(RoundManagerPatch));
             harmony.PatchAll(typeof(StartOfRoundPatch));
             harmony.PatchAll(typeof(GameNetworkManagerPatch));
 
