@@ -65,6 +65,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         public  void ReceivedEventFromServer(string eventName)
         {
             log.LogInfo($"event: {eventName}");
+            EventParser(eventName);
         }
 
         public void SendEventToClients(string eventName)
@@ -78,6 +79,24 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
             }
             log.LogInfo("sending event to clients");
             RescueCompanyPingPong.Instance.EventClientRpc(eventName);
+        }
+
+
+        private void EventParser(string eventName)
+        {
+            if (!NetworkManager.Singleton.IsHost) return;
+
+            switch(eventName.ToLower()){
+                case "spider":
+                    log.LogInfo("EventParser spider action");
+                    break;
+                case "deadbody":
+                    log.LogInfo("EventParser deadbody action");
+                    break;
+                case "delete_deadbody":
+                    log.LogInfo("EventParser delete_deadbody action");
+                    break;
+            }
         }
     }
 }
