@@ -114,6 +114,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Facepunch.Steamworks.Win64.dll</HintPath>
     </Reference>
+	  <Reference Include="UnityEngine.AssetBundleModule">
+		  <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+	  </Reference>
   </ItemGroup>
   <ItemGroup Condition="$(DefineConstants.Contains('KEGAN_ENABLED'))">
     <Reference Include="System" />
@@ -174,6 +177,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>X:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Facepunch.Steamworks.Win64.dll</HintPath>
     </Reference>
+	  <Reference Include="UnityEngine.AssetBundleModule">
+		  <HintPath>X:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+	  </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NetworkBehaviors\RescueCompanyPingPong.cs" />
@@ -189,6 +195,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="WelcomeMessage.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="prefabs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

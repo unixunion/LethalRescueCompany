@@ -14,29 +14,30 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 {
     public class RescueCompanyPingPong : NetworkBehaviour
     {
-        string jsonBody = "{}";
+        public static RescueCompanyPingPong Instance { get; private set; }
+        public static event Action<String> LevelEvent;
+
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RescueCompanyPingPong");
-        NetworkObject _networkObject = null;
-        public void Start()
+
+        public override void OnNetworkSpawn()
         {
-            _networkObject = gameObject.GetComponent<NetworkObject>();
+            LevelEvent = null;
+            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
+                Instance?.gameObject.GetComponent<NetworkObject>().Despawn();
+            Instance = this;
+            base.OnNetworkSpawn();
         }
 
         [ClientRpc]
-        public void TestClientRpc(string value, ulong sourceNetworkObjectId)
+        public void EventClientRpc(string eventName)
         {
-            log.LogInfo($"Client Received the RPC #{value} on NetworkObject #{sourceNetworkObjectId}");
-            if (!_networkObject.IsOwner) //Only send an RPC to the server on the client that owns the NetworkObject that owns this NetworkBehaviour instance
-            {
-                TestServerRpc(value + 1, sourceNetworkObjectId);
-            }
+            LevelEvent?.Invoke(eventName); // If the event has subscribers (does not equal null), invoke the event
         }
 
-        [ServerRpc]
-        public void TestServerRpc(string value, ulong sourceNetworkObjectId)
+        [ServerRpc(RequireOwnership = false)]
+        public void EventServerRPC(/*parameters here*/)
         {
-            log.LogInfo($"Server Received the RPC #{value} on NetworkObject #{sourceNetworkObjectId}");
-            TestClientRpc(value, sourceNetworkObjectId);
+            // code here
         }
     }
 }

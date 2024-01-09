@@ -6,6 +6,8 @@ using LethalRescueCompanyMod.NetworkBehaviors;
 using LethalRescueCompanyMod.Patches;
 using LethalRescueCompanyPlugin.Patches;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
@@ -41,8 +43,17 @@ namespace LethalRescueCompanyPlugin
             harmony.PatchAll(typeof(StartOfRoundPatch));
             harmony.PatchAll(typeof(GameNetworkManagerPatch));
 
+            var MainAssetBundle = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "prefabs"));
+            if (MainAssetBundle == null)
+            {
+                log.LogError("MainAssetBundle is null");
+                return;
+            }
 
-
+            MainAssetBundle.AllAssetNames().ToList().ForEach(assetName =>
+            {
+                log.LogInfo($"assetName:{assetName}");
+            });
         }
     }
 }
