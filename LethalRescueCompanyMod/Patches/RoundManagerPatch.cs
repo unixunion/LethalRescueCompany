@@ -16,20 +16,20 @@ namespace LethalRescueCompanyMod.Patches
 
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RoundManager");
 
-        [HarmonyPatch("GenerateNewFloor")]
-        [HarmonyPostfix]
-        static void SubscribeToHandler()
-        {
-            log.LogInfo("subscribing to eventh handler");
-            RescueCompanyPingPong.LevelEvent += RescueCompanyPingPong.Instance.ReceivedEventFromServer;
-        }
+        //[HarmonyPatch("GenerateNewFloor")]
+        //[HarmonyPostfix]
+        //static void SubscribeToHandler()
+        //{
+        //    log.LogInfo("subscribing to eventh handler");
+        //    RescueCompanyPingPong.LevelEvent += RescueCompanyPingPong.Instance.ReceivedEventFromServer;
+        //}
 
-        [HarmonyPatch("DespawnPropsAtEndOfRound")]
-        [HarmonyPostfix]
-        static void UnsubscribeFromHandler()
-        {
-            log.LogInfo("unsubscribing to eventh handler");
-            RescueCompanyPingPong.LevelEvent -= RescueCompanyPingPong.Instance.ReceivedEventFromServer;
-        }
+        //[HarmonyPatch("DespawnPropsAtEndOfRound")]
+        //[HarmonyPostfix]
+        //static void UnsubscribeFromHandler()
+        //{
+        //    log.LogInfo("unsubscribing to eventh handler");
+        //    RescueCompanyPingPong.LevelEvent -= RescueCompanyPingPong.Instance.ReceivedEventFromServer;
+        //}
     }
 }
