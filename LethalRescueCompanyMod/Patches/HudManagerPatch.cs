@@ -27,9 +27,9 @@ namespace LethalRescueCompanyMod.Patches
             if (___localPlayer == null ) return;
             var sourceid = ___localPlayer.NetworkObjectId;
 
-            RescueCompanyPingPong.Instance.ToggleServerRpc(0.1f);
+            //RescueCompanyPingPong.Instance.ToggleServerRpc(0.1f);
 
-            //___localPlayer.gameObject.GetComponent<RescueCompanyPingPong>().TestServerRpc("suckmaballs", sourceid);
+            //___localPlayer.gameObject.GetComponent<RescueCompanyPingPong>().ToggleServerRpc(0.1f);
             // spider debugging stuff
             if (isDebug && ___localPlayer.IsServer)
             {

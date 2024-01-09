@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
+using LethalRescueCompanyPlugin;
 
 namespace LethalRescueCompanyMod.Patches
 {
@@ -51,5 +52,25 @@ namespace LethalRescueCompanyMod.Patches
                 }
             }
         }
+
+        [HarmonyPatch("Awake")]
+        [HarmonyPostfix]
+        static void SpawnNetworkHandler()
+        {
+            
+            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
+            {
+                log.LogInfo("SpawnNetworkHandler: spawning the network object");
+                var networkHandlerHost = UnityEngine.Object.Instantiate(LethalCompanyMemorableMomentsPlugin.instance.getPrefab(), Vector3.zero, Quaternion.identity);
+                networkHandlerHost.GetComponent<NetworkObject>().Spawn();
+            } else
+            {
+                log.LogInfo("SpawnNetworkHandler: im not the host nor the server");
+            }
+        }
+
+        
+        
+
     }
 }

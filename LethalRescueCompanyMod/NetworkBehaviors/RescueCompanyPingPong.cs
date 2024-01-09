@@ -19,98 +19,27 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RescueCompanyPingPong");
 
-        private NetworkList<Command> data;
-        public bool addCommand = false;
-        public Command newCommand;
+        public static event Action<String> LevelEvent;
 
         public static RescueCompanyPingPong Instance { get; private set; }
 
 
-        void Awake()
-        {
-            log.LogInfo("initializeing in awake");
-            Instance = this;
-            data = new NetworkList<Command>();
-            log.LogInfo($"data {data.Count}");
-            log.LogInfo("awake done");
-        }
-
-        void Start()
-        {
-            log.LogInfo("start pingponger");
-            /*At this point, the object hasn't been network spawned yet, so you're not allowed to edit network variables! */
-        }
-
-        void Update()
-        {
-            if (!IsServer) return;
-            if (addCommand)
-            {
-                log.LogInfo("adding command");
-                addCommand = false;
-                data.Add(newCommand);
-
-            }
-        }
-
         public override void OnNetworkSpawn()
         {
-            log.LogInfo("network spawn called");
-            if (IsServer)
-            {
-                log.LogInfo($"I am server: ownerClientId: {OwnerClientId}");
+            LevelEvent = null;
 
+            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
+                Instance?.gameObject.GetComponent<NetworkObject>().Despawn();
+            Instance = this;
 
-                //NetworkManager.OnClientConnectedCallback += NetworkManager_OnClientConnectedCallback;
-
-                if (!IsHost)
-                {
-                    log.LogInfo("I am not the host");
-                }
-                else
-                {
-                    log.LogInfo("I am the host");
-                }
-
-                data.OnListChanged += OnServerListChanged;
-
-            }
-            else
-            {
-                log.LogInfo("I am not the server");
-                data.OnListChanged += OnClientListChanged;
-            }
-
-
+            base.OnNetworkSpawn();
         }
 
-        void OnServerListChanged(NetworkListEvent<Command> changeEvent)
+        [ClientRpc]
+        public void EventClientRpc(string eventName)
         {
-            Debug.Log($"[S] The list changed and now has {data.Count} elements");
+            LevelEvent?.Invoke(eventName); // If the event has subscribers (does not equal null), invoke the event
         }
-
-        void OnClientListChanged(NetworkListEvent<Command> changeEvent)
-        {
-            Debug.Log($"[C] The list changed and now has {data.Count} elements");
-        }
-
-
-
-        [ServerRpc(RequireOwnership = false)]
-        public void ToggleServerRpc(float value)
-        {
-            if (data == null)
-            {
-                log.LogError("Data list is null");
-                return;
-            }
-
-            log.LogInfo("called");
-            newCommand = new Command(0, Vector3.zero);
-            log.LogInfo("update value");
-            addCommand = true;
-        }
-
 
 
     }
