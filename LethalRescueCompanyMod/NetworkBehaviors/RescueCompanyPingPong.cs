@@ -33,7 +33,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                 Instance?.gameObject.GetComponent<NetworkObject>().Spawn();
             Instance = this;
 
-            LevelEvent += ReceivedEventFromServer;
+            LevelEvent += ReceivedEvent;
             base.OnNetworkSpawn();
         }
 
@@ -44,7 +44,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                 Instance?.gameObject.GetComponent<NetworkObject>().Despawn();
             Instance = this;
 
-            LevelEvent -= ReceivedEventFromServer;
+            LevelEvent -= ReceivedEvent;
             base.OnNetworkDespawn();
         }
 
@@ -62,7 +62,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
             LevelEvent?.Invoke(eventName); // If the event has subscribers (does not equal null), invoke the event
         }
 
-        public void ReceivedEventFromServer(string eventName)
+        public  void ReceivedEvent(string eventName)
         {
             log.LogInfo($"event: {eventName}");
             EventParser(eventName);
