@@ -50,7 +50,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
             LevelEvent?.Invoke(eventName); // If the event has subscribers (does not equal null), invoke the event
         }
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         public void EventServerRpc(string eventName)
         {
             log.LogInfo("event server rpc");
@@ -75,37 +75,4 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
             RescueCompanyPingPong.Instance.EventClientRpc(eventName);
         }
     }
-
-    //public struct Command : INetworkSerializable, System.IEquatable<Command>
-    //{
-    //    public int commandId;
-    //    public Vector3 location;
-
-    //    public Command(int commandId, Vector3 location)
-    //    {
-    //        this.commandId = commandId;
-    //        this.location = location;
-    //    }
-
-    //    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-    //    {
-    //        if (serializer.IsReader)
-    //        {
-    //            var reader = serializer.GetFastBufferReader();
-    //            reader.ReadValueSafe(out commandId);
-    //            reader.ReadValueSafe(out location);
-    //        }
-    //        else
-    //        {
-    //            var writer = serializer.GetFastBufferWriter();
-    //            writer.WriteValueSafe(commandId);
-    //            writer.WriteValueSafe(location);
-    //        }
-    //    }
-
-    //    public bool Equals(Command other)
-    //    {
-    //        return commandId == other.commandId && location.Equals(other.location);
-    //    }
-    //}
 }
