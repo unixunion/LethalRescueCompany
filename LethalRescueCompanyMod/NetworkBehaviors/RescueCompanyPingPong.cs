@@ -81,7 +81,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                         {
                             log.LogInfo("spawning cube");
                             GameObject go = Instantiate(LethalCompanyMemorableMomentsPlugin.instance.getTestPrefab(), item.transform.position, UnityEngine.Quaternion.identity);
-                            go.GetComponent<NetworkObject>().Spawn(true);
+                            if(IsServer)go.GetComponent<NetworkObject>().Spawn(true);
                             break;
                         }
                     }
