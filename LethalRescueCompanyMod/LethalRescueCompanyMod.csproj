@@ -41,7 +41,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -50,6 +50,7 @@
     <DefineConstants>KEGAN_ENABLED</DefineConstants>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup Condition="$(DefineConstants.Contains('ARRON_ENABLED'))">
     <Reference Include="System" />
@@ -207,7 +208,7 @@
   <PropertyGroup Condition="$(DefineConstants.Contains('ARRON_ENABLED'))">
     <PostBuildEvent>netcode-patch "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed"</PostBuildEvent>
   </PropertyGroup>
-	<PropertyGroup Condition="$(DefineConstants.Contains('KEGAN_ENABLED'))">
-		<PostBuildEvent>netcode-patch "$(TargetPath)" "X:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed"</PostBuildEvent>
-	</PropertyGroup>
+  <PropertyGroup Condition="$(DefineConstants.Contains('KEGAN_ENABLED'))">
+    <PostBuildEvent>netcode-patch "$(TargetPath)" "X:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
