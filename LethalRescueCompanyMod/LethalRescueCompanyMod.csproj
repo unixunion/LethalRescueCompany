@@ -28,18 +28,6 @@
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'KeganDebug|AnyCPU' ">
-		<DebugSymbols>true</DebugSymbols>
-		<DebugType>full</DebugType>
-		<Optimize>false</Optimize>
-		<OutputPath>bin\Debug\</OutputPath>
-		<DefineConstants>DEBUG;TRACE</DefineConstants>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-		<DefineConstants>KEGAN_ENABLED</DefineConstants>
-		<LangVersion>latest</LangVersion>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 		<DebugType>pdbonly</DebugType>
 		<Optimize>true</Optimize>
@@ -47,6 +35,18 @@
 		<DefineConstants>TRACE</DefineConstants>
 		<ErrorReport>prompt</ErrorReport>
 		<WarningLevel>4</WarningLevel>
+		<DefineConstants>KEGAN_ENABLED</DefineConstants>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugKegan|AnyCPU'">
+		<DebugSymbols>true</DebugSymbols>
+		<OutputPath>bin\DebugKegan\</OutputPath>
+		<DefineConstants>ARRON_ENABLED</DefineConstants>
+		<DebugType>portable</DebugType>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<LangVersion>latest</LangVersion>
+		<ErrorReport>prompt</ErrorReport>
 		<DefineConstants>KEGAN_ENABLED</DefineConstants>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
