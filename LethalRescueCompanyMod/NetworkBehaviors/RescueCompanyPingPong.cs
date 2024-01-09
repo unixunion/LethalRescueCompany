@@ -38,7 +38,6 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         void Start()
         {
             log.LogInfo("start pingponger");
-            //DontDestroyOnLoad(gameObject.GetComponentInParent<GameObject>());
             /*At this point, the object hasn't been network spawned yet, so you're not allowed to edit network variables! */
         }
 
@@ -56,7 +55,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 
         public override void OnNetworkSpawn()
         {
-
+            log.LogInfo("network spawn called");
             if (IsServer)
             {
                 log.LogInfo($"I am server: ownerClientId: {OwnerClientId}");
