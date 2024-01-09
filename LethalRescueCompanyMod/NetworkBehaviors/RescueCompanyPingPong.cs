@@ -96,6 +96,9 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                 case "delete_deadbody":
                     log.LogInfo("EventParser delete_deadbody action");
                     break;
+                default:
+                    log.LogInfo($"EventParser unknown action: {eventName}");
+                    break;
             }
         }
     }
