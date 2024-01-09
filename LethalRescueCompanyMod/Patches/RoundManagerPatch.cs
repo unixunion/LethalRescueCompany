@@ -21,7 +21,7 @@ namespace LethalRescueCompanyMod.Patches
         static void SubscribeToHandler()
         {
             log.LogInfo("subscribing to eventh handler");
-            RescueCompanyPingPong.LevelEvent += RescueCompanyPingPong.ReceivedEventFromServer;
+            RescueCompanyPingPong.LevelEvent += RescueCompanyPingPong.Instance.ReceivedEventFromServer;
         }
 
         [HarmonyPatch("DespawnPropsAtEndOfRound")]
@@ -29,7 +29,7 @@ namespace LethalRescueCompanyMod.Patches
         static void UnsubscribeFromHandler()
         {
             log.LogInfo("unsubscribing to eventh handler");
-            RescueCompanyPingPong.LevelEvent -= RescueCompanyPingPong.ReceivedEventFromServer;
+            RescueCompanyPingPong.LevelEvent -= RescueCompanyPingPong.Instance.ReceivedEventFromServer;
         }
     }
 }

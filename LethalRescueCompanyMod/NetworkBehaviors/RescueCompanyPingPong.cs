@@ -17,11 +17,11 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
     public class RescueCompanyPingPong : NetworkBehaviour
     {
 
-        static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RescueCompanyPingPong");
+        internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RescueCompanyPingPong");
 
         public static event Action<String> LevelEvent;
 
-        public static RescueCompanyPingPong Instance { get; private set; }
+        public static RescueCompanyPingPong Instance;
 
      
         public override void OnNetworkSpawn()
@@ -50,12 +50,12 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
             LevelEvent?.Invoke(eventName); // If the event has subscribers (does not equal null), invoke the event
         }
 
-        public static void ReceivedEventFromServer(string eventName)
+        public  void ReceivedEventFromServer(string eventName)
         {
             log.LogInfo($"event: {eventName}");
         }
 
-        public static void SendEventToClients(string eventName)
+        public  void SendEventToClients(string eventName)
         {
             if (!(NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer))
             {

@@ -29,7 +29,7 @@ namespace LethalRescueCompanyMod.Patches
 
             //RescueCompanyPingPong.Instance.ToggleServerRpc(0.1f);
 
-            RescueCompanyPingPong.SendEventToClients(___lastChatMessage);
+            RescueCompanyPingPong.Instance.SendEventToClients(___lastChatMessage);
 
             //___localPlayer.gameObject.GetComponent<RescueCompanyPingPong>().ToggleServerRpc(0.1f);
             // spider debugging stuff
