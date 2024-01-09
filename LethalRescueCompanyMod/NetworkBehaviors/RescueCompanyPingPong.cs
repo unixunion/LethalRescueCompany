@@ -33,7 +33,14 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                 Instance?.gameObject.GetComponent<NetworkObject>().Despawn();
             Instance = this;
 
+            LevelEvent += ReceivedEventFromServer;
             base.OnNetworkSpawn();
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            LevelEvent -= ReceivedEventFromServer;
+            base.OnNetworkDespawn();
         }
 
         [ClientRpc]
@@ -43,7 +50,21 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
             LevelEvent?.Invoke(eventName); // If the event has subscribers (does not equal null), invoke the event
         }
 
+        public static void ReceivedEventFromServer(string eventName)
+        {
+            log.LogInfo($"event: {eventName}");
+        }
 
+        public static void SendEventToClients(string eventName)
+        {
+            if (!(NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer))
+            {
+                log.LogInfo("noping out");
+                return;
+            }
+            log.LogInfo("sending event");
+            RescueCompanyPingPong.Instance.EventClientRpc(eventName);
+        }
     }
 
     //public struct Command : INetworkSerializable, System.IEquatable<Command>
