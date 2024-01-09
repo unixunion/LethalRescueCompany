@@ -3,6 +3,7 @@ using GameNetcodeStuff;
 using LethalRescueCompanyMod.Models;
 using LethalRescueCompanyPlugin;
 using Newtonsoft.Json.Linq;
+using Steamworks.Ugc;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -74,18 +75,20 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                     
                     log.LogInfo("ReceivedEvent spawn action");
                     PlayerControllerB[] players = GameObject.FindObjectsOfType<PlayerControllerB>();
-
-                    foreach (PlayerControllerB item in players.ToList())
+                    var r = RoundManager.Instance;
+                    if (r != null)
                     {
-                        if (!item.isPlayerDead)
+                        foreach(var player in r.playersManager.allPlayerScripts)
                         {
-                            log.LogInfo("spawning cube");
-                            GameObject go = Instantiate(LethalCompanyMemorableMomentsPlugin.instance.getTestPrefab(), item.transform.position, UnityEngine.Quaternion.identity);
-                            if(IsServer)go.GetComponent<NetworkObject>().Spawn(true);
-                            break;
-                        }
+                            if (!player.isPlayerDead)
+                            {
+                                log.LogInfo("spawning cube");
+                                GameObject go = Instantiate(LethalCompanyMemorableMomentsPlugin.instance.getTestPrefab(), player.transform.position, UnityEngine.Quaternion.identity);
+                                if (IsServer) go.GetComponent<NetworkObject>().Spawn(true);
+                                break;
+                            }
+                        };
                     }
-                    
                     break;
                 
                 default:
