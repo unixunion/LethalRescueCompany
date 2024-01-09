@@ -32,7 +32,7 @@ namespace LethalRescueCompanyMod.Patches
             NetworkManager.Singleton.NetworkConfig.ForceSamePrefabs = false;
 
             log.LogInfo("Loading prefab");
-            networkPrefab = LethalCompanyMemorableMomentsPlugin.instance.getPrefab();
+            networkPrefab = AssetManager.GetAssetByKey("LethalRescueNetworkPrefab");
 
             log.LogInfo($"Adding components to prefab: {networkPrefab}");
             networkPrefab.AddComponent<RescueCompanyPingPong>();

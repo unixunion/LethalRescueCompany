@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -25,8 +26,8 @@ namespace LethalRescueCompanyPlugin
         private const string modVersion = "1.0.0.0";
         private readonly Harmony harmony = new Harmony(modGUID);
         public static LethalCompanyMemorableMomentsPlugin instance;
-        public static GameObject prefab {  get; private set; }
-        public static GameObject testPrefab { get; private set; }
+        public static PluginConfig cfg { get; private set; }
+
 
         internal ManualLogSource log;
         void Awake()
@@ -35,6 +36,11 @@ namespace LethalRescueCompanyPlugin
             {
                 instance = this;
             }
+
+            cfg = new(base.Config);
+            cfg.InitBindings();
+
+            Settings.isDebug = cfg.debug;
 
             var types = Assembly.GetExecutingAssembly().GetTypes();
             foreach (var type in types)
@@ -53,7 +59,8 @@ namespace LethalRescueCompanyPlugin
             log = BepInEx.Logging.Logger.CreateLogSource(modGUID);
             log.LogInfo("Rescue Company Initializing...");
 
-            loadPrefab();
+            // notify the asset manager to load its shit. 
+            AssetManager.LoadAssets();
 
             harmony.PatchAll(typeof(LethalCompanyMemorableMomentsPlugin));
             harmony.PatchAll(typeof(SandSpiderAIPatch));
@@ -64,47 +71,6 @@ namespace LethalRescueCompanyPlugin
 
         }
 
-        private void loadPrefab()
-        {
-            if (prefab == null)
-            {
-                log.LogInfo("attempting to load prefab");
-                var MainAssetBundle = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "prefabs"));
-                prefab = (GameObject)MainAssetBundle.LoadAsset("assets/lethalrescuenetworkprefab.prefab");       
-                testPrefab = (GameObject)MainAssetBundle.LoadAsset("assets/cubeprefab.prefab");
-                log.LogInfo($"prefab set to {prefab}");
-                log.LogInfo($"testPrefab set to {testPrefab}");
-            } 
-        }
 
-        public GameObject getPrefab()
-        {
-            loadPrefab();
-            if (prefab != null)
-            {
-                return prefab;
-            }
-            else
-            {
-                log.LogError("failed to load the prefab");
-            }
-
-            return null;
-        }
-
-        public GameObject getTestPrefab()
-        {
-            loadPrefab();
-            if (testPrefab != null)
-            {
-                return testPrefab;
-            }
-            else
-            {
-                log.LogError("failed to load the testPrefab");
-            }
-
-            return null;
-        }
     }
 }

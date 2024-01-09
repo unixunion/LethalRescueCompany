@@ -2,20 +2,10 @@
 using GameNetcodeStuff;
 using LethalRescueCompanyMod.Models;
 using LethalRescueCompanyPlugin;
-using Newtonsoft.Json.Linq;
-using Steamworks.Ugc;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
-using static CommandContract;
-using static UnityEngine.CullingGroup;
+
 
 namespace LethalRescueCompanyMod.NetworkBehaviors
 {
@@ -82,9 +72,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                         {
                             if (!player.isPlayerDead)
                             {
-                                log.LogInfo("spawning cube");
-                                GameObject go = Instantiate(LethalCompanyMemorableMomentsPlugin.instance.getTestPrefab(), player.transform.position, UnityEngine.Quaternion.identity);
-                                if (IsServer) go.GetComponent<NetworkObject>().Spawn(true);
+                                Spawn("CubePrefab", player.transform.position);
                                 break;
                             }
                         };
@@ -96,6 +84,23 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                     break;
             }
 
+        }
+
+        /**
+         * Spawn the object correctly regardless of server / client, and return a ref.
+         * identifier, is the prefab name, as defined in unity editor!
+         **/
+        public NetworkObjectReference Spawn(String identifier, Vector3 position)
+        {
+            log.LogInfo($"spawning {identifier}");
+            GameObject go = Instantiate(AssetManager.GetAssetByKey(identifier), position, UnityEngine.Quaternion.identity);
+            if (IsServer)
+            {
+                log.LogInfo($"Server Spawn of a {identifier}");
+                go.GetComponent<NetworkObject>().Spawn(true);
+            }
+
+            return go.GetComponentInChildren<NetworkObject>();
         }
 
         public void SendEventToClients(Event eventName)

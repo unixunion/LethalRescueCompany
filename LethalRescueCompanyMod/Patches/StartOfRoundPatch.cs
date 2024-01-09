@@ -61,7 +61,7 @@ namespace LethalRescueCompanyMod.Patches
             if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
             {
                 log.LogInfo("SpawnNetworkHandler: spawning the network object");
-                var networkHandlerHost = UnityEngine.Object.Instantiate(LethalCompanyMemorableMomentsPlugin.instance.getPrefab(), Vector3.zero, Quaternion.identity);
+                var networkHandlerHost = UnityEngine.Object.Instantiate(AssetManager.GetAssetByKey("LethalRescueNetworkPrefab"), Vector3.zero, Quaternion.identity);
                 networkHandlerHost.GetComponent<NetworkObject>().Spawn();
             } else
             {
