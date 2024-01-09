@@ -84,13 +84,14 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 
         private void EventParser(string eventName)
         {
+            if (!eventName.StartsWith("lrc")) return;
             if (!NetworkManager.Singleton.IsHost) ClientEventParser(eventName);
             if (NetworkManager.Singleton.IsHost) ServerEventParser(eventName);
         }
 
         private void ClientEventParser(string eventName)
         {
-            switch (eventName.ToLower())
+            switch (eventName.Split().ElementAt(1).ToLower())
             {
                 case "spider":
                     log.LogInfo("ClientEventParser spider action");
