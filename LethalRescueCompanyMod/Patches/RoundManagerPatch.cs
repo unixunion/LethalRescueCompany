@@ -10,11 +10,11 @@ using Unity.Netcode;
 
 namespace LethalRescueCompanyMod.Patches
 {
+    [HarmonyPatch(typeof(RoundManager))]
     internal class RoundManagerPatch
     {
 
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RoundManager");
-
 
         [HarmonyPatch("GenerateNewFloor")]
         [HarmonyPostfix]
@@ -23,7 +23,8 @@ namespace LethalRescueCompanyMod.Patches
             RescueCompanyPingPong.LevelEvent += ReceivedEventFromServer;
         }
 
-        [HarmonyPostfix, HarmonyPatch(typeof(RoundManager), nameof(RoundManager.DespawnPropsAtEndOfRound))]
+        [HarmonyPatch("DespawnPropsAtEndOfRound")]
+        [HarmonyPostfix]
         static void UnsubscribeFromHandler()
         {
             RescueCompanyPingPong.LevelEvent -= ReceivedEventFromServer;
