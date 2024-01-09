@@ -30,7 +30,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
             LevelEvent = null;
 
             if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
-                Instance?.gameObject.GetComponent<NetworkObject>().Despawn();
+                Instance?.gameObject.GetComponent<NetworkObject>().Spawn();
             Instance = this;
 
             LevelEvent += ReceivedEventFromServer;
@@ -39,6 +39,11 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 
         public override void OnNetworkDespawn()
         {
+
+            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
+                Instance?.gameObject.GetComponent<NetworkObject>().Despawn();
+            Instance = this;
+
             LevelEvent -= ReceivedEventFromServer;
             base.OnNetworkDespawn();
         }
