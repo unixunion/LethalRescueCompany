@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace LethalRescueCompanyMod.Patches
 {
@@ -18,6 +19,7 @@ namespace LethalRescueCompanyMod.Patches
     internal class GameNetworkManagerPatch : BaseUnityPlugin
     {
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.GameNetworkManager");
+        static GameObject networkPrefab;
 
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
@@ -33,16 +35,20 @@ namespace LethalRescueCompanyMod.Patches
         {
             log.LogInfo("Initializing the ping pooog");
             log.LogInfo("Singling out the wingus");
-            GameObject rescuePingPong = new GameObject("RescueCompanyPingPong");
-            rescuePingPong.AddComponent<RescueCompanyPingPong>();
-            rescuePingPong.AddComponent<NetworkObject>();
-            log.LogInfo("Shaking the dog");
+            networkPrefab = (GameObject)Resources.Load("assets/lethalrescuenetworkprefab.prefab");
+
+
+
+            //GameObject rescuePingPong = new GameObject("RescueCompanyPingPong");
+            networkPrefab.AddComponent<RescueCompanyPingPong>();
+            //rescuePingPong.AddComponent<NetworkObject>();
+            //log.LogInfo("Shaking the dog");
             //DontDestroyOnLoad(rescuePingPong);
-            log.LogInfo("Whisking the mayo");
+            //log.LogInfo("Whisking the mayo");
             if (___localPlayerController != null && NetworkManager.Singleton.IsServer)
             {
                 log.LogInfo("Adding the Prefibulation");
-                NetworkManager.Singleton.AddNetworkPrefab(rescuePingPong);
+                NetworkManager.Singleton.AddNetworkPrefab(networkPrefab);
             }
 
         }
