@@ -40,7 +40,7 @@ namespace LethalRescueCompanyMod.Patches
                 case "spawn":
                     log.LogInfo("ClientEventParser spawn action");
                     var commandObj = new Event(CommandContract.Command.SpawnSpider, Vector3.zero);
-                    RescueCompanyPingPong.Instance.SpawnSpiderEvent(commandObj);
+                    RescueCompanyPingPong.Instance.SendEventToClients(commandObj);
                     break;
                 case "destroy":
                     log.LogInfo("ClientEventParser destory action");
