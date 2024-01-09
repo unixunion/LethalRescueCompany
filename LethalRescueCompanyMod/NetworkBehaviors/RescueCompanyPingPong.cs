@@ -50,19 +50,28 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
             LevelEvent?.Invoke(eventName); // If the event has subscribers (does not equal null), invoke the event
         }
 
+        [ServerRpc]
+        public void EventServerRpc(string eventName)
+        {
+            log.LogInfo("event server rpc");
+            LevelEvent?.Invoke(eventName); // If the event has subscribers (does not equal null), invoke the event
+        }
+
         public  void ReceivedEventFromServer(string eventName)
         {
             log.LogInfo($"event: {eventName}");
         }
 
-        public  void SendEventToClients(string eventName)
+        public void SendEventToClients(string eventName)
         {
             if (!(NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer))
             {
-                log.LogInfo("noping out");
+                log.LogInfo("sending event to server");
+                // send to server only
+                RescueCompanyPingPong.Instance.EventServerRpc(eventName);
                 return;
             }
-            log.LogInfo("sending event");
+            log.LogInfo("sending event to clients");
             RescueCompanyPingPong.Instance.EventClientRpc(eventName);
         }
     }
