@@ -84,20 +84,44 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 
         private void EventParser(string eventName)
         {
-            if (!NetworkManager.Singleton.IsHost) return;
+            if (!NetworkManager.Singleton.IsHost) ClientEventParser(eventName);
+            if (NetworkManager.Singleton.IsHost) ServerEventParser(eventName);
+        }
 
-            switch(eventName.ToLower()){
+        private void ClientEventParser(string eventName)
+        {
+            switch (eventName.ToLower())
+            {
                 case "spider":
-                    log.LogInfo("EventParser spider action");
+                    log.LogInfo("ClientEventParser spider action");
                     break;
                 case "deadbody":
-                    log.LogInfo("EventParser deadbody action");
+                    log.LogInfo("ClientEventParser deadbody action");
                     break;
                 case "delete_deadbody":
-                    log.LogInfo("EventParser delete_deadbody action");
+                    log.LogInfo("ClientEventParser delete_deadbody action");
                     break;
                 default:
-                    log.LogInfo($"EventParser unknown action: {eventName}");
+                    log.LogInfo($"ClientEventParser unknown action: {eventName}");
+                    break;
+            }
+        }
+
+        private void ServerEventParser(string eventName)
+        {
+            switch (eventName.ToLower())
+            {
+                case "spider":
+                    log.LogInfo("ServerEventParser spider action");
+                    break;
+                case "deadbody":
+                    log.LogInfo("ServerEventParser deadbody action");
+                    break;
+                case "delete_deadbody":
+                    log.LogInfo("ServerEventParser delete_deadbody action");
+                    break;
+                default:
+                    log.LogInfo($"ServerEventParser unknown action: {eventName}");
                     break;
             }
         }
