@@ -6,7 +6,9 @@ using HarmonyLib;
 using LethalRescueCompanyMod.NetworkBehaviors;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Unity.Netcode;
@@ -34,12 +36,22 @@ namespace LethalRescueCompanyMod.Patches
         static void setLobbyJoinablePatch(ref GameNetworkManager __instance, ref PlayerControllerB ___localPlayerController)
         {
             log.LogInfo("Initializing the ping pooog");
-            log.LogInfo("Singling out the wingus");
-            networkPrefab = (GameObject)Resources.Load("assets/lethalrescuenetworkprefab.prefab");
+            
+            log.LogInfo("Loading prefab");
+            var MainAssetBundle = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "prefabs"));
+            if (MainAssetBundle == null)
+            {
+                log.LogError("MainAssetBundle is null");
+                return;
+            }
 
+            networkPrefab = (GameObject)MainAssetBundle.LoadAsset("assets/lethalrescuenetworkprefab.prefab");
 
 
             //GameObject rescuePingPong = new GameObject("RescueCompanyPingPong");
+            log.LogInfo($"Adding components to prefab: {networkPrefab}");
+            
+
             networkPrefab.AddComponent<RescueCompanyPingPong>();
             //rescuePingPong.AddComponent<NetworkObject>();
             //log.LogInfo("Shaking the dog");
@@ -47,7 +59,7 @@ namespace LethalRescueCompanyMod.Patches
             //log.LogInfo("Whisking the mayo");
             if (___localPlayerController != null && NetworkManager.Singleton.IsServer)
             {
-                log.LogInfo("Adding the Prefibulation");
+                log.LogInfo("Adding the prefab via networking manager");
                 NetworkManager.Singleton.AddNetworkPrefab(networkPrefab);
             }
 

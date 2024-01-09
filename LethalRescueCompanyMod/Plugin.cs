@@ -43,17 +43,6 @@ namespace LethalRescueCompanyPlugin
             harmony.PatchAll(typeof(StartOfRoundPatch));
             harmony.PatchAll(typeof(GameNetworkManagerPatch));
 
-            var MainAssetBundle = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "prefabs"));
-            if (MainAssetBundle == null)
-            {
-                log.LogError("MainAssetBundle is null");
-                return;
-            }
-
-            MainAssetBundle.AllAssetNames().ToList().ForEach(assetName =>
-            {
-                log.LogInfo($"assetName:{assetName}");
-            });
         }
     }
 }
