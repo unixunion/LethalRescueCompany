@@ -37,10 +37,9 @@ namespace LethalRescueCompanyMod.Patches
                         //Destroy(asset.GetComponent<NetworkRigidbody>());
                         //Destroy(asset.GetComponent<Rigidbody>());
 
-                        asset.AddComponent<LRCGrabbableObject>();
-
                         if (asset.tag == "PhysicsProp")
                         {
+                            asset.AddComponent<LRCGrabbableObject>();
                             var a = asset.GetComponent<LRCGrabbableObject>();
                             log.LogInfo("Patching object to be grabbable");
                             a.grabbable = true;
