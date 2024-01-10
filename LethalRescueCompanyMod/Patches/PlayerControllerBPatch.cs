@@ -89,16 +89,16 @@ namespace LethalRescueCompanyPlugin.Patches
 
         }
 
-        private static void AddPingPong(StartOfRound playersManager)
-        {
-            if (playersManager != null)
-            {
-                foreach (var item in playersManager.allPlayerScripts)
-                {
-                    if (item.gameObject.GetComponent<RescueCompanyPingPong>() == null) item.gameObject.AddComponent<RescueCompanyPingPong>();
-                }
-            }
-        }
+        //private static void AddPingPong(StartOfRound playersManager)
+        //{
+        //    if (playersManager != null)
+        //    {
+        //        foreach (var item in playersManager.allPlayerScripts)
+        //        {
+        //            if (item.gameObject.GetComponent<RescueCompanyController>() == null) item.gameObject.AddComponent<RescueCompanyController>();
+        //        }
+        //    }
+        //}
 
         private static void AddWelcomeMessage(StartOfRound playersManager)
         {

@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace LethalRescueCompanyMod.NetworkBehaviors
 {
-    public class SpawnUtils : NetworkBehaviour
+    public class BodyCloneBehavior : NetworkBehaviour
     {
         public void CloneDeadBody(DeadBodyInfo deadBodyInfo)
         {

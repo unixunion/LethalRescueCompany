@@ -53,7 +53,7 @@ namespace LethalRescueCompanyMod.Patches
 
             
 
-            //___localPlayer.gameObject.GetComponent<RescueCompanyPingPong>().ToggleServerRpc(0.1f);
+            //___localPlayer.gameObject.GetComponent<RescueCompanyController>().ToggleServerRpc(0.1f);
             // spider debugging stuff
             
         }
@@ -75,7 +75,7 @@ namespace LethalRescueCompanyMod.Patches
                 default:
                     log.LogInfo("default spawn action interpreter");
                     var commandObj = new Event(CommandContract.Command.SpawnCube, Vector3.zero);
-                    RescueCompanyPingPong.Instance.HandleEvent(commandObj);
+                    RescueCompanyController.Instance.HandleEvent(commandObj);
                     break;
             }
         }

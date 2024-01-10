@@ -35,7 +35,7 @@ namespace LethalRescueCompanyMod.Patches
             networkPrefab = AssetManager.GetAssetByKey("LethalRescueNetworkPrefab");
 
             log.LogInfo($"Adding components to prefab: {networkPrefab}");
-            networkPrefab.AddComponent<RescueCompanyPingPong>();
+            networkPrefab.AddComponent<RescueCompanyController>();
             
             log.LogInfo("Adding the prefab via networking manager");
             NetworkManager.Singleton.AddNetworkPrefab(networkPrefab);

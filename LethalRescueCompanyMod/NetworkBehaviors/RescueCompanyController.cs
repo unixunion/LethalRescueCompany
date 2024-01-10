@@ -8,18 +8,20 @@ using UnityEngine;
 
 namespace LethalRescueCompanyMod.NetworkBehaviors
 {
-    public class RescueCompanyPingPong : NetworkBehaviour
+    public class RescueCompanyController : NetworkBehaviour
     {
 
-        internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RescueCompanyPingPong");
+        internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RescueCompanyController");
 
+        // for clarity, separating out the events
         public static event Action<Event> ServerEvent;
         public static event Action<Event> ClientEvent;
 
-        public static RescueCompanyPingPong Instance;
+        public static RescueCompanyController Instance;
 
         void Awake()
         {
+            // experiment, attach the spawning behaviors we want onto this. 
             gameObject.AddComponent<SpiderSpawnBehavior>();
         }
 
@@ -61,7 +63,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 
 
         /**
-         * This is the RPC clients talk to
+         * This is the RPC clients talk to, we want it to be open
          **/
         [ServerRpc(RequireOwnership = false)]
         public void EventServerRpc(Event eventName)
@@ -70,6 +72,9 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
             ServerEvent?.Invoke(eventName); // If the event has subscribers (does not equal null), invoke the event
         }
 
+        /**
+         * Subscriber to the local ServerEvents within this runtime
+         **/
         public void ServerEventHandler(Event eventName)
         {
             log.LogInfo($"ServerEventHandler notified: event: {eventName}");
@@ -116,7 +121,9 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 
 
         /**
-         * this is not probably needed, but could be useful. 
+         * Subscriber to the local ClientEvents within this runtime, just a nop for now.
+         * Could be used to update other things client side, such as UI, play sounds, whatever.
+         * But not used for spawn or sync of object states, NetworkBehavior does that.
          **/
         public void ClientEventHandler(Event eventName)
         {
@@ -125,8 +132,8 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 
 
         /**
-         * Main event handler, so we call this from other stuff when we want things to happen.
-         * Such as from the HudManager.
+         * Main event handler, so we call this from anywhere when we want to do stuff.
+         * e.g: HudManager
          **/
         public void HandleEvent(Event eventName)
         {

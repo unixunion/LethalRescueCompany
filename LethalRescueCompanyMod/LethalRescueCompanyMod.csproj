@@ -185,8 +185,8 @@
     <Compile Include="AssetManager.cs" />
     <Compile Include="Models\CommandContract.cs" />
     <Compile Include="Models\Event.cs" />
-    <Compile Include="NetworkBehaviors\SpawnUtils.cs" />
-    <Compile Include="NetworkBehaviors\RescueCompanyPingPong.cs" />
+    <Compile Include="NetworkBehaviors\BodyCloneBehavior.cs" />
+    <Compile Include="NetworkBehaviors\RescueCompanyController.cs" />
     <Compile Include="NetworkBehaviors\SpiderSpawnBehavior.cs" />
     <Compile Include="Patches\GameNetworkManagerPatch.cs" />
     <Compile Include="Patches\StartOfRoundPatch.cs" />
