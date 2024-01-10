@@ -6,7 +6,6 @@ using LethalRescueCompanyMod.Models;
 using LethalRescueCompanyMod.NetworkBehaviors;
 using System.Linq;
 using Unity.Netcode;
-using Unity.Netcode.Components;
 using UnityEngine;
 
 
