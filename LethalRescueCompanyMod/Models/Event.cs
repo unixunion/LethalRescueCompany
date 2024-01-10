@@ -39,7 +39,7 @@ namespace LethalRescueCompanyMod.Models
 
         public override string ToString()
         {
-            return $"command: {command.ToString()}, location.x: {location.x}";
+            return $"command: {command}, location.x: {location.x}";
         }
 
         public bool Equals(Event other)

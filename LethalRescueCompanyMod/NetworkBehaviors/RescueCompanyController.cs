@@ -105,7 +105,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                     var p = RoundManager.Instance.playersManager.localPlayerController;
                     if (p.IsHost)
                     {
-                        log.LogInfo($"ServerEventHandler: spawn cube player: {p}");
+                        log.LogInfo($"ServerEventHandler: spawn spider, player: {p}");
                         SpawnViaComponent("spider", p);
                     } else
                     {

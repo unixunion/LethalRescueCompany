@@ -15,7 +15,5 @@ namespace LethalRescueCompanyMod
         public static bool isDebug { get; set; } = true;
         public static bool isSolo { get; set; } = false;
 
-        
-
     }
 }

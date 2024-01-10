@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 using LethalRescueCompanyPlugin;
+using LethalRescueCompanyMod.Models;
 
 namespace LethalRescueCompanyMod.Patches
 {
@@ -55,7 +56,7 @@ namespace LethalRescueCompanyMod.Patches
 
         [HarmonyPatch("Awake")]
         [HarmonyPostfix]
-        static void SpawnNetworkHandler()
+        static void SpawnNetworkHandler(ref StartOfRound __instance)
         {
             
             if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
@@ -67,6 +68,14 @@ namespace LethalRescueCompanyMod.Patches
             {
                 log.LogInfo("SpawnNetworkHandler: im not the host nor the server");
             }
+
+            log.LogInfo("Hacks!!!: making cube prefab savable");
+            var cubeAsset = AssetManager.GetAssetByKey("CubePrefab");
+            if (cubeAsset != null)
+            {
+                __instance.allItemsList.itemsList.Add(cubeAsset.GetComponent<LRCGrabbableObject>()?.itemProperties);
+            }
+
         }
 
         
