@@ -6,7 +6,6 @@ using LethalRescueCompanyMod.Models;
 using LethalRescueCompanyMod.NetworkBehaviors;
 using System.Linq;
 using Unity.Netcode;
-using Unity.Netcode.Components;
 using UnityEngine;
 
 
@@ -40,9 +39,8 @@ namespace LethalRescueCompanyMod.Patches
 
                         if (asset.tag == "PhysicsProp")
                         {
-                            asset.AddComponent<LRCGrabbableObject>();
-                            var a = asset.GetComponent<LRCGrabbableObject>();
                             log.LogInfo("Patching object to be grabbable");
+                            var a = asset.AddComponent<LRCGrabbableObject>();
                             a.grabbable = true;
                             a.itemProperties = ScriptableObject.CreateInstance<Item>();
                             if (Settings.isDebug) a.itemProperties.canBeGrabbedBeforeGameStart = true;
@@ -50,7 +48,7 @@ namespace LethalRescueCompanyMod.Patches
                             a.itemProperties.itemId = 1512;
                             itemId += 1;
                             a.tag = asset.tag;
-                            asset.layer = 6;
+                            asset.layer = 6; // this is the Props layer id as debugged
                         }
 
                         NetworkManager.Singleton.AddNetworkPrefab(asset);
@@ -72,24 +70,7 @@ namespace LethalRescueCompanyMod.Patches
                     NetworkManager.Singleton.AddNetworkPrefab(networkPrefab);
                 }
 
-                // hackes
-                
-                //GameObject foo = new GameObject();
-
-                //prefab.AddComponent<GrabbableObject>();
-                //GrabbableObject grabbable = prefab.GetComponent<GrabbableObject>();
-                //grabbable.grabbable = true;
-                //grabbable.itemProperties = new Item();
-                //grabbable.itemProperties.canBeGrabbedBeforeGameStart = true;
-               
-
-
             });
-            
-
         }
-
-
-
     }
 }
