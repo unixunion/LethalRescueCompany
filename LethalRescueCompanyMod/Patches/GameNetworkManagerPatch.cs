@@ -4,6 +4,7 @@ using GameNetcodeStuff;
 using HarmonyLib;
 using LethalRescueCompanyMod.Models;
 using LethalRescueCompanyMod.NetworkBehaviors;
+using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
@@ -15,8 +16,8 @@ namespace LethalRescueCompanyMod.Patches
     internal class GameNetworkManagerPatch : BaseUnityPlugin
     {
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.GameNetworkManager");
-        public static GameObject networkPrefab {  get; private set; }
-
+        public static GameObject networkPrefab { get; private set; }
+        static List<string> itemsThatShouldBeGrabbable = new List<string>() { "Example", "CubePrefab" };
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
         static void startPatch(ref GameNetworkManager __instance, ref PlayerControllerB ___localPlayerController)
@@ -30,19 +31,20 @@ namespace LethalRescueCompanyMod.Patches
                 if (mapping.Key != "LethalRescueNetworkPrefab")
                 {
                     var asset = AssetManager.GetAssetByKey(mapping.Key);
-                    if ( asset.GetComponent<NetworkObject>() != null)
+                    if (asset.GetComponent<NetworkObject>() != null)
                     {
                         log.LogInfo($"Adding prefab: {mapping.Key} to NetworkManager");
-
-                        //Destroy(asset.GetComponent<NetworkRigidbody>());
-                        //Destroy(asset.GetComponent<Rigidbody>());
-                        if (asset.tag.ToLower().Equals("canbegrabbed")) {
+                        //if (asset.tag.ToLower().Equals("physicsprop")) {//this wont change regardless of how i build the asset, i suggest a managed asset key list to do this
+                        if (itemsThatShouldBeGrabbable.Contains(mapping.Key))
+                        {
+                            log.LogInfo($"making: {mapping.Key} grabbable");
                             asset = MakeGrabbable(asset, mapping.Key);
                             itemId += 1;
                         }
 
                         NetworkManager.Singleton.AddNetworkPrefab(asset);
-                    } else
+                    }
+                    else
                     {
                         log.LogWarning($"Asset {mapping.Key} has no NetworkObject");
                     }
@@ -61,7 +63,7 @@ namespace LethalRescueCompanyMod.Patches
                 }
 
                 // hackes
-                
+
                 //GameObject foo = new GameObject();
 
                 //prefab.AddComponent<GrabbableObject>();
@@ -69,11 +71,11 @@ namespace LethalRescueCompanyMod.Patches
                 //grabbable.grabbable = true;
                 //grabbable.itemProperties = new Item();
                 //grabbable.itemProperties.canBeGrabbedBeforeGameStart = true;
-               
+
 
 
             });
-            
+
 
         }
 
