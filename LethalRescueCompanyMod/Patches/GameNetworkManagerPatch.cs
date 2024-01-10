@@ -35,10 +35,12 @@ namespace LethalRescueCompanyMod.Patches
                     {
                         log.LogInfo($"Adding prefab: {mapping.Key} to NetworkManager");
 
-                        //if (asset.tag.ToLower().Equals("canbegrabbed")) {
-                        asset = MakeGrabbable(asset, mapping.Key, mapping.Value);
-                        itemId += 1;
-                        //}
+                        if(itemsThatShouldBeGrabbable.Contains(mapping.Key))
+                        {
+                            log.LogInfo($"Making {mapping.Key} grabbable");
+                            asset = MakeGrabbable(asset, mapping.Key, mapping.Value);
+                            itemId += 1;
+                        }
 
                         NetworkManager.Singleton.AddNetworkPrefab(asset);
                     }
