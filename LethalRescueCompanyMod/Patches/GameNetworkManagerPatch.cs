@@ -1,20 +1,12 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
-using Dissonance;
 using GameNetcodeStuff;
 using HarmonyLib;
 using LethalRescueCompanyMod.NetworkBehaviors;
-using LethalRescueCompanyPlugin;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Assertions;
+
 
 namespace LethalRescueCompanyMod.Patches
 {
@@ -31,7 +23,7 @@ namespace LethalRescueCompanyMod.Patches
             log.LogInfo("Dialing the donut");
             NetworkManager.Singleton.NetworkConfig.ForceSamePrefabs = false;
 
-            log.LogInfo("Loading prefab");
+            log.LogInfo("Loading prefabs");
             networkPrefab = AssetManager.GetAssetByKey("LethalRescueNetworkPrefab");
 
             log.LogInfo($"Adding components to prefab: {networkPrefab}");
@@ -40,8 +32,24 @@ namespace LethalRescueCompanyMod.Patches
             log.LogInfo("Adding the prefab via networking manager");
             NetworkManager.Singleton.AddNetworkPrefab(networkPrefab);
 
-            log.LogInfo("Adding the cube prefab via networking manager");
-            NetworkManager.Singleton.AddNetworkPrefab(AssetManager.GetAssetByKey("CubePrefab"));
+            
+            AssetManager.assetMappings.ToList().ForEach(mapping =>
+            {
+                if (mapping.Key != "LethalRescueNetworkPrefab")
+                {
+                    var asset = AssetManager.GetAssetByKey(mapping.Key);
+                    if ( asset.GetComponent<NetworkObject>() != null)
+                    {
+                        log.LogInfo($"Adding prefab: {mapping.Key} to NetworkManager");
+                        NetworkManager.Singleton.AddNetworkPrefab(asset);
+                    } else
+                    {
+                        log.LogWarning("Asset {} has no NetworkObject");
+                    }
+                    
+                }
+            });
+            
 
         }
 
