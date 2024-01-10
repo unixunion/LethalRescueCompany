@@ -27,7 +27,7 @@ namespace LethalRescueCompanyMod
         private IEnumerator showWelcome()
         {
             yield return new WaitForSeconds(10);
-            HUDManager.Instance.DisplayTip("Lethal Rescue Company", "You can rescue your crewmates that have been webbed up by spiders by bringing them back to the ship");
+            HUDManager.Instance.DisplayTip("Lethal Rescue Company", "You can rescue your crewmates that have been cacooned by spiders by bringing their cacooned bodies back to the ship");
         }
     }
 }

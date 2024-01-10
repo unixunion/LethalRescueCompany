@@ -34,11 +34,12 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         public override void OnNetworkDespawn()
         {
 
-            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
-                Instance?.gameObject.GetComponent<NetworkObject>().Despawn();
-            Instance = this;
-
             LevelEvent -= ReceivedEvent;
+
+            // this made the exit shit the bed, maybe the base takes care of this?
+            //if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
+            //    Instance?.gameObject.GetComponent<NetworkObject>().Despawn();
+            //Instance = this;
             base.OnNetworkDespawn();
         }
 

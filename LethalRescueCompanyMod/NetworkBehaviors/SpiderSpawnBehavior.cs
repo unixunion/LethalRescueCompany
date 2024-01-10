@@ -54,6 +54,10 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                     {
                         if (enemy.enemyType.enemyPrefab.name.ToLower().Contains("spider"))
                         {
+                            // looking for wayt so dump prefab into
+                            // PrefabUtility.
+                            // UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage()?.prefabAssetPath;
+                            // log.LogInfo(enemy.enemyType.enemyPrefab);
                             spiderEnemyType = enemy.enemyType;
                             return;//breaks out
                         }
