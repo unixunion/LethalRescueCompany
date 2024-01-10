@@ -44,10 +44,10 @@ namespace LethalRescueCompanyMod.Patches
                             log.LogInfo("Patching object to be grabbable");
                             a.grabbable = true;
                             a.itemProperties = ScriptableObject.CreateInstance<Item>();
-                            a.itemProperties.canBeGrabbedBeforeGameStart = true;
+                            if (Settings.isDebug) a.itemProperties.canBeGrabbedBeforeGameStart = true;
                             a.itemProperties.itemName = mapping.Key;
                             a.itemProperties.itemId = 1512;
-                            a.tag = "PhysicsProp";
+                            a.tag = asset.tag;
                             asset.layer = 6;
                         }
 
