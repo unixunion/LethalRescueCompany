@@ -1,12 +1,6 @@
 ﻿using BepInEx.Logging;
-using Dissonance;
-using GameNetcodeStuff;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -14,7 +8,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 {
     public class SpiderSpawnBehavior : NetworkBehaviour
     {
-        internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.SpiderSpawnBehavior");
+        internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.NetworkBehaviors.SpiderSpawnBehavior");
         private List<EnemyAI> spawnedSpiders = null;
         private EnemyType spiderEnemyType = null;
         private bool hasKilledSpiders = false;

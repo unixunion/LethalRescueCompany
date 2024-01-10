@@ -11,7 +11,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
     public class RescueCompanyController : NetworkBehaviour
     {
 
-        internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RescueCompanyController");
+        internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.NetworkBehaviors.RescueCompanyController");
 
         // for clarity, separating out the events
         public static event Action<Event> ServerEvent;
