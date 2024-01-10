@@ -10,7 +10,7 @@ namespace LethalRescueCompanyMod
     {
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.AssetManager");
         public static Dictionary<string, GameObject> assetMappings { get; private set; }
-        public static bool initialized { get; set; } = false;
+        public static bool initialized { get; private set; } = false;
 
         /**
          * Loads all assets from the "prefabs" file, uses their object name as the key as defined in unity editor.
@@ -28,11 +28,15 @@ namespace LethalRescueCompanyMod
                 log.LogInfo($"adding asset: {prefab.name}, {item}");
                 assetMappings.Add(prefab.name, prefab);
             }
+
+            initialized = true;
  
         }
 
         public static GameObject GetAssetByKey(string key)
         {
+            if (assetMappings.Count == 0 && !initialized) LoadAssets();
+
             if (assetMappings.TryGetValue(key, out GameObject asset))
             {
                 // Found the asset, return it

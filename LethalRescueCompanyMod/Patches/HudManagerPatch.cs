@@ -29,27 +29,16 @@ namespace LethalRescueCompanyMod.Patches
             if (___localPlayer == null ) return;
             var sourceid = ___localPlayer.NetworkObjectId;
 
-        
-
             if (!___lastChatMessage.StartsWith("lrc")) return;
             String command = ___lastChatMessage.Split().ElementAt(1).ToLower();
 
 
             switch (command)
             {
-                case "spider":
-                    if (isDebug && ___localPlayer.IsServer)
-                    {
-                        log.LogInfo("spawning spider");
-                        var spiderSpawnBehaviorComponent = ___localPlayer.gameObject.GetComponent<SpiderSpawnBehavior>();
-                        if (spiderSpawnBehaviorComponent != null) spiderSpawnBehaviorComponent.DebugHacks(___localPlayer.thisPlayerBody);
-                    }
+                case "spawn":
+                    SpawnCommand(___localPlayer, ___lastChatMessage);
                     break;
-                case "cube":
-                    log.LogInfo("ClientEventParser spawn action");
-                    var commandObj = new Event(CommandContract.Command.SpawnSpider, Vector3.zero);
-                    RescueCompanyPingPong.Instance.SendEventToClients(commandObj);
-                    break;
+                
                 case "destroy":
                     log.LogInfo("ClientEventParser destory action");
                     break;
@@ -69,6 +58,27 @@ namespace LethalRescueCompanyMod.Patches
             
         }
 
+        private static void SpawnCommand(PlayerControllerB player, string inputString)
+        {
+            var command = inputString.Split().ElementAt(2).ToLower();
+
+            switch (command)
+            {
+                case "spider":
+                    if (isDebug && player.IsServer)
+                    {
+                        log.LogInfo("spawning spider");
+                        var spiderSpawnBehaviorComponent = player.gameObject.GetComponent<SpiderSpawnBehavior>();
+                        if (spiderSpawnBehaviorComponent != null) spiderSpawnBehaviorComponent.DebugHacks(player.thisPlayerBody);
+                    }
+                    break;
+                default:
+                    log.LogInfo("default spawn action interpreter");
+                    var commandObj = new Event(CommandContract.Command.SpawnCube, Vector3.zero);
+                    RescueCompanyPingPong.Instance.HandleEvent(commandObj);
+                    break;
+            }
+        }
 
     }
 }

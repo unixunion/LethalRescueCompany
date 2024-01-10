@@ -68,7 +68,7 @@ namespace LethalRescueCompanyPlugin.Patches
             }
             
             AddWelcomeMessage(___playersManager);
-            AddPingPong(___playersManager);
+            //AddPingPong(___playersManager);
 
             // nope out if not a body
             if (___deadBody == null) return;

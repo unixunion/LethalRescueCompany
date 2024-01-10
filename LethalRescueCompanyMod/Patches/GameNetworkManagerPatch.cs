@@ -40,6 +40,9 @@ namespace LethalRescueCompanyMod.Patches
             log.LogInfo("Adding the prefab via networking manager");
             NetworkManager.Singleton.AddNetworkPrefab(networkPrefab);
 
+            log.LogInfo("Adding the cube prefab via networking manager");
+            NetworkManager.Singleton.AddNetworkPrefab(AssetManager.GetAssetByKey("CubePrefab"));
+
         }
 
 
