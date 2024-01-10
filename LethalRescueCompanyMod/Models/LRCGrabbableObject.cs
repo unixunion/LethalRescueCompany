@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace LethalRescueCompanyMod.Models
 {
+    /**
+     * GrabbableObject is abstract, so need this to solve that. 
+     **/
     public class LRCGrabbableObject : GrabbableObject
     {
 
