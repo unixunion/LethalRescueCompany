@@ -25,6 +25,7 @@ namespace LethalRescueCompanyMod.Patches
             log.LogInfo("Dialing the donut");
             NetworkManager.Singleton.NetworkConfig.ForceSamePrefabs = false;
 
+            int itemId = 1512;
             AssetManager.assetMappings.ToList().ForEach(mapping =>
             {
                 if (mapping.Key != "LethalRescueNetworkPrefab")
@@ -80,14 +81,14 @@ namespace LethalRescueCompanyMod.Patches
         {
             asset.AddComponent<LRCGrabbableObject>();
             var a = asset.GetComponent<LRCGrabbableObject>();
-
-            log.LogInfo("screwing around");
+            log.LogInfo("Patching object to be grabbable");
             a.grabbable = true;
             a.itemProperties = ScriptableObject.CreateInstance<Item>();
-            a.itemProperties.canBeGrabbedBeforeGameStart = true;
-            a.itemProperties.itemName = key;
+            if (Settings.isDebug) a.itemProperties.canBeGrabbedBeforeGameStart = true;
+            a.itemProperties.itemName = mapping.Key;
             a.itemProperties.itemId = 1512;
-            a.tag = "PhysicsProp";
+            itemId += 1;
+            a.tag = asset.tag;
             asset.layer = 6;
 
             return asset;
