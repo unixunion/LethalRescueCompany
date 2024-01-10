@@ -23,7 +23,6 @@ namespace LethalRescueCompanyMod
             var MainAssetBundle = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "prefabs"));
             foreach (var item in MainAssetBundle.GetAllAssetNames())
             {
-                
                 var prefab = (GameObject)MainAssetBundle.LoadAsset(item);
                 log.LogInfo($"adding asset: {prefab.name}, {item}");
                 assetMappings.Add(prefab.name, prefab);
@@ -50,5 +49,8 @@ namespace LethalRescueCompanyMod
             }
         }
 
+
+
+ 
     }
 }

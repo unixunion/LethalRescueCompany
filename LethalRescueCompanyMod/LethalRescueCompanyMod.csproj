@@ -185,6 +185,7 @@
     <Compile Include="AssetManager.cs" />
     <Compile Include="Models\CommandContract.cs" />
     <Compile Include="Models\Event.cs" />
+    <Compile Include="Models\LRCGrabbableObject.cs" />
     <Compile Include="NetworkBehaviors\BodyCloneBehavior.cs" />
     <Compile Include="NetworkBehaviors\RescueCompanyController.cs" />
     <Compile Include="NetworkBehaviors\SpiderSpawnBehavior.cs" />
@@ -206,6 +207,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Unity.Netcode.Components, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>X:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.Netcode.Components.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

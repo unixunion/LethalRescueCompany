@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.Collections;
 using LethalRescueCompanyMod;
 using LethalRescueCompanyMod.NetworkBehaviors;
+using Unity.Burst.CompilerServices;
+using LethalRescueCompanyMod.Models;
 
 //round manager has spawn enemies
 
@@ -48,12 +50,33 @@ namespace LethalRescueCompanyPlugin.Patches
         {
         }
 
+        //[HarmonyPatch("BeginGrabObject")]
+        //[HarmonyPrefix]
+        //static void BGO(ref Camera ___gameplayCamera, ref PlayerControllerB __instance)
+        //{
+        //    Ray interactRay = new Ray(___gameplayCamera.transform.position, ___gameplayCamera.transform.forward);
+        //    Physics.Raycast(interactRay, out var hit, __instance.grabDistance, 832);
+        //    log.LogInfo($"ray hit: {hit}");
+        //    //var currentlyGrabbingObject = hit.collider.transform.gameObject.GetComponent<LRCGrabbableObject>();
+        //    var currentlyGrabbingObject = hit.collider.transform.gameObject.GetComponent<GrabbableObject>();
+
+        //    log.LogInfo($"layer1: {hit.collider.transform.gameObject.layer}");
+        //    log.LogInfo($"layer2: {currentlyGrabbingObject.gameObject.layer}");
+
+        //    if (currentlyGrabbingObject != null)
+        //    {
+        //        log.LogInfo($"grabbing hack: {currentlyGrabbingObject.GetComponent<GrabbableObject>()}");
+        //    } else
+        //    {
+        //        log.LogInfo($"object does not contain LRCGrabbableObject ");
+        //    }
+        //}
 
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
         static void updatePatch(
-            ref PlayerControllerB __instance,
-            ref StartOfRound ___playersManager,
+        ref PlayerControllerB __instance,
+        ref StartOfRound ___playersManager,
             ref DeadBodyInfo ___deadBody)
         {
             if (isDebug)

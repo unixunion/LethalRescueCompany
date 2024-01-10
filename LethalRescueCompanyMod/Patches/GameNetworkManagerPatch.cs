@@ -2,9 +2,11 @@
 using BepInEx.Logging;
 using GameNetcodeStuff;
 using HarmonyLib;
+using LethalRescueCompanyMod.Models;
 using LethalRescueCompanyMod.NetworkBehaviors;
 using System.Linq;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 
 
@@ -31,6 +33,22 @@ namespace LethalRescueCompanyMod.Patches
                     if ( asset.GetComponent<NetworkObject>() != null)
                     {
                         log.LogInfo($"Adding prefab: {mapping.Key} to NetworkManager");
+
+                        //Destroy(asset.GetComponent<NetworkRigidbody>());
+                        //Destroy(asset.GetComponent<Rigidbody>());
+
+                        asset.AddComponent<LRCGrabbableObject>();
+                        var a = asset.GetComponent<LRCGrabbableObject>();
+
+                        log.LogInfo("screwing around");
+                        a.grabbable = true;
+                        a.itemProperties = ScriptableObject.CreateInstance<Item>();
+                        a.itemProperties.canBeGrabbedBeforeGameStart = true;
+                        a.itemProperties.itemName = mapping.Key;
+                        a.itemProperties.itemId = 1512;
+                        a.tag="PhysicsProp";
+                        asset.layer = 6;
+
                         NetworkManager.Singleton.AddNetworkPrefab(asset);
                     } else
                     {
@@ -49,6 +67,19 @@ namespace LethalRescueCompanyMod.Patches
                     log.LogInfo("Adding the RescueCompanyController prefab via networking manager");
                     NetworkManager.Singleton.AddNetworkPrefab(networkPrefab);
                 }
+
+                // hackes
+                
+                //GameObject foo = new GameObject();
+
+                //prefab.AddComponent<GrabbableObject>();
+                //GrabbableObject grabbable = prefab.GetComponent<GrabbableObject>();
+                //grabbable.grabbable = true;
+                //grabbable.itemProperties = new Item();
+                //grabbable.itemProperties.canBeGrabbedBeforeGameStart = true;
+               
+
+
             });
             
 
