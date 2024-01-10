@@ -36,20 +36,8 @@ namespace LethalRescueCompanyMod.Patches
 
                         //Destroy(asset.GetComponent<NetworkRigidbody>());
                         //Destroy(asset.GetComponent<Rigidbody>());
-
-                        asset.AddComponent<LRCGrabbableObject>();
-
-                        if (asset.tag == "PhysicsProp")
-                        {
-                            var a = asset.GetComponent<LRCGrabbableObject>();
-                            log.LogInfo("Patching object to be grabbable");
-                            a.grabbable = true;
-                            a.itemProperties = ScriptableObject.CreateInstance<Item>();
-                            a.itemProperties.canBeGrabbedBeforeGameStart = true;
-                            a.itemProperties.itemName = mapping.Key;
-                            a.itemProperties.itemId = 1512;
-                            a.tag = "PhysicsProp";
-                            asset.layer = 6;
+                        if (asset.tag.ToLower().Equals("canbegrabbed")) {
+                            asset = MakeGrabbable(asset, mapping.Key);
                         }
 
                         NetworkManager.Singleton.AddNetworkPrefab(asset);
@@ -88,7 +76,22 @@ namespace LethalRescueCompanyMod.Patches
 
         }
 
+        private static GameObject MakeGrabbable(GameObject asset, string key)
+        {
+            asset.AddComponent<LRCGrabbableObject>();
+            var a = asset.GetComponent<LRCGrabbableObject>();
 
+            log.LogInfo("screwing around");
+            a.grabbable = true;
+            a.itemProperties = ScriptableObject.CreateInstance<Item>();
+            a.itemProperties.canBeGrabbedBeforeGameStart = true;
+            a.itemProperties.itemName = key;
+            a.itemProperties.itemId = 1512;
+            a.tag = "PhysicsProp";
+            asset.layer = 6;
+
+            return asset;
+        }
 
     }
 }
