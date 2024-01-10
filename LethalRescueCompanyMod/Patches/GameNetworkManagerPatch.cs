@@ -34,12 +34,10 @@ namespace LethalRescueCompanyMod.Patches
                     {
                         log.LogInfo($"Adding prefab: {mapping.Key} to NetworkManager");
 
-                        //Destroy(asset.GetComponent<NetworkRigidbody>());
-                        //Destroy(asset.GetComponent<Rigidbody>());
-                        if (asset.tag.ToLower().Equals("canbegrabbed")) {
-                            asset = MakeGrabbable(asset, mapping.Key);
-                            itemId += 1;
-                        }
+                        //if (asset.tag.ToLower().Equals("canbegrabbed")) {
+                        asset = MakeGrabbable(asset, mapping.Key, mapping.Value);
+                        itemId += 1;
+                        //}
 
                         NetworkManager.Singleton.AddNetworkPrefab(asset);
                     } else
@@ -63,7 +61,7 @@ namespace LethalRescueCompanyMod.Patches
             });
         }
 
-        private static GameObject MakeGrabbable(GameObject asset, string key)
+        private static GameObject MakeGrabbable(GameObject asset, string key, GameObject assetPath)
         {
             asset.AddComponent<LRCGrabbableObject>();
             var a = asset.GetComponent<LRCGrabbableObject>();
@@ -73,8 +71,12 @@ namespace LethalRescueCompanyMod.Patches
             if (Settings.isDebug) a.itemProperties.canBeGrabbedBeforeGameStart = true;
             a.itemProperties.itemName = key;
             a.itemProperties.itemId = 1512;
-            a.tag = asset.tag;
+            a.tag = "PhysicsProp";
             asset.layer = 6;
+
+            // make the item savable, it needs bool and a prefab hint.
+            a.itemProperties.saveItemVariable = true;
+            a.itemProperties.spawnPrefab = assetPath;
 
             return asset;
         }
