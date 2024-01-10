@@ -23,16 +23,6 @@ namespace LethalRescueCompanyMod.Patches
             log.LogInfo("Dialing the donut");
             NetworkManager.Singleton.NetworkConfig.ForceSamePrefabs = false;
 
-            log.LogInfo("Loading prefabs");
-            networkPrefab = AssetManager.GetAssetByKey("LethalRescueNetworkPrefab");
-
-            log.LogInfo($"Adding components to prefab: {networkPrefab}");
-            networkPrefab.AddComponent<RescueCompanyController>();
-            
-            log.LogInfo("Adding the prefab via networking manager");
-            NetworkManager.Singleton.AddNetworkPrefab(networkPrefab);
-
-            
             AssetManager.assetMappings.ToList().ForEach(mapping =>
             {
                 if (mapping.Key != "LethalRescueNetworkPrefab")
@@ -46,7 +36,18 @@ namespace LethalRescueCompanyMod.Patches
                     {
                         log.LogWarning("Asset {} has no NetworkObject");
                     }
-                    
+
+                }
+                else
+                {
+                    log.LogInfo("Loading prefabs");
+                    networkPrefab = AssetManager.GetAssetByKey("LethalRescueNetworkPrefab");
+
+                    log.LogInfo($"Adding components to prefab: {networkPrefab}");
+                    networkPrefab.AddComponent<RescueCompanyController>();
+
+                    log.LogInfo("Adding the prefab via networking manager");
+                    NetworkManager.Singleton.AddNetworkPrefab(networkPrefab);
                 }
             });
             
