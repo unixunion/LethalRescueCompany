@@ -40,13 +40,13 @@ namespace LethalRescueCompanyMod.Patches
                 }
                 else
                 {
-                    log.LogInfo("Loading prefabs");
+                    log.LogInfo("Loading LethalRescueNetworkPrefab");
                     networkPrefab = AssetManager.GetAssetByKey("LethalRescueNetworkPrefab");
 
-                    log.LogInfo($"Adding components to prefab: {networkPrefab}");
+                    log.LogInfo($"Adding RescueCompanyController to LethalRescueNetworkPrefab: {networkPrefab}");
                     networkPrefab.AddComponent<RescueCompanyController>();
 
-                    log.LogInfo("Adding the prefab via networking manager");
+                    log.LogInfo("Adding the RescueCompanyController prefab via networking manager");
                     NetworkManager.Singleton.AddNetworkPrefab(networkPrefab);
                 }
             });
