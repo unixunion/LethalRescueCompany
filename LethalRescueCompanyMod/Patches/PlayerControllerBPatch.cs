@@ -1,26 +1,9 @@
 ﻿using BepInEx.Logging;
 using GameNetcodeStuff;
 using HarmonyLib;
-using UnityEngine;
-using UnityEngine.Windows.WebCam;
-using System.Linq;
-using System;
-using UnityEngine.Video;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using BepInEx;
-using System.IO;
-using System.Reflection;
-using Unity.Netcode;
-using Dissonance.Integrations.Unity_NFGO;
-using Newtonsoft.Json;
-using DunGen;
-using System.Collections.Generic;
-using System.Collections;
 using LethalRescueCompanyMod;
 using LethalRescueCompanyMod.NetworkBehaviors;
-using Unity.Burst.CompilerServices;
-using LethalRescueCompanyMod.Models;
 
 //round manager has spawn enemies
 
