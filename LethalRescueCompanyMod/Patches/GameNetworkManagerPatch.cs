@@ -44,7 +44,7 @@ namespace LethalRescueCompanyMod.Patches
                         NetworkManager.Singleton.AddNetworkPrefab(asset);
                     } else
                     {
-                        log.LogWarning("Asset {} has no NetworkObject");
+                        log.LogWarning($"Asset {mapping.Key} has no NetworkObject");
                     }
                     
                 }
