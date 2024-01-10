@@ -55,7 +55,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         [ClientRpc]
         public void EventClientRpc(Event eventName)
         {
-            log.LogInfo($"EventClientRpc: received event: {eventName}");
+            log.LogInfo($"EventClientRpc: received event: {eventName}, notifying subscribers within this runtime");
             ClientEvent?.Invoke(eventName); // If the event has subscribers (does not equal null), invoke the event
         }
 
@@ -66,13 +66,13 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         [ServerRpc(RequireOwnership = false)]
         public void EventServerRpc(Event eventName)
         {
-            log.LogInfo($"EventServerRpc: event: {eventName}");
+            log.LogInfo($"EventServerRpc: event: {eventName}, notifying subscribers within this runtime");
             ServerEvent?.Invoke(eventName); // If the event has subscribers (does not equal null), invoke the event
         }
 
         public void ServerEventHandler(Event eventName)
         {
-            log.LogInfo($"ServerEventHandler: event: {eventName}");
+            log.LogInfo($"ServerEventHandler notified: event: {eventName}");
             switch (eventName.command)
             {
                 case CommandContract.Command.SpawnCube:
@@ -120,10 +120,14 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
          **/
         public void ClientEventHandler(Event eventName)
         {
-            log.LogInfo($"ClientEventHandler: event: {eventName}");
+            log.LogInfo($"ClientEventHandler notified: event: {eventName}");
         }
 
 
+        /**
+         * Main event handler, so we call this from other stuff when we want things to happen.
+         * Such as from the HudManager.
+         **/
         public void HandleEvent(Event eventName)
         {
             log.LogInfo($"HandleEvent: {eventName}");
@@ -133,6 +137,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                 // Perform server-side handling of the event
                 log.LogInfo("HandleEvent: I am server, calling EventClientRpc");
                 ServerEventHandler(eventName);
+                // update clients, but they just log this.
                 EventClientRpc(eventName);
             }
             else
@@ -146,7 +151,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 
 
         /**
-         * Spawn the object correctly regardless of server / client, and return a ref.
+         * Spawn the object correctly regardless of server / client
          * identifier, is the prefab name, as defined in unity editor!
          **/
         public void ServerSpawnAsset(String identifier, Vector3 position)
@@ -162,6 +167,9 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         }
 
 
+        /**
+         * Experiment, using a subcomponent of this game object to invoke spawns.
+         **/
         public void SpawnViaComponent(string identifier, PlayerControllerB p)
         {
             log.LogInfo($"SpawnViaComponent: identifier: {identifier}"); 
