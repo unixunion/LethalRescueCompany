@@ -28,7 +28,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
             spidersExist = false;
         }
 
-        public void DebugHacks(Transform thisPlayerBody, string lastChatMessage, StartOfRound playersManager)
+        public void DebugHacks(Transform thisPlayerBody)
         {
             List<EnemyAI> fuckingSpiders = null;
             try

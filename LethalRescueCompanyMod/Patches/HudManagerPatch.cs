@@ -37,7 +37,15 @@ namespace LethalRescueCompanyMod.Patches
 
             switch (command)
             {
-                case "spawn":
+                case "spider":
+                    if (isDebug && ___localPlayer.IsServer)
+                    {
+                        log.LogInfo("spawning spider");
+                        var spiderSpawnBehaviorComponent = ___localPlayer.gameObject.GetComponent<SpiderSpawnBehavior>();
+                        if (spiderSpawnBehaviorComponent != null) spiderSpawnBehaviorComponent.DebugHacks(___localPlayer.thisPlayerBody);
+                    }
+                    break;
+                case "cube":
                     log.LogInfo("ClientEventParser spawn action");
                     var commandObj = new Event(CommandContract.Command.SpawnSpider, Vector3.zero);
                     RescueCompanyPingPong.Instance.SendEventToClients(commandObj);
@@ -58,14 +66,7 @@ namespace LethalRescueCompanyMod.Patches
 
             //___localPlayer.gameObject.GetComponent<RescueCompanyPingPong>().ToggleServerRpc(0.1f);
             // spider debugging stuff
-            if (isDebug && ___localPlayer.IsServer)
-            {
-                //log.LogMessage($"playerName: {PlayerStateStore.playerControllerB?.name}");
-                //log.LogMessage($"hasDeadBody: {PlayerStateStore.deadBodyInfo != null}");
-                //log.LogMessage($"hasPlayerManager: {PlayerStateStore.playersManager != null}");
-                //var spiderSpawnBehaviorComponent = ___localPlayer.gameObject.GetComponent<SpiderSpawnBehavior>();
-                //if(spiderSpawnBehaviorComponent!=null) spiderSpawnBehaviorComponent.DebugHacksServerRpc(___localPlayer.thisPlayerBody, ___lastChatMessage, ___playersManager);
-            }
+            
         }
 
 
