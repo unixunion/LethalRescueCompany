@@ -23,6 +23,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         {
             // experiment, attach the spawning behaviors we want onto this. 
             gameObject.AddComponent<SpiderSpawnBehavior>();
+            // gameObject.AddComponent<BodyCloneBehavior>();
         }
 
         public override void OnNetworkSpawn()
