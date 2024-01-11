@@ -44,23 +44,38 @@ namespace LethalRescueCompanyPlugin.Patches
             Physics.Raycast(interactRay, out var hit, __instance.grabDistance, 832);
 
             if (hit.collider == null) return;
-            log.LogInfo($"ray hit: {hit}");
-            var testing = hit.collider.transform.gameObject.GetComponentInParent<DeadBodyInfo>();
+            log.LogInfo($"ray hit: {hit.collider.transform.gameObject}");
+
+            var testing = hit.collider.transform.gameObject.GetComponent<GrabbableObject>();
+
+            //var testing = hit.collider.transform.gameObject.GetComponentInParent<DeadBodyInfo>();
+            log.LogInfo($"testing: {testing}");
+            //var t2 = hit.collider.transform.gameObject.GetComponentInParent<RagdollGrabbableObject>();
+            //log.LogInfo($"t2: {t2}");
+            //var t3 = hit.collider.transform.gameObject.GetComponent<RagdollGrabbableObject>();
+            //log.LogInfo($"t3: {t3}");
+            //var t4 = hit.collider.transform.gameObject.GetComponentInChildren<RagdollGrabbableObject>();
+            //log.LogInfo($"t4: {t4}");
+
+
             var currentlyGrabbingObject = hit.collider.transform.gameObject.GetComponent<GrabbableObject>();
-            if (testing != null && testing.attachedTo != null)
+            if (testing != null) // && testing.attachedTo != null
             {
-                Rigidbody? rigidbody = testing.GetComponent<Rigidbody>();
-                Rigidbody? anotherOne = testing.GetComponentInParent<Rigidbody>();
-                Rigidbody? pinky = testing.GetComponentInChildren<Rigidbody>();
-                log.LogInfo($"RIGADOODLE: {rigidbody} : {anotherOne} : {pinky}");
-                testing.attachedLimb = null;
-                testing.attachedTo = null;
-                if (rigidbody != null)
+
+                log.LogMessage("ray hit a grabbable");
+
+                var dbinfo = hit.collider.transform.gameObject.GetComponentInParent<DeadBodyInfo>();
+                if (dbinfo != null)
                 {
-                    log.LogInfo($"RAZZLE DAZZLE");
-                    rigidbody.isKinematic = false;
-                    rigidbody.useGravity = true;
+                    log.LogInfo("freeing the body");
+                    dbinfo.attachedLimb = null;
+                    dbinfo.attachedTo = null;
+                    dbinfo.wasMatchingPosition = false;
+                } else
+                {
+                    log.LogWarning("not sure what the hell this is?");
                 }
+                
             }
         }
 

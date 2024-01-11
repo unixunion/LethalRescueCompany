@@ -40,6 +40,7 @@ namespace LethalRescueCompanyMod.Patches
                         __instance.livingPlayers += 2;
                         hasTriedToConnect = true;
                         __instance.StartGame();
+                        
                     }
                 }
 

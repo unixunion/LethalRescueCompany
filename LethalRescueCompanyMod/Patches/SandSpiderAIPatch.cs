@@ -68,15 +68,20 @@ namespace LethalRescueCompanyMod.Patches
 
             deadBodyInfo.grabBodyObject.grabbable = true;
             deadBodyInfo.canBeGrabbedBackByPlayers = true;
+            //var t = deadBodyInfo.GetComponent<RagdollGrabbableObject>();
+            //if (t != null) t.grabbable = true;
+
 
             if (deadBodyInfo.gameObject != null)
             {
                 if (deadBodyInfo.gameObject.GetComponent<RevivableTrait>() == null) { 
                     if (Settings.isDebug) log.LogInfo("adding revivable trait");
-                    deadBodyInfo.gameObject.AddComponent<RevivableTrait>();
+                    var revivableTrait = deadBodyInfo.gameObject.AddComponent<RevivableTrait>();
 
-                    //var ragdollGrabbableObject = deadBodyInfo.GetComponent<GrabbableObject>();
-                    
+                    // configure revivable
+                    var ragdollGrabbableObject = deadBodyInfo.GetComponent<GrabbableObject>();
+                    revivableTrait.grabbableObject = ragdollGrabbableObject;
+                    revivableTrait.playerControllerB = deadBodyInfo.playerScript;
 
                     //Destroy(deadBodyInfo.gameObject.GetComponent<GrabbableObject>());
                     //deadBodyInfo.gameObject.AddComponent<LRCGrabbableObject>();
