@@ -20,6 +20,15 @@ namespace LethalRescueCompanyMod
             log.LogInfo("attempting to load prefabs");
             assetMappings = new Dictionary<string, GameObject>();
 
+            //log.LogInfo("printing out ALL found assets");
+            
+            //var OriginalAssets = Resources.LoadAll("./prefabs");
+            //foreach (var item in OriginalAssets)
+            //{
+            //    log.LogInfo($"asset: {item.name}");
+            //}
+
+            
             var MainAssetBundle = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "prefabs"));
             foreach (var item in MainAssetBundle.GetAllAssetNames())
             {

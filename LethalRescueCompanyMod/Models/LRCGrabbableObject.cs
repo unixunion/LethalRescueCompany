@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BepInEx.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,5 +14,11 @@ namespace LethalRescueCompanyMod.Models
     public class LRCGrabbableObject : GrabbableObject
     {
 
+        static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.NetworkBehaviors.LRCGrabbableObject");
+
+        public override void InteractItem()
+        {
+            log.LogInfo("interact item");
+        }
     }
 }

@@ -22,16 +22,17 @@ namespace LethalRescueCompanyMod
             
         }
 
-        public void ReviveRescuedPlayer(DeadBodyInfo deadbody, StartOfRound playersManager)
+        public void ReviveRescuedPlayer(PlayerControllerB playerControllerB, Vector3 spawnPosistion)
         {
+            
             try
             {
                 if (Settings.isDebug)
                 {
-                    log.LogInfo($"ReviveRescuedPlayer called with db: {deadbody.name}, pm: {playersManager}");
+                    log.LogInfo($"ReviveRescuedPlayer called with db: {playerControllerB.playerClientId}, pm: {playerControllerB.playersManager}");
                 }
                 // get the PlayerControllerB from the deadbody
-                var ps = deadbody.playerScript;
+                var ps = playerControllerB;
 
                 // this is stolen from the spawn logic
                 ps.isClimbingLadder = false;
@@ -48,7 +49,7 @@ namespace LethalRescueCompanyMod
                 ps.carryWeight = 1f;
                 ps.isFreeCamera = false;
                 ps.playerHudUIContainer.gameObject.SetActive(value: true);
-                ps.TeleportPlayer(deadbody.transform.GetComponent<Rigidbody>().position);
+                ps.TeleportPlayer(spawnPosistion);
                 ps.setPositionOfDeadPlayer = false;
 
                 // this is the disable player model 
@@ -95,11 +96,11 @@ namespace LethalRescueCompanyMod
 
                 HUDManager.Instance.UpdateHealthUI(40, hurtPlayer: false);
                 HUDManager.Instance.audioListenerLowPass.enabled = false;
-                playersManager.livingPlayers = playersManager.livingPlayers + 1;
+                playerControllerB.playersManager.livingPlayers = playerControllerB.playersManager.livingPlayers + 1;
                 HUDManager.Instance.HideHUD(hide: false);
 
                 // destroy deadbody
-                if(!Settings.isDebug) Destroy(deadbody.gameObject);
+                // if(!Settings.isDebug) Destroy(deadbody.gameObject);
 
                 if (Settings.isDebug) log.LogInfo($"end ReviveRescuedPlayer");
             }

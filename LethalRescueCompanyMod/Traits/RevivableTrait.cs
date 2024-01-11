@@ -3,11 +3,6 @@ using GameNetcodeStuff;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -15,10 +10,49 @@ namespace LethalRescueCompanyMod
 {
     public class RevivableTrait : NetworkBehaviour
     {
+        static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RevivableTrait");
+
+
         bool isDebug = Settings.isDebug;
         Helper helper = new Helper();
+        
         public bool isRespawning = false;
-        static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.RevivableTrait");
+        public bool isUsed = false;
+        public PlayerControllerB playerControllerB; // the controller player instance
+        public GrabbableObject grabbableObject; // pointer to the grabbable parent
+        
+        void Update()
+        {
+            revivePlayer();
+        }
+
+        public void Interact()
+        {
+            log.LogDebug("interacting...");
+
+        }
+
+        public void revivePlayer()
+        {
+            if (grabbableObject == null) return;
+            if (playerControllerB == null) return;
+            if (grabbableObject.isInShipRoom && playerControllerB.playersManager!=null)
+            {
+                if (!grabbableObject.isHeld) {
+                    
+                    if (!isRespawning && !isUsed)
+                    {
+                        log.LogInfo("revive conditions met, object is not held");
+                        StartCoroutine(WaitFiveSecondsAndRevive(playerControllerB, playerControllerB.playersManager.playerSpawnPositions[0].position));
+                        
+                    }
+                }
+            } else
+            {
+                log.LogError($"revive conditions unmet: {grabbableObject.isInShipRoom}, {playerControllerB.playersManager} ");
+            }
+        }
+
         public void playerIsDeadInShipAndRevivable(DeadBodyInfo deadBodyInfo, StartOfRound playersManager)
         {
             try
@@ -48,7 +82,7 @@ namespace LethalRescueCompanyMod
                     if (!isRespawning)
                     {
                         if (Settings.isDebug) log.LogInfo("trait found, reviving coroutine");
-                        StartCoroutine(WaitFiveSecondsAndRevive(deadBodyInfo, playersManager));
+                        //StartCoroutine(WaitFiveSecondsAndRevive(deadBodyInfo, playersManager));
                     }
                 }
                 else
@@ -63,13 +97,27 @@ namespace LethalRescueCompanyMod
         }
 
 
-        public IEnumerator WaitFiveSecondsAndRevive(DeadBodyInfo deadBodyInfo, StartOfRound playersManager)
+        public void DebugRevive(DeadBodyInfo deadBodyInfo)
+        {
+            if (isDebug)
+            {
+                if (!isRespawning)
+                {
+                    if (Settings.isDebug) log.LogInfo("trait found, reviving coroutine");
+                    StartCoroutine(WaitFiveSecondsAndRevive(deadBodyInfo.playerScript, deadBodyInfo.transform.position));
+                }
+            }
+        }
+
+        public IEnumerator WaitFiveSecondsAndRevive(PlayerControllerB playerControllerB, Vector3 spawnPositions)
         {
             isRespawning = true;
+            isUsed = true;
             log.LogMessage("Start waiting");
             yield return new WaitForSeconds(5);
             log.LogMessage("Done waiting");
-            helper.ReviveRescuedPlayer(deadBodyInfo, playersManager);
+            helper.ReviveRescuedPlayer(playerControllerB, spawnPositions);
+            isUsed = true;
             isRespawning = false;
         }
     }

@@ -4,6 +4,9 @@ using HarmonyLib;
 using BepInEx;
 using LethalRescueCompanyMod;
 using LethalRescueCompanyMod.NetworkBehaviors;
+using Unity.Burst.CompilerServices;
+using UnityEngine;
+using LethalRescueCompanyMod.Models;
 
 //round manager has spawn enemies
 
@@ -33,27 +36,52 @@ namespace LethalRescueCompanyPlugin.Patches
         {
         }
 
-        //[HarmonyPatch("BeginGrabObject")]
-        //[HarmonyPrefix]
-        //static void BGO(ref Camera ___gameplayCamera, ref PlayerControllerB __instance)
-        //{
-        //    Ray interactRay = new Ray(___gameplayCamera.transform.position, ___gameplayCamera.transform.forward);
-        //    Physics.Raycast(interactRay, out var hit, __instance.grabDistance, 832);
-        //    log.LogInfo($"ray hit: {hit}");
-        //    //var currentlyGrabbingObject = hit.collider.transform.gameObject.GetComponent<LRCGrabbableObject>();
-        //    var currentlyGrabbingObject = hit.collider.transform.gameObject.GetComponent<GrabbableObject>();
+        /// <summary>
+        /// Lets do the swap early of the body if its what we want. 
+        /// </summary>
+        /// <param name="___gameplayCamera"></param>
+        /// <param name="__instance"></param>
+        [HarmonyPatch("BeginGrabObject")]
+        [HarmonyPrefix]
+        static void ReplaceObjectWithSurrogate(ref Camera ___gameplayCamera, ref PlayerControllerB __instance)
+        {
+            Ray interactRay = new Ray(___gameplayCamera.transform.position, ___gameplayCamera.transform.forward);
+            Physics.Raycast(interactRay, out var hit, __instance.grabDistance, 832);
+            
+            log.LogInfo($"ray hit: {hit}");
+            var currentlyGrabbingObject = hit.collider.transform.gameObject.GetComponent<GrabbableObject>();
 
-        //    log.LogInfo($"layer1: {hit.collider.transform.gameObject.layer}");
-        //    log.LogInfo($"layer2: {currentlyGrabbingObject.gameObject.layer}");
+            if (currentlyGrabbingObject != null)
+            {
+                log.LogInfo($"grabbing hack: {currentlyGrabbingObject.GetComponent<GrabbableObject>()}");
 
-        //    if (currentlyGrabbingObject != null)
-        //    {
-        //        log.LogInfo($"grabbing hack: {currentlyGrabbingObject.GetComponent<GrabbableObject>()}");
-        //    } else
-        //    {
-        //        log.LogInfo($"object does not contain LRCGrabbableObject ");
-        //    }
-        //}
+                var trait = currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
+                trait.Interact();
+
+                if (trait != null)
+                {
+                    log.LogInfo($"BeginGrabbbing: has trait: {currentlyGrabbingObject.name}");
+
+                    var ragdollGrabbableObject = currentlyGrabbingObject.GetComponentInParent<RagdollGrabbableObject>();
+                    if (ragdollGrabbableObject != null)
+                    {
+                        log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
+                        var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
+                        BodyCloneBehavior.ReplacementBody(originalDeadBodyInfo).GetComponent<GrabbableObject>();
+                        //Destroy(originalDeadBodyInfo);
+                    }
+                }
+
+                        
+            }
+            else
+            {
+                log.LogInfo($"object does not contain GrabbableObject ");
+            }
+
+            // currentlyGrabbingObject.InteractItem();
+
+        }
 
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
@@ -73,6 +101,7 @@ namespace LethalRescueCompanyPlugin.Patches
                 }
             }
             
+            // is this in update ?
             AddWelcomeMessage(___playersManager);
             //AddPingPong(___playersManager);
 
@@ -91,7 +120,8 @@ namespace LethalRescueCompanyPlugin.Patches
                 log.LogWarning("revivable trait is null");
                 return;
             }
-            revivabletrait.playerIsDeadInShipAndRevivable(___deadBody, ___playersManager);
+            //revivabletrait.playerIsDeadInShipAndRevivable(___deadBody, ___playersManager);
+            revivabletrait.DebugRevive(___deadBody);
 
         }
 
@@ -117,9 +147,16 @@ namespace LethalRescueCompanyPlugin.Patches
             }
         }
 
-        [HarmonyPatch("GrabObject")]
-        [HarmonyPostfix]
-        static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject, ref GrabbableObject ___currentlyHeldObject, ref PlayerControllerB __instance)
+
+
+
+        
+
+
+
+        //[HarmonyPatch("GrabObject")]
+        //[HarmonyPrefix]
+        static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject, ref GrabbableObject ___currentlyHeldObject, ref PlayerControllerB __instance, ref GrabbableObject ___currentlyHeldObjectServer)
         {
 
             // look at RagdollGrabbableObject
@@ -130,21 +167,32 @@ namespace LethalRescueCompanyPlugin.Patches
 
 
             log.LogInfo($"BeginGrabbbing: {___currentlyGrabbingObject.name}");
+
             var trait = ___currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
 
             if (trait != null)
             {
                 log.LogInfo($"BeginGrabbbing: has trait: {___currentlyGrabbingObject.name}");
 
-
-
                 var ragdollGrabbableObject = ___currentlyGrabbingObject.GetComponentInParent<RagdollGrabbableObject>();
                 if (ragdollGrabbableObject != null)
                 {
                     log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
-                    var db = ragdollGrabbableObject.ragdoll;
-                    __instance.SpawnDeadBody(db.playerObjectId, db.transform.position, 0, db.playerScript);
-                    Destroy(___currentlyGrabbingObject);
+                    var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
+
+                    // glutchfest 2024
+                    //log.LogInfo("performing the switcheroo");
+                    //var cloneDeadbodyInfo = BodyCloneBehavior.CloneDeadBody(originalDeadBodyInfo);
+
+                    //ragdollGrabbableObject.ragdoll = cloneDeadbodyInfo;
+                    //log.LogInfo($"BeginGrabbbing: now set to: {___currentlyGrabbingObject.name}");
+
+                    // this was in order to grab the network spawned cube, dont delete it!
+                    ___currentlyGrabbingObject = BodyCloneBehavior.ReplacementBody(originalDeadBodyInfo).GetComponent<GrabbableObject>();
+                    //___currentlyHeldObjectServer = ___currentlyGrabbingObject;
+
+                    //__instance.SpawnDeadBody(originalDeadBodyInfo.playerObjectId, originalDeadBodyInfo.transform.position, 0, originalDeadBodyInfo.playerScript);
+                    //Destroy(___currentlyGrabbingObject);
 
                 }
                 else
@@ -172,8 +220,9 @@ namespace LethalRescueCompanyPlugin.Patches
         {
             if (isDebug)
             {
-                log.LogInfo("making fucknut revivable");
+                log.LogInfo("making revivable");
                 __instance.deadBody.gameObject.AddComponent<RevivableTrait>();
+                log.LogInfo("trait added");
             }
         }
     }

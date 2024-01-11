@@ -3,6 +3,7 @@ using BepInEx.Logging;
 using Dissonance;
 using GameNetcodeStuff;
 using HarmonyLib;
+using LethalRescueCompanyMod.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,12 +20,14 @@ namespace LethalRescueCompanyMod.Patches
 
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.SandSpiderAIPatch");
         static Helper helper = new Helper();
-
         static DeadBodyInfo currentlyHeldBody = null;
+        
+
         [HarmonyPatch("HangBodyFromCeiling")]
         [HarmonyPrefix]
         static void hangBodyFromCeilingPrePatch(ref DeadBodyInfo ___currentlyHeldBody)
         {
+            log.LogInfo($"Getting currentlyHeldBody: {___currentlyHeldBody}");
             currentlyHeldBody = ___currentlyHeldBody;
             for (int i = 0; i < currentlyHeldBody.bodyBloodDecals.Length; i++)
             {
@@ -32,18 +35,28 @@ namespace LethalRescueCompanyMod.Patches
             }
         }
 
-        
+
+        [HarmonyPatch("Start")]
+        [HarmonyPostfix]
+        public static void ExtractFields(ref SandSpiderAI __instance)
+        {
+            Settings.hangingBodyPrefab = __instance.hangBodyPhysicsPrefab;
+        }
+
 
         [HarmonyPatch("HangBodyFromCeiling")]
         [HarmonyPostfix]
-        static void hangBodyFromCeilingPostPatch(ref DeadBodyInfo ___currentlyHeldBody, ref SandSpiderAI __instance)
+        static void hangBodyFromCeilingPostPatch(ref SandSpiderAI __instance)
         {
             makeWebbedBodyGrabbable(currentlyHeldBody);
+
+            // if debug / solo
             if (Settings.isDebug && Settings.isSolo)
             {
                 log.LogInfo("debug and solo, spider hacks to revive player");
                 // spawn the player
-                helper.ReviveRescuedPlayer(currentlyHeldBody, StartOfRound.Instance);
+                //helper.ReviveRescuedPlayer(currentlyHeldBody, StartOfRound.Instance);
+                helper.ReviveRescuedPlayer(currentlyHeldBody.playerScript, currentlyHeldBody.transform.position);
 
                 RoundManager.Instance.currentLevel.Enemies.Clear();
                 RoundManager.Instance.currentLevel.OutsideEnemies.Clear();
@@ -66,14 +79,26 @@ namespace LethalRescueCompanyMod.Patches
             deadBodyInfo.grabBodyObject.grabbable = true;
             deadBodyInfo.canBeGrabbedBackByPlayers = true;
 
-            if (deadBodyInfo.gameObject != null && deadBodyInfo.gameObject.GetComponent<RevivableTrait>() == null)
+            if (deadBodyInfo.gameObject != null)
             {
-                if (Settings.isDebug) log.LogInfo("adding revivable trait");
-                deadBodyInfo.gameObject.AddComponent<RevivableTrait>();
+                if (deadBodyInfo.gameObject.GetComponent<RevivableTrait>() == null) { 
+                    if (Settings.isDebug) log.LogInfo("adding revivable trait");
+                    deadBodyInfo.gameObject.AddComponent<RevivableTrait>();
+
+                    //var ragdollGrabbableObject = deadBodyInfo.GetComponent<GrabbableObject>();
+                    
+
+                    //Destroy(deadBodyInfo.gameObject.GetComponent<GrabbableObject>());
+                    //deadBodyInfo.gameObject.AddComponent<LRCGrabbableObject>();
+
+                } else
+                {
+                    if (Settings.isDebug) log.LogWarning($"deadbody already has revivable trait: {deadBodyInfo.gameObject?.GetComponent<RevivableTrait>()}");
+                }
             }
             else
             {
-                log.LogWarning("deadbody gameobject was null");
+                log.LogError("deadbody gameobject was null, error making it revivable");
             }
 
             if (Settings.isDebug)

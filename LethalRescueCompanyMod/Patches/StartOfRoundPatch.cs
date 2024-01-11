@@ -14,6 +14,7 @@ using Unity.Netcode;
 using UnityEngine;
 using LethalRescueCompanyPlugin;
 using LethalRescueCompanyMod.Models;
+using System.Runtime.Remoting.Messaging;
 
 namespace LethalRescueCompanyMod.Patches
 {
@@ -25,6 +26,8 @@ namespace LethalRescueCompanyMod.Patches
         static bool isDebug = Settings.isDebug;
         static bool hasTriedToConnect = false;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.StartOfRound");
+        static Helper helper = new Helper();
+        
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
         static void UpdatePatch(ref StartOfRound __instance)
@@ -48,12 +51,21 @@ namespace LethalRescueCompanyMod.Patches
                         __instance.livingPlayers += 2;
                         hasTriedToConnect = true;
                         __instance.StartGame();
- 
                     }
                 }
+
+                if (__instance.localPlayerController.isPlayerDead)
+                {
+                    
+                    RevivableTrait revivable = __instance.localPlayerController.deadBody.gameObject.GetComponent<RevivableTrait>();
+                    if (revivable != null) revivable.revivePlayer(); // .DebugRevive(__instance.localPlayerController.deadBody, __instance.localPlayerController.playersManager);
+                } else
+                {
+                    
+                }
+
             }
         }
-
         [HarmonyPatch("Awake")]
         [HarmonyPostfix]
         static void SpawnNetworkHandler(ref StartOfRound __instance)

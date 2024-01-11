@@ -1,7 +1,9 @@
-﻿using GameNetcodeStuff;
+﻿using BepInEx.Logging;
+using GameNetcodeStuff;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Unity.Netcode;
@@ -11,20 +13,47 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
 {
     public class BodyCloneBehavior : NetworkBehaviour
     {
-        public void CloneDeadBody(DeadBodyInfo deadBodyInfo)
+
+        static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.NetworkBehaviors.BodyCloneBehavior");
+
+
+        public static GameObject ReplacementBody(DeadBodyInfo deadBodyInfo)
         {
-
-            // copy whats important
-            var rd = deadBodyInfo.playerScript.playersManager.playerRagdolls[0];
             var tf = deadBodyInfo.transform;
+            //AssetManager.GetAssetByKey("CubePrefab")
+            log.LogInfo($"hanging body prefab: {Settings.hangingBodyPrefab}");
+            GameObject gameObject = Instantiate(Settings.hangingBodyPrefab, tf.position, tf.rotation);
+            RevivableTrait revivableTrait = gameObject.AddComponent<RevivableTrait>();
+            revivableTrait.playerControllerB = deadBodyInfo.playerScript;
+            revivableTrait.grabbableObject = gameObject.GetComponent<GrabbableObject>();
 
-            // server | client check?
-            Destroy(deadBodyInfo);
+            if (NetworkManager.Singleton.IsServer) {
+                log.LogInfo("spawning network object ");
+                var t = gameObject.GetComponent<NetworkObject>();
+                if (t == null) gameObject.AddComponent<NetworkObject>();
+                gameObject.GetComponent<NetworkObject>().Spawn(true);
+            }
 
-            GameObject gameObject = Instantiate(rd,tf.position,tf.rotation);
-            if (IsServer) gameObject.GetComponent<NetworkObject>().Spawn();
-
+            return gameObject;
         }
+
+        public static GameObject ReplacementBody(GameObject original, PlayerControllerB playerControllerB)
+        {
+            var tf = original.transform;
+            GameObject gameObject = Instantiate(original, tf.position, tf.rotation);
+            RevivableTrait revivableTrait = gameObject.AddComponent<RevivableTrait>();
+            revivableTrait.playerControllerB = playerControllerB;
+            revivableTrait.grabbableObject = gameObject.GetComponent<GrabbableObject>();
+
+            if (NetworkManager.Singleton.IsServer)
+            {
+                log.LogInfo("spawning network object ");
+                gameObject.GetComponent<NetworkObject>().Spawn(true);
+            }
+
+            return gameObject;
+        }
+
 
 
 

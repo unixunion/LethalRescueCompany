@@ -17,7 +17,11 @@ namespace LethalRescueCompanyMod.Patches
     {
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.GameNetworkManager");
         public static GameObject networkPrefab { get; private set; }
+        
+        // current place where we declare what should be grabbable. not terrible, not great.
         static List<string> itemsThatShouldBeGrabbable = new List<string>() { "Example", "CubePrefab" };
+
+
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
         static void startPatch(ref GameNetworkManager __instance, ref PlayerControllerB ___localPlayerController)
