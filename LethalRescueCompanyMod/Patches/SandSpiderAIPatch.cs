@@ -66,30 +66,33 @@ namespace LethalRescueCompanyMod.Patches
             //deadBodyInfo.attachedTo = null;
             //if (Settings.isDebug) log.LogInfo($"reattached via secondary to the primary attachment point");
 
-            deadBodyInfo.grabBodyObject.grabbable = true;
             deadBodyInfo.canBeGrabbedBackByPlayers = true;
+            // according to code, this is not needed, as the above line overrides it in the late update.
+            //deadBodyInfo.grabBodyObject.grabbable = true;
+            
+
             //var t = deadBodyInfo.GetComponent<RagdollGrabbableObject>();
             //if (t != null) t.grabbable = true;
 
 
             if (deadBodyInfo.gameObject != null)
             {
-                if (deadBodyInfo.gameObject.GetComponent<RevivableTrait>() == null) { 
+                if (deadBodyInfo.gameObject.GetComponent<RevivableTrait>() == null)
+                {
                     if (Settings.isDebug) log.LogInfo("adding revivable trait");
-                    var revivableTrait = deadBodyInfo.gameObject.AddComponent<RevivableTrait>();
-
-                    // configure revivable
-                    var ragdollGrabbableObject = deadBodyInfo.GetComponent<GrabbableObject>();
-                    revivableTrait.grabbableObject = ragdollGrabbableObject;
-                    revivableTrait.playerControllerB = deadBodyInfo.playerScript;
-
-                    //Destroy(deadBodyInfo.gameObject.GetComponent<GrabbableObject>());
-                    //deadBodyInfo.gameObject.AddComponent<LRCGrabbableObject>();
-
+                    deadBodyInfo.gameObject.AddComponent<RevivableTrait>();
                 } else
                 {
-                    if (Settings.isDebug) log.LogWarning($"deadbody already has revivable trait: {deadBodyInfo.gameObject?.GetComponent<RevivableTrait>()}");
+                    if (Settings.isDebug) log.LogInfo("trait already present");
                 }
+
+                // configure revivable
+                var revivableTrait = deadBodyInfo.gameObject.GetComponent<RevivableTrait>();
+                var ragdollGrabbableObject = deadBodyInfo.GetComponent<GrabbableObject>();
+                if (ragdollGrabbableObject != null) log.LogWarning("unable to find grabbable, fix this!");
+                revivableTrait.grabbableObject = ragdollGrabbableObject;
+                revivableTrait.playerControllerB = deadBodyInfo.playerScript;
+
             }
             else
             {
