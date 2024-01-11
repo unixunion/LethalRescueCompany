@@ -1,11 +1,5 @@
 ﻿using BepInEx.Logging;
 using GameNetcodeStuff;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -21,7 +15,7 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         {
             var tf = deadBodyInfo.transform;
             //AssetManager.GetAssetByKey("CubePrefab")
-            log.LogInfo($"hanging body prefab: {Settings.hangingBodyPrefab}");
+            log.LogInfo($"ReplacementBody: hanging body prefab: {Settings.hangingBodyPrefab}");
             GameObject gameObject = Instantiate(Settings.hangingBodyPrefab, tf.position, tf.rotation);
             RevivableTrait revivableTrait = gameObject.AddComponent<RevivableTrait>();
             revivableTrait.playerControllerB = deadBodyInfo.playerScript;

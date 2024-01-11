@@ -1,20 +1,9 @@
 ﻿using BepInEx.Logging;
-using DunGen;
-using GameNetcodeStuff;
 using HarmonyLib;
-using LethalRescueCompanyMod.NetworkBehaviors;
-using Steamworks;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
-using LethalRescueCompanyPlugin;
 using LethalRescueCompanyMod.Models;
-using System.Runtime.Remoting.Messaging;
+using LethalRescueCompanyMod.Hacks;
 
 namespace LethalRescueCompanyMod.Patches
 {
@@ -90,8 +79,33 @@ namespace LethalRescueCompanyMod.Patches
 
         }
 
-        
-        
+
+        [HarmonyPatch("StartGame")]
+        [HarmonyPostfix]
+        static void startOfRoundPatch(ref StartOfRound __instance)
+        {
+            AddWelcomeMessage(__instance);
+        }
+
+
+        private static void AddWelcomeMessage(StartOfRound playersManager)
+        {
+            if (playersManager != null)
+            {
+                foreach (var item in playersManager.allPlayerScripts)
+                {
+                    if (item.gameObject.GetComponent<WelcomeMessage>() == null) item.gameObject.AddComponent<WelcomeMessage>();
+                    if (item.gameObject.GetComponent<PowerCheat>() == null)
+                    {
+                        if (Settings.isDebug) item.gameObject.AddComponent<PowerCheat>();
+                    }
+                    if (item.gameObject.GetComponent<SpeedCheat>() == null)
+                    {
+                        if (Settings.isDebug) item.gameObject.AddComponent<SpeedCheat>();
+                    }
+                }
+            }
+        }
 
     }
 }
