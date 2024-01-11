@@ -1,16 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
-using Dissonance;
-using GameNetcodeStuff;
 using HarmonyLib;
-using LethalRescueCompanyMod.Models;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
 
 namespace LethalRescueCompanyMod.Patches
 {

@@ -119,7 +119,7 @@ namespace LethalRescueCompanyPlugin.Patches
                 return;
             }
             //revivabletrait.playerIsDeadInShipAndRevivable(___deadBody, ___playersManager);
-            revivabletrait.DebugRevive(___deadBody);
+            //revivabletrait.DebugRevive(___deadBody);
 
         }
 
