@@ -32,6 +32,18 @@ namespace LethalRescueCompanyMod
 
         }
 
+        public void setGrabbable(GrabbableObject grabbable)
+        {
+            log.LogInfo($"settings grabbable to {grabbable}");
+            this.grabbableObject = grabbable;
+        }
+
+        public void setPlayerControllerB(PlayerControllerB controller)
+        {
+            log.LogInfo($"settings controller to {controller}");
+            this.playerControllerB = controller;
+        }
+
         public void revivePlayer()
         {
             log.LogInfo("checking1");

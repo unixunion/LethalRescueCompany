@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using LethalRescueCompanyMod.Models;
 
 namespace LethalRescueCompanyMod.Patches
 {
@@ -88,10 +89,10 @@ namespace LethalRescueCompanyMod.Patches
 
                 // configure revivable
                 var revivableTrait = deadBodyInfo.gameObject.GetComponent<RevivableTrait>();
-                var ragdollGrabbableObject = deadBodyInfo.GetComponent<GrabbableObject>();
-                if (ragdollGrabbableObject != null) log.LogWarning("unable to find grabbable, fix this!");
-                revivableTrait.grabbableObject = ragdollGrabbableObject;
-                revivableTrait.playerControllerB = deadBodyInfo.playerScript;
+                var ragdollGrabbableObject = deadBodyInfo.gameObject.AddComponent<LRCGrabbableObject>();
+                if (ragdollGrabbableObject == null) log.LogWarning("unable to find grabbable, fix this!");
+                revivableTrait.setGrabbable(ragdollGrabbableObject);
+                revivableTrait.setPlayerControllerB(deadBodyInfo.playerScript);
 
             }
             else
