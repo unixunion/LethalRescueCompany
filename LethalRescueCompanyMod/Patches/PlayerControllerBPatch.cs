@@ -5,6 +5,8 @@ using BepInEx;
 using LethalRescueCompanyMod;
 using LethalRescueCompanyMod.NetworkBehaviors;
 using UnityEngine;
+using System.Linq;
+using LethalRescueCompanyMod.Hacks;
 
 //round manager has spawn enemies
 
@@ -32,6 +34,7 @@ namespace LethalRescueCompanyPlugin.Patches
            ref StartOfRound ___playersManager,
            ref DeadBodyInfo ___deadBody)
         {
+
         }
 
         /// <summary>
@@ -45,40 +48,43 @@ namespace LethalRescueCompanyPlugin.Patches
         {
             Ray interactRay = new Ray(___gameplayCamera.transform.position, ___gameplayCamera.transform.forward);
             Physics.Raycast(interactRay, out var hit, __instance.grabDistance, 832);
-            
+
+            if (hit.collider == null) return;
             log.LogInfo($"ray hit: {hit}");
+            var testing = hit.collider.transform.gameObject.GetComponentInParent<DeadBodyInfo>();
             var currentlyGrabbingObject = hit.collider.transform.gameObject.GetComponent<GrabbableObject>();
-
-            if (currentlyGrabbingObject != null)
+            if (testing != null && testing.attachedTo != null)
             {
-                log.LogInfo($"grabbing hack: {currentlyGrabbingObject.GetComponent<GrabbableObject>()}");
-
-                var trait = currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
-                trait.Interact();
-
-                if (trait != null)
+                Rigidbody? rigidbody = testing.GetComponent<Rigidbody>();
+                Rigidbody? anotherOne = testing.GetComponentInParent<Rigidbody>();
+                Rigidbody? pinky = testing.GetComponentInChildren<Rigidbody>();
+                log.LogInfo($"RIGADOODLE: {rigidbody} : {anotherOne} : {pinky}");
+                testing.attachedLimb = null;
+                testing.attachedTo = null;
+                if (rigidbody != null)
                 {
-                    log.LogInfo($"BeginGrabbbing: has trait: {currentlyGrabbingObject.name}");
-
-                    var ragdollGrabbableObject = currentlyGrabbingObject.GetComponentInParent<RagdollGrabbableObject>();
-                    if (ragdollGrabbableObject != null)
-                    {
-                        log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
-                        var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
-                        BodyCloneBehavior.ReplacementBody(originalDeadBodyInfo).GetComponent<GrabbableObject>();
-                        //Destroy(originalDeadBodyInfo);
-                    }
+                    log.LogInfo($"RAZZLE DAZZLE");
+                    rigidbody.isKinematic = false;
+                    rigidbody.useGravity = true;
                 }
-
-                        
             }
-            else
+        }
+
+        [HarmonyPatch("BeginGrabObject")]
+        [HarmonyPostfix]
+        static void ReplaceObjectWithSurrogatePost(ref Camera ___gameplayCamera, ref PlayerControllerB __instance)
+        {
+            if (__instance.currentlyHeldObject == null) return;
+            var grabbableComponent = __instance.currentlyHeldObject.GetComponent<GrabbableObject>();
+            if (grabbableComponent == null) return;
+            var rigidBody = grabbableComponent.GetComponent<Rigidbody>();
+            if (rigidBody != null && !rigidBody.isKinematic)
             {
-                log.LogInfo($"object does not contain GrabbableObject ");
+                log.LogInfo("DETECTED Rigid Body that should drop like a mf");
+                __instance.currentlyHeldObject.DiscardItemOnClient();
+                __instance.currentlyHeldObjectServer.DiscardItemOnClient();
+                rigidBody.isKinematic = true;
             }
-
-            // currentlyGrabbingObject.InteractItem();
-
         }
 
         [HarmonyPatch("Update")]
@@ -98,10 +104,6 @@ namespace LethalRescueCompanyPlugin.Patches
                     }
                 }
             }
-            
-            // is this in update ?
-            AddWelcomeMessage(___playersManager);
-            //AddPingPong(___playersManager);
 
             // nope out if not a body
             if (___deadBody == null) return;
@@ -118,39 +120,7 @@ namespace LethalRescueCompanyPlugin.Patches
                 log.LogWarning("revivable trait is null");
                 return;
             }
-            //revivabletrait.playerIsDeadInShipAndRevivable(___deadBody, ___playersManager);
-            //revivabletrait.DebugRevive(___deadBody);
-
         }
-
-        //private static void AddPingPong(StartOfRound playersManager)
-        //{
-        //    if (playersManager != null)
-        //    {
-        //        foreach (var item in playersManager.allPlayerScripts)
-        //        {
-        //            if (item.gameObject.GetComponent<RescueCompanyController>() == null) item.gameObject.AddComponent<RescueCompanyController>();
-        //        }
-        //    }
-        //}
-
-        private static void AddWelcomeMessage(StartOfRound playersManager)
-        {
-            if (playersManager != null)
-            {
-                foreach (var item in playersManager.allPlayerScripts)
-                {
-                    if (item.gameObject.GetComponent<WelcomeMessage>() == null) item.gameObject.AddComponent<WelcomeMessage>();
-                }
-            }
-        }
-
-
-
-
-        
-
-
 
         //[HarmonyPatch("GrabObject")]
         //[HarmonyPrefix]

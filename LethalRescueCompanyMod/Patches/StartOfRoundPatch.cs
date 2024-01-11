@@ -3,6 +3,7 @@ using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
 using LethalRescueCompanyMod.Models;
+using LethalRescueCompanyMod.Hacks;
 
 namespace LethalRescueCompanyMod.Patches
 {
@@ -78,8 +79,33 @@ namespace LethalRescueCompanyMod.Patches
 
         }
 
-        
-        
+
+        [HarmonyPatch("StartGame")]
+        [HarmonyPostfix]
+        static void startOfRoundPatch(ref StartOfRound __instance)
+        {
+            AddWelcomeMessage(__instance);
+        }
+
+
+        private static void AddWelcomeMessage(StartOfRound playersManager)
+        {
+            if (playersManager != null)
+            {
+                foreach (var item in playersManager.allPlayerScripts)
+                {
+                    if (item.gameObject.GetComponent<WelcomeMessage>() == null) item.gameObject.AddComponent<WelcomeMessage>();
+                    if (item.gameObject.GetComponent<PowerCheat>() == null)
+                    {
+                        if (Settings.isDebug) item.gameObject.AddComponent<PowerCheat>();
+                    }
+                    if (item.gameObject.GetComponent<SpeedCheat>() == null)
+                    {
+                        if (Settings.isDebug) item.gameObject.AddComponent<SpeedCheat>();
+                    }
+                }
+            }
+        }
 
     }
 }
