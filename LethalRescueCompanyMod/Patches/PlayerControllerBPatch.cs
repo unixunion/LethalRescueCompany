@@ -4,9 +4,7 @@ using HarmonyLib;
 using BepInEx;
 using LethalRescueCompanyMod;
 using LethalRescueCompanyMod.NetworkBehaviors;
-using Unity.Burst.CompilerServices;
 using UnityEngine;
-using LethalRescueCompanyMod.Models;
 
 //round manager has spawn enemies
 
@@ -36,52 +34,76 @@ namespace LethalRescueCompanyPlugin.Patches
         {
         }
 
-        /// <summary>
-        /// Lets do the swap early of the body if its what we want. 
-        /// </summary>
-        /// <param name="___gameplayCamera"></param>
-        /// <param name="__instance"></param>
+
         [HarmonyPatch("BeginGrabObject")]
         [HarmonyPrefix]
         static void ReplaceObjectWithSurrogate(ref Camera ___gameplayCamera, ref PlayerControllerB __instance)
         {
             Ray interactRay = new Ray(___gameplayCamera.transform.position, ___gameplayCamera.transform.forward);
             Physics.Raycast(interactRay, out var hit, __instance.grabDistance, 832);
-            
+
+            if (hit.collider == null) return;
             log.LogInfo($"ray hit: {hit}");
+            var testing = hit.collider.transform.gameObject.GetComponentInParent<DeadBodyInfo>();
             var currentlyGrabbingObject = hit.collider.transform.gameObject.GetComponent<GrabbableObject>();
-
-            if (currentlyGrabbingObject != null)
+            if (testing != null && testing.attachedTo != null)
             {
-                log.LogInfo($"grabbing hack: {currentlyGrabbingObject.GetComponent<GrabbableObject>()}");
-
-                var trait = currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
-                trait.Interact();
-
-                if (trait != null)
-                {
-                    log.LogInfo($"BeginGrabbbing: has trait: {currentlyGrabbingObject.name}");
-
-                    var ragdollGrabbableObject = currentlyGrabbingObject.GetComponentInParent<RagdollGrabbableObject>();
-                    if (ragdollGrabbableObject != null)
-                    {
-                        log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
-                        var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
-                        BodyCloneBehavior.ReplacementBody(originalDeadBodyInfo).GetComponent<GrabbableObject>();
-                        //Destroy(originalDeadBodyInfo);
-                    }
-                }
-
-                        
-            }
-            else
-            {
-                log.LogInfo($"object does not contain GrabbableObject ");
+                log.LogInfo($"RIGADOODLE");
+                testing.attachedLimb = null;
+                testing.attachedTo = null;
+                currentlyGrabbingObject.EquipItem();
             }
 
-            // currentlyGrabbingObject.InteractItem();
 
         }
+
+
+        /// <summary>
+        /// Lets do the swap early of the body if its what we want. 
+        /// </summary>
+        /// <param name="___gameplayCamera"></param>
+        /// <param name="__instance"></param>
+        //[HarmonyPatch("BeginGrabObject")]
+        //[HarmonyPrefix]
+        //static void ReplaceObjectWithSurrogate(ref Camera ___gameplayCamera, ref PlayerControllerB __instance)
+        //{
+        //    Ray interactRay = new Ray(___gameplayCamera.transform.position, ___gameplayCamera.transform.forward);
+        //    Physics.Raycast(interactRay, out var hit, __instance.grabDistance, 832);
+
+        //    log.LogInfo($"ray hit: {hit}");
+        //    var currentlyGrabbingObject = hit.collider.transform.gameObject.GetComponent<GrabbableObject>();
+
+        //    if (currentlyGrabbingObject != null)
+        //    {
+        //        log.LogInfo($"grabbing hack: {currentlyGrabbingObject.GetComponent<GrabbableObject>()}");
+
+        //        var trait = currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
+        //        trait.Interact();
+
+        //        if (trait != null)
+        //        {
+        //            log.LogInfo($"BeginGrabbbing: has trait: {currentlyGrabbingObject.name}");
+
+        //            var ragdollGrabbableObject = currentlyGrabbingObject.GetComponentInParent<RagdollGrabbableObject>();
+        //            if (ragdollGrabbableObject != null)
+        //            {
+        //                log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
+        //                var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
+        //                BodyCloneBehavior.ReplacementBody(originalDeadBodyInfo).GetComponent<GrabbableObject>();
+        //                //Destroy(originalDeadBodyInfo);
+        //            }
+        //        }
+
+
+        //    }
+        //    else
+        //    {
+        //        log.LogInfo($"object does not contain GrabbableObject ");
+        //    }
+
+        //    // currentlyGrabbingObject.InteractItem();
+
+        //}
 
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
