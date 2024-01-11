@@ -4,9 +4,7 @@ using HarmonyLib;
 using BepInEx;
 using LethalRescueCompanyMod;
 using LethalRescueCompanyMod.NetworkBehaviors;
-using Unity.Burst.CompilerServices;
 using UnityEngine;
-using LethalRescueCompanyMod.Models;
 
 //round manager has spawn enemies
 
