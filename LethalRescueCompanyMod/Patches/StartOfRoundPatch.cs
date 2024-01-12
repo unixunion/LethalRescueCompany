@@ -71,30 +71,5 @@ namespace LethalRescueCompanyMod.Patches
                 __instance.allItemsList.itemsList.Add(cubeAsset.GetComponent<LRCGrabbableObject>()?.itemProperties);
             }
         }
-
-        [HarmonyPatch("StartGame")]
-        [HarmonyPostfix]
-        static void startOfRoundPatch(ref StartOfRound __instance)
-        {
-            AddWelcomeMessage(__instance);
-        }
-
-        private static void AddWelcomeMessage(StartOfRound playersManager)
-        {
-            if (playersManager != null)
-            {
-                foreach (var item in playersManager.allPlayerScripts)
-                {
-                    if (item.gameObject.GetComponent<WelcomeMessage>() == null) item.gameObject.AddComponent<WelcomeMessage>();
-                    if (Settings.isDebug)
-                    {
-                        if (item.gameObject.GetComponent<PowerCheat>() == null) item.gameObject.AddComponent<PowerCheat>();
-                        if (item.gameObject.GetComponent<SpeedCheat>() == null) item.gameObject.AddComponent<SpeedCheat>();
-                    }
-                    
-                }
-            }
-        }
-
     }
 }
