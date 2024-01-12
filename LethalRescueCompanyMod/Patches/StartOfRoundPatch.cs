@@ -40,7 +40,9 @@ namespace LethalRescueCompanyMod.Patches
                         __instance.livingPlayers += 2;
                         hasTriedToConnect = true;
                         __instance.StartGame();
+
                         
+
                     }
                 }
 
@@ -86,6 +88,9 @@ namespace LethalRescueCompanyMod.Patches
         static void startOfRoundPatch(ref StartOfRound __instance)
         {
             AddWelcomeMessage(__instance);
+
+            
+
         }
 
 
@@ -96,14 +101,12 @@ namespace LethalRescueCompanyMod.Patches
                 foreach (var item in playersManager.allPlayerScripts)
                 {
                     if (item.gameObject.GetComponent<WelcomeMessage>() == null) item.gameObject.AddComponent<WelcomeMessage>();
-                    if (item.gameObject.GetComponent<PowerCheat>() == null)
+                    if (Settings.isDebug)
                     {
-                        if (Settings.isDebug) item.gameObject.AddComponent<PowerCheat>();
+                        if (item.gameObject.GetComponent<PowerCheat>() == null) item.gameObject.AddComponent<PowerCheat>();
+                        if (item.gameObject.GetComponent<SpeedCheat>() == null) item.gameObject.AddComponent<SpeedCheat>();
                     }
-                    if (item.gameObject.GetComponent<SpeedCheat>() == null)
-                    {
-                        if (Settings.isDebug) item.gameObject.AddComponent<SpeedCheat>();
-                    }
+                    
                 }
             }
         }
