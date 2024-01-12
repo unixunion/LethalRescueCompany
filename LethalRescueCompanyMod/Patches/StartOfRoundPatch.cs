@@ -10,11 +10,10 @@ namespace LethalRescueCompanyMod.Patches
     [HarmonyPatch(typeof(StartOfRound))]
     internal class StartOfRoundPatch
     {
-        static bool isDebug = Settings.isDebug;
         static bool hasTriedToConnect = false;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.StartOfRound");
-        static Helper helper = new Helper();
-        
+ 
+
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
         static void UpdatePatch(ref StartOfRound __instance)
@@ -38,9 +37,6 @@ namespace LethalRescueCompanyMod.Patches
                         __instance.livingPlayers += 2;
                         hasTriedToConnect = true;
                         __instance.StartGame();
-
-                        
-
                     }
                 }
 

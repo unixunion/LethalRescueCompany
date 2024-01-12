@@ -70,11 +70,66 @@ namespace LethalRescueCompanyPlugin.Patches
             }
         }
 
+
+
+
+
+        [HarmonyPatch("BeginGrabObject")]
+        [HarmonyPrefix]
+        static void ReplaceObjectWithSurrogate(ref Camera ___gameplayCamera, ref PlayerControllerB __instance)
+        {
+            Ray interactRay = new Ray(___gameplayCamera.transform.position, ___gameplayCamera.transform.forward);
+            Physics.Raycast(interactRay, out var hit, __instance.grabDistance, 832);
+
+            log.LogInfo($"ray hit: {hit}");
+            var currentlyGrabbingObject = hit.collider.transform.gameObject.GetComponent<GrabbableObject>();
+
+            if (currentlyGrabbingObject != null)
+            {
+                log.LogInfo($"grabbing hack: {currentlyGrabbingObject.GetComponent<GrabbableObject>()}");
+
+                var trait = currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
+                trait.Interact();
+
+                if (trait != null)
+                {
+                    log.LogInfo($"BeginGrabbbing: has trait: {currentlyGrabbingObject.name}");
+
+                    var ragdollGrabbableObject = currentlyGrabbingObject.GetComponentInParent<RagdollGrabbableObject>();
+                    if (ragdollGrabbableObject != null)
+                    {
+                        log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
+                        var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
+                        BodyCloneBehavior.ReplacementBody(originalDeadBodyInfo).GetComponent<GrabbableObject>();
+                        //Destroy(originalDeadBodyInfo);
+                    }
+                }
+
+
+            }
+            else
+            {
+                log.LogInfo($"object does not contain GrabbableObject ");
+            }
+
+            // currentlyGrabbingObject.InteractItem();
+
+        }
+
+
+
+
+
+
         [HarmonyPatch("GrabObject")]
         [HarmonyPrefix]
         static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject, ref GrabbableObject ___currentlyHeldObject, ref PlayerControllerB __instance, ref GrabbableObject ___currentlyHeldObjectServer)
         {
-            if (___currentlyGrabbingObject == null) return;
+            if (___currentlyGrabbingObject == null)
+            {
+                log.LogError("grabbing null?");
+                return;
+            };
 
             log.LogInfo($"BeginGrabbbing: {___currentlyGrabbingObject.name}");
 
@@ -99,16 +154,21 @@ namespace LethalRescueCompanyPlugin.Patches
                     // attachedTo = target ( check spider code )
                     // 
 
+                    // notes of what happens when wasMatchingPosition = false.
                     //attachedLimb.position = attachedTo.position;
                     //attachedLimb.rotation = attachedTo.rotation;
                     //attachedLimb.centerOfMass = Vector3.zero;
                     //attachedLimb.inertiaTensorRotation = Quaternion.identity;
 
-                    // fuck with the body parts
-                    //for (int i = 0; i < originalDeadBodyInfo.bodyParts.Length; i++) {
-                    //    originalDeadBodyInfo.bodyParts[i].isKinematic = false;
-                    //    originalDeadBodyInfo.bodyParts[i].WakeUp();
-                    //}
+
+                    // fuck with the body parts as per wasMatchingPosition = false
+                    for (int i = 0; i < originalDeadBodyInfo.bodyParts.Length; i++) {
+                        originalDeadBodyInfo.bodyParts[i].isKinematic = false;
+                        originalDeadBodyInfo.bodyParts[i].WakeUp();
+                    }
+                    originalDeadBodyInfo.attachedLimb.freezeRotation = false;
+                    originalDeadBodyInfo.attachedLimb.isKinematic = false;
+                    
 
 
                     // detaching stuff

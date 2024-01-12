@@ -11,7 +11,7 @@ namespace LethalRescueCompanyMod.Hacks
         public void Start()
         {
             StartCoroutine(powerUpBaby());
-            StartCoroutine(scotty());
+            if (Settings.teleportEnabled) StartCoroutine(scotty());
         }
 
         private IEnumerator powerUpBaby()
