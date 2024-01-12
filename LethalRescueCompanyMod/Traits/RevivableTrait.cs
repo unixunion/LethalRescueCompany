@@ -49,7 +49,6 @@ namespace LethalRescueCompanyMod
            
             if (playerControllerB == null) return;
             if (Settings.debugAddRevive && !isUsed && !isRespawning) StartCoroutine(WaitFiveSecondsAndRevive(playerControllerB, playerControllerB.playersManager.outsideShipSpawnPosition.position, false));
-
             if (grabbableObject == null) return;
            
 

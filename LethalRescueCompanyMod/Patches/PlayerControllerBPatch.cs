@@ -102,12 +102,13 @@ namespace LethalRescueCompanyPlugin.Patches
                     if (ragdollGrabbableObject != null)
                     {
                         log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
-                        //var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
                         
                         var deadBodyInfo = currentlyGrabbingObject.GetComponentInParent<DeadBodyInfo>();
                         if (deadBodyInfo == null) return;
                         log.LogInfo("cloning this shit");
-                        BodyCloneBehavior.ReplacementBody(deadBodyInfo).GetComponent<GrabbableObject>();
+                        //BodyCloneBehavior.ReplacementBody(deadBodyInfo).GetComponent<GrabbableObject>();
+
+                        BodyCloneBehavior.ReplacementBody(ragdollGrabbableObject.ragdoll).GetComponent<GrabbableObject>();
 
                         //Destroy(originalDeadBodyInfo);
                     }

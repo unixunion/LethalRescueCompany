@@ -22,9 +22,19 @@ namespace LethalRescueCompanyMod
             
         }
 
+
+        public void ReviveRescuedPlayerById(int id, Vector3 spawnPosistion, bool removeBody)
+        {
+            PlayerControllerB playerControllerB = RoundManager.Instance.playersManager.allPlayerScripts[id];
+            log.LogInfo($"reviving player: {playerControllerB.playerUsername}");
+            ReviveRescuedPlayer(playerControllerB, spawnPosistion, removeBody);
+
+        }
+
         public void ReviveRescuedPlayer(PlayerControllerB playerControllerB, Vector3 spawnPosistion, bool removeBody)
         {
-            
+            if (playerControllerB == null) return;
+            log.LogInfo($"reviving player: {playerControllerB.playerUsername}");
             try
             {
                 if (Settings.isDebug)
