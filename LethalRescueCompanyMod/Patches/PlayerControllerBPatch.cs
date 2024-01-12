@@ -65,7 +65,7 @@ namespace LethalRescueCompanyPlugin.Patches
             var revivabletrait = ___deadBody.gameObject.GetComponent<RevivableTrait>();
             if (revivabletrait == null)
             {
-                log.LogWarning("revivable trait is null");
+                log.LogDebug("revivable trait is null");
                 return;
             }
         }
@@ -89,16 +89,50 @@ namespace LethalRescueCompanyPlugin.Patches
                 {
                     log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
                     var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
-                    
-                    log.LogInfo($"Confuckery: attachedLimb: {originalDeadBodyInfo.attachedLimb} ||  attachedTo: {originalDeadBodyInfo.attachedTo} ||  attachedTo.parent:{originalDeadBodyInfo.attachedTo.parent} ");
-                    
-                    
+
+                    //log.LogInfo($"debugging: attachedLimb: {originalDeadBodyInfo.attachedLimb} ||  attachedTo: {originalDeadBodyInfo.attachedTo} ||  attachedTo.parent:{originalDeadBodyInfo.attachedTo.parent} {originalDeadBodyInfo} || attachedTo.parent==base.transform {originalDeadBodyInfo.attachedTo == __instance.deadBody.transform} ");
+                    //log.LogInfo($"debugging: lerpBeforeMatchingPosition: {originalDeadBodyInfo.lerpBeforeMatchingPosition} || wasMatchingPosition: {originalDeadBodyInfo.wasMatchingPosition} || matchPositionExactly: {originalDeadBodyInfo.matchPositionExactly}");
+                    //log.LogInfo($"debugging: deactivated: {originalDeadBodyInfo.deactivated} || parentedToShip: {originalDeadBodyInfo.parentedToShip}");
+                    //log.LogInfo($"debugging: attachedLimb.centerOfMass: {originalDeadBodyInfo.attachedLimb.centerOfMass}, attachedLimb.inertiaTensorRotation: {originalDeadBodyInfo.attachedLimb.inertiaTensorRotation}");
+
+                    // attachedLimb = PlayerRagdoll(Clone)
+                    // attachedTo = target ( check spider code )
+                    // 
+
+                    //attachedLimb.position = attachedTo.position;
+                    //attachedLimb.rotation = attachedTo.rotation;
+                    //attachedLimb.centerOfMass = Vector3.zero;
+                    //attachedLimb.inertiaTensorRotation = Quaternion.identity;
+
+                    // fuck with the body parts
+                    //for (int i = 0; i < originalDeadBodyInfo.bodyParts.Length; i++) {
+                    //    originalDeadBodyInfo.bodyParts[i].isKinematic = false;
+                    //    originalDeadBodyInfo.bodyParts[i].WakeUp();
+                    //}
+
+
+                    // detaching stuff
+                    //if (originalDeadBodyInfo.attachedLimb != null)
+                    //{
+                    //    originalDeadBodyInfo.attachedLimb.isKinematic = false;
+                    //    originalDeadBodyInfo.attachedLimb.freezeRotation = false;
+                    //}
+
+
                     originalDeadBodyInfo.attachedLimb = null;
                     originalDeadBodyInfo.attachedTo = null;
-                    
-                    log.LogInfo($"Lerp: {originalDeadBodyInfo.lerpBeforeMatchingPosition} || wasMatchingPosition: {originalDeadBodyInfo.wasMatchingPosition} || matchPositionExactly: {originalDeadBodyInfo.matchPositionExactly}");
-                    originalDeadBodyInfo.lerpBeforeMatchingPosition = false;
+
+                    // more
+                    //originalDeadBodyInfo.secondaryAttachedLimb = null;
+                    //originalDeadBodyInfo.secondaryAttachedTo = null;
+
+                    // makes things at least grabbable
                     originalDeadBodyInfo.wasMatchingPosition = false;
+
+
+                    // experiments 
+                    // originalDeadBodyInfo.lerpBeforeMatchingPosition = false;
+                    // ragdollGrabbableObject.EquipItem();
                     //originalDeadBodyInfo.matchPositionExactly = false;
                     //originalDeadBodyInfo.bodyParts[6].transform.
                 }

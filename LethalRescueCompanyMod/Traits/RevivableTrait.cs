@@ -59,7 +59,7 @@ namespace LethalRescueCompanyMod
                 }
             } else
             {
-                log.LogError($"revive conditions unmet: {grabbableObject.isInShipRoom}, {playerControllerB.playersManager} ");
+                log.LogDebug($"revive conditions unmet: {grabbableObject.isInShipRoom}, {playerControllerB.playersManager} ");
             }
         }
 
