@@ -5,6 +5,7 @@ using BepInEx;
 using LethalRescueCompanyMod;
 using LethalRescueCompanyMod.NetworkBehaviors;
 using UnityEngine;
+using System.Linq;
 
 //round manager has spawn enemies
 
@@ -145,6 +146,18 @@ namespace LethalRescueCompanyPlugin.Patches
                     log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
                     var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
 
+
+
+                    originalDeadBodyInfo.playerScript.SpawnDeadBody(
+                            (int)originalDeadBodyInfo.playerScript.playerClientId,
+                            Vector3.zero,
+                            (int)CauseOfDeath.Mauling,
+                            originalDeadBodyInfo.playerScript
+                        );
+
+                    
+                    
+
                     //log.LogInfo($"debugging: attachedLimb: {originalDeadBodyInfo.attachedLimb} ||  attachedTo: {originalDeadBodyInfo.attachedTo} ||  attachedTo.parent:{originalDeadBodyInfo.attachedTo.parent} {originalDeadBodyInfo} || attachedTo.parent==base.transform {originalDeadBodyInfo.attachedTo == __instance.deadBody.transform} ");
                     //log.LogInfo($"debugging: lerpBeforeMatchingPosition: {originalDeadBodyInfo.lerpBeforeMatchingPosition} || wasMatchingPosition: {originalDeadBodyInfo.wasMatchingPosition} || matchPositionExactly: {originalDeadBodyInfo.matchPositionExactly}");
                     //log.LogInfo($"debugging: deactivated: {originalDeadBodyInfo.deactivated} || parentedToShip: {originalDeadBodyInfo.parentedToShip}");
@@ -162,16 +175,16 @@ namespace LethalRescueCompanyPlugin.Patches
 
 
                     // fuck with the body parts as per wasMatchingPosition = false
-                    for (int i = 0; i < originalDeadBodyInfo.bodyParts.Length; i++) {
-                        originalDeadBodyInfo.bodyParts[i].isKinematic = false;
-                        originalDeadBodyInfo.bodyParts[i].WakeUp();
-                    }
+                    //for (int i = 0; i < originalDeadBodyInfo.bodyParts.Length; i++) {
+                    //    originalDeadBodyInfo.bodyParts[i].isKinematic = false;
+                    //    originalDeadBodyInfo.bodyParts[i].WakeUp();
+                    //}
 
-                    if (originalDeadBodyInfo.attachedLimb != null)
-                    {
-                        originalDeadBodyInfo.attachedLimb.freezeRotation = false;
-                        originalDeadBodyInfo.attachedLimb.isKinematic = false;
-                    }
+                    //if (originalDeadBodyInfo.attachedLimb != null)
+                    //{
+                    //    originalDeadBodyInfo.attachedLimb.freezeRotation = false;
+                    //    originalDeadBodyInfo.attachedLimb.isKinematic = false;
+                    //}
 
 
                     // detaching stuff
@@ -182,8 +195,8 @@ namespace LethalRescueCompanyPlugin.Patches
                     //}
 
 
-                    originalDeadBodyInfo.attachedLimb = null;
-                    originalDeadBodyInfo.attachedTo = null;
+                    //originalDeadBodyInfo.attachedLimb = null;
+                    //originalDeadBodyInfo.attachedTo = null;
 
                     // more
                     //originalDeadBodyInfo.secondaryAttachedLimb = null;
