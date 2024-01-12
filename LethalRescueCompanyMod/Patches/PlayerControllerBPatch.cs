@@ -141,22 +141,18 @@ namespace LethalRescueCompanyPlugin.Patches
                 log.LogInfo($"BeginGrabbbing: has RevivableTrait. obj.name: {___currentlyGrabbingObject.name}");
 
                 var ragdollGrabbableObject = ___currentlyGrabbingObject.GetComponentInParent<RagdollGrabbableObject>();
+                var deadBodyInfo = ___currentlyGrabbingObject.GetComponentInParent<DeadBodyInfo>();
                 if (ragdollGrabbableObject != null)
                 {
                     log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
                     var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
 
-
-
-                    originalDeadBodyInfo.playerScript.SpawnDeadBody(
+                    __instance.SpawnDeadBody(
                             (int)originalDeadBodyInfo.playerScript.playerClientId,
                             Vector3.zero,
                             (int)CauseOfDeath.Mauling,
-                            originalDeadBodyInfo.playerScript
+                            deadBodyInfo.playerScript
                         );
-
-                    
-                    
 
                     //log.LogInfo($"debugging: attachedLimb: {originalDeadBodyInfo.attachedLimb} ||  attachedTo: {originalDeadBodyInfo.attachedTo} ||  attachedTo.parent:{originalDeadBodyInfo.attachedTo.parent} {originalDeadBodyInfo} || attachedTo.parent==base.transform {originalDeadBodyInfo.attachedTo == __instance.deadBody.transform} ");
                     //log.LogInfo($"debugging: lerpBeforeMatchingPosition: {originalDeadBodyInfo.lerpBeforeMatchingPosition} || wasMatchingPosition: {originalDeadBodyInfo.wasMatchingPosition} || matchPositionExactly: {originalDeadBodyInfo.matchPositionExactly}");
