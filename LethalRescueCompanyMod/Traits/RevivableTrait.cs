@@ -23,7 +23,7 @@ namespace LethalRescueCompanyMod
         
         void Update()
         {
-            revivePlayer();
+            revivePlayer(true);
         }
 
         public void Interact()
@@ -44,7 +44,7 @@ namespace LethalRescueCompanyMod
             this.playerControllerB = controller;
         }
 
-        public void revivePlayer()
+        public void revivePlayer(bool removeBody)
         {
             log.LogInfo("checking1");
             if (grabbableObject == null) return;
@@ -59,8 +59,7 @@ namespace LethalRescueCompanyMod
                     if (!isRespawning && !isUsed)
                     {
                         log.LogInfo("revive conditions met, object is not held");
-                        StartCoroutine(WaitFiveSecondsAndRevive(playerControllerB, playerControllerB.playersManager.playerSpawnPositions[0].position));
-                        
+                        StartCoroutine(WaitFiveSecondsAndRevive(playerControllerB, playerControllerB.playersManager.playerSpawnPositions[0].position, removeBody));
                     }
                 }
             } else
@@ -113,26 +112,26 @@ namespace LethalRescueCompanyMod
         }
 
 
-        public void DebugRevive(DeadBodyInfo deadBodyInfo)
+        public void DebugRevive(DeadBodyInfo deadBodyInfo, bool removeBody)
         {
             if (isDebug)
             {
                 if (!isRespawning)
                 {
                     if (Settings.isDebug) log.LogInfo("trait found, reviving coroutine");
-                    StartCoroutine(WaitFiveSecondsAndRevive(deadBodyInfo.playerScript, deadBodyInfo.transform.position));
+                    StartCoroutine(WaitFiveSecondsAndRevive(deadBodyInfo.playerScript, deadBodyInfo.transform.position, removeBody));
                 }
             }
         }
 
-        public IEnumerator WaitFiveSecondsAndRevive(PlayerControllerB playerControllerB, Vector3 spawnPositions)
+        public IEnumerator WaitFiveSecondsAndRevive(PlayerControllerB playerControllerB, Vector3 spawnPositions, bool removeBody)
         {
             isRespawning = true;
             isUsed = true;
             log.LogMessage("Start waiting");
             yield return new WaitForSeconds(5);
             log.LogMessage("Done waiting");
-            helper.ReviveRescuedPlayer(playerControllerB, spawnPositions);
+            helper.ReviveRescuedPlayer(playerControllerB, spawnPositions, removeBody);
             isUsed = true;
             isRespawning = false;
         }

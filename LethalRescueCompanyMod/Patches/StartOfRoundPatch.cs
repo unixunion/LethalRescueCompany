@@ -7,8 +7,6 @@ using LethalRescueCompanyMod.Hacks;
 
 namespace LethalRescueCompanyMod.Patches
 {
-    //76561197971961474 --kegan
-    //76561198057628250 --arron
     [HarmonyPatch(typeof(StartOfRound))]
     internal class StartOfRoundPatch
     {
@@ -46,16 +44,13 @@ namespace LethalRescueCompanyMod.Patches
                     }
                 }
 
-                if (__instance.localPlayerController.isPlayerDead)
-                {
-                    
-                    RevivableTrait revivable = __instance.localPlayerController.deadBody.gameObject.GetComponent<RevivableTrait>();
-                    if (revivable != null) revivable.revivePlayer(); // .DebugRevive(__instance.localPlayerController.deadBody, __instance.localPlayerController.playersManager);
-                } else
-                {
-                    
-                }
-
+                //if (__instance.localPlayerController.isPlayerDead)
+                //{
+                //    RevivableTrait revivable = __instance.localPlayerController.deadBody.gameObject.GetComponent<RevivableTrait>();
+                //    if (revivable != null) revivable.revivePlayer(); // .DebugRevive(__instance.localPlayerController.deadBody, __instance.localPlayerController.playersManager);
+                //} else
+                //{
+                //}
             }
         }
         [HarmonyPatch("Awake")]
@@ -79,9 +74,7 @@ namespace LethalRescueCompanyMod.Patches
             {
                 __instance.allItemsList.itemsList.Add(cubeAsset.GetComponent<LRCGrabbableObject>()?.itemProperties);
             }
-
         }
-
 
         [HarmonyPatch("StartGame")]
         [HarmonyPostfix]
@@ -89,7 +82,6 @@ namespace LethalRescueCompanyMod.Patches
         {
             AddWelcomeMessage(__instance);
         }
-
 
         private static void AddWelcomeMessage(StartOfRound playersManager)
         {

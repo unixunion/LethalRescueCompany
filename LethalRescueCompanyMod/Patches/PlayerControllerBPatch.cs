@@ -35,7 +35,6 @@ namespace LethalRescueCompanyPlugin.Patches
 
         }
 
-
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
         static void updatePatch(

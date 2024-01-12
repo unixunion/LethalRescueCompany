@@ -22,7 +22,7 @@ namespace LethalRescueCompanyMod
             
         }
 
-        public void ReviveRescuedPlayer(PlayerControllerB playerControllerB, Vector3 spawnPosistion)
+        public void ReviveRescuedPlayer(PlayerControllerB playerControllerB, Vector3 spawnPosistion, bool removeBody)
         {
             
             try
@@ -100,7 +100,11 @@ namespace LethalRescueCompanyMod
                 HUDManager.Instance.HideHUD(hide: false);
 
                 // destroy deadbody
-                Destroy(ps.deadBody);
+                if (removeBody)
+                {
+                    Destroy(ps.deadBody.gameObject);
+                    Destroy(ps.deadBody);
+                }
 
                 if (Settings.isDebug) log.LogInfo($"end ReviveRescuedPlayer");
             }
