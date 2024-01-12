@@ -65,7 +65,7 @@ namespace LethalRescueCompanyPlugin.Patches
             var revivabletrait = ___deadBody.gameObject.GetComponent<RevivableTrait>();
             if (revivabletrait == null)
             {
-                log.LogDebug("revivable trait is null");
+                //log.LogDebug("revivable trait is null");
                 return;
             }
         }
