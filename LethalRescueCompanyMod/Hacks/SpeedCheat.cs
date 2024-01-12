@@ -23,7 +23,7 @@ namespace LethalRescueCompanyMod.Hacks
             log.LogInfo("Snorting the cocain");
             yield return new WaitForSeconds(5);
             gameObject.GetComponentInParent<PlayerControllerB>().movementSpeed = 10f;
-            Destroy(this);
+            //Destroy(this);
         }
 
     }

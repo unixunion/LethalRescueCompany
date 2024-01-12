@@ -36,63 +36,6 @@ namespace LethalRescueCompanyPlugin.Patches
         }
 
 
-        //[HarmonyPatch("BeginGrabObject")]
-        //[HarmonyPrefix]
-        static void ReplaceObjectWithSurrogate(ref Camera ___gameplayCamera, ref PlayerControllerB __instance)
-        {
-            Ray interactRay = new Ray(___gameplayCamera.transform.position, ___gameplayCamera.transform.forward);
-            Physics.Raycast(interactRay, out var hit, __instance.grabDistance, 832);
-
-            if (hit.collider == null) return;
-            log.LogInfo($"ray hit: {hit.collider.transform.gameObject}");
-
-            var testing = hit.collider.transform.gameObject.GetComponent<GrabbableObject>();
-
-            //var testing = hit.collider.transform.gameObject.GetComponentInParent<DeadBodyInfo>();
-            log.LogInfo($"testing: {testing.name}");
-            //var t2 = hit.collider.transform.gameObject.GetComponentInParent<RagdollGrabbableObject>();
-            //log.LogInfo($"t2: {t2}");
-            //var t3 = hit.collider.transform.gameObject.GetComponent<RagdollGrabbableObject>();
-            //log.LogInfo($"t3: {t3}");
-            //var t4 = hit.collider.transform.gameObject.GetComponentInChildren<RagdollGrabbableObject>();
-            //log.LogInfo($"t4: {t4}");
-
-
-            var currentlyGrabbingObject = hit.collider.transform.gameObject.GetComponent<GrabbableObject>();
-            if (testing != null) // && testing.attachedTo != null
-            {
-
-                log.LogMessage("ray hit a grabbable");
-
-                var dbinfo = hit.collider.transform.gameObject.GetComponentInParent<DeadBodyInfo>();
-                if (dbinfo != null)
-                {
-                    log.LogInfo("freeing the body");
-
-                    // changed from nulling to setting kinematics TODO FIXME TESTING
-                    if (dbinfo.attachedLimb != null) dbinfo.attachedLimb.isKinematic = false;
-                    
-                    dbinfo.attachedTo = null;
-                    dbinfo.wasMatchingPosition = false;
-                } else
-                {
-                    log.LogWarning("not sure what the hell this is?");
-                }
-                
-            }
-        }
-
-
-        //    }
-        //    else
-        //    {
-        //        log.LogInfo($"object does not contain GrabbableObject ");
-        //    }
-
-        //    // currentlyGrabbingObject.InteractItem();
-
-        //}
-
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
         static void updatePatch(
@@ -128,19 +71,11 @@ namespace LethalRescueCompanyPlugin.Patches
             }
         }
 
-
-
         [HarmonyPatch("GrabObject")]
         [HarmonyPrefix]
         static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject, ref GrabbableObject ___currentlyHeldObject, ref PlayerControllerB __instance, ref GrabbableObject ___currentlyHeldObjectServer)
         {
-
-            // look at RagdollGrabbableObject
-            // RagdollGrabbableObject
-
             if (___currentlyGrabbingObject == null) return;
-            //if (___currentlyHeldObject != null) return;
-
 
             log.LogInfo($"BeginGrabbbing: {___currentlyGrabbingObject.name}");
 
@@ -159,40 +94,18 @@ namespace LethalRescueCompanyPlugin.Patches
                     originalDeadBodyInfo.attachedLimb = null;
                     originalDeadBodyInfo.attachedTo = null;
                     originalDeadBodyInfo.wasMatchingPosition = false;
-
-                    // glutchfest 2024
-                    //log.LogInfo("performing the switcheroo");
-                    //var cloneDeadbodyInfo = BodyCloneBehavior.CloneDeadBody(originalDeadBodyInfo);
-
-                    //ragdollGrabbableObject.ragdoll = cloneDeadbodyInfo;
-                    //log.LogInfo($"BeginGrabbbing: now set to: {___currentlyGrabbingObject.name}");
-
-                    // this was in order to grab the network spawned cube, dont delete it!
-                    //___currentlyGrabbingObject = BodyCloneBehavior.ReplacementBody(originalDeadBodyInfo).GetComponent<GrabbableObject>();
-                    //___currentlyHeldObjectServer = ___currentlyGrabbingObject;
-
-                    //__instance.SpawnDeadBody(originalDeadBodyInfo.playerObjectId, originalDeadBodyInfo.transform.position, 0, originalDeadBodyInfo.playerScript);
-                    //Destroy(___currentlyGrabbingObject);
-
                 }
                 else
                 {
                     log.LogWarning("BeginGrabbbing: not ragdollGrabbableObject");
                 }
-
                 log.LogInfo("ive done all I can");
             }
-
-
-
             else
             {
                 log.LogDebug("no revivable trait found, cant grab patch this");
             }
         }
-
-
-
 
         [HarmonyPatch("SpawnDeadBody")]
         [HarmonyPostfix]

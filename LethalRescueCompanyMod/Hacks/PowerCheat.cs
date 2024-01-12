@@ -20,7 +20,7 @@ namespace LethalRescueCompanyMod.Hacks
             RoundManager.Instance.SwitchPower(true);
             
             yield return new WaitForSeconds(10);
-            Destroy(this);
+            //Destroy(this);
         }
 
         private IEnumerator scotty()

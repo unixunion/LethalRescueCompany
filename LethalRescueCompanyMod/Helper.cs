@@ -100,7 +100,7 @@ namespace LethalRescueCompanyMod
                 HUDManager.Instance.HideHUD(hide: false);
 
                 // destroy deadbody
-                // if(!Settings.isDebug) Destroy(deadbody.gameObject);
+                Destroy(ps.deadBody);
 
                 if (Settings.isDebug) log.LogInfo($"end ReviveRescuedPlayer");
             }

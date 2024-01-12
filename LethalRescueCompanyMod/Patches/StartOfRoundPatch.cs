@@ -88,9 +88,6 @@ namespace LethalRescueCompanyMod.Patches
         static void startOfRoundPatch(ref StartOfRound __instance)
         {
             AddWelcomeMessage(__instance);
-
-            
-
         }
 
 
