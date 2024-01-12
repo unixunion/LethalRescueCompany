@@ -233,7 +233,7 @@ namespace LethalRescueCompanyPlugin.Patches
         [HarmonyPostfix]
         static void debugDeath(ref PlayerControllerB __instance)
         {
-            if (Settings.debugAddRevive)
+            if (Settings.isDebug)
             {
                 log.LogInfo("making revivable");
                 RevivableTrait revivableTrait = __instance.deadBody.gameObject.AddComponent<RevivableTrait>();
