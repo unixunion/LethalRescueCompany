@@ -107,6 +107,7 @@ namespace LethalRescueCompanyMod
                 }
 
                 if (Settings.isDebug) log.LogInfo($"end ReviveRescuedPlayer");
+                if (Settings.isDebug) ps.nightVision.enabled = true;
             }
             catch (Exception ex)
             {
