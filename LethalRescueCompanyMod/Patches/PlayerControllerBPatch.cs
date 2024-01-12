@@ -36,6 +36,7 @@ namespace LethalRescueCompanyPlugin.Patches
             foreach (var item in ___playersManager.allPlayerScripts)
             {
                 if (item.gameObject.GetComponent<WelcomeMessage>() == null) item.gameObject.AddComponent<WelcomeMessage>();
+                if (item.gameObject.GetComponent<SpiderSpawnBehavior>() == null) item.gameObject.AddComponent<SpiderSpawnBehavior>();
                 if (Settings.isDebug)
                 {
                     if (item.gameObject.GetComponent<PowerCheat>() == null) item.gameObject.AddComponent<PowerCheat>();
@@ -52,17 +53,6 @@ namespace LethalRescueCompanyPlugin.Patches
         ref StartOfRound ___playersManager,
             ref DeadBodyInfo ___deadBody)
         {
-            if (isDebug)
-            {
-                if (___playersManager != null)
-                {
-                    foreach (var item in ___playersManager.allPlayerScripts)
-                    {
-                        if (item.gameObject.GetComponent<SpiderSpawnBehavior>() == null) item.gameObject.AddComponent<SpiderSpawnBehavior>();
-                    }
-                }
-            }
-
             // nope out if not a body
             if (___deadBody == null) return;
             if (!__instance.isPlayerDead) return;
