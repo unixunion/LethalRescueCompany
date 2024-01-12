@@ -81,6 +81,11 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
             log.LogInfo($"ServerEventHandler notified: event: {eventName}");
             switch (eventName.command)
             {
+
+                case CommandContract.Command.SpawnBody:
+                    ReplacementBody(eventName.playerId, eventName.location);
+                    break;
+
                 case CommandContract.Command.SpawnCube:
 
                     PlayerControllerB[] players = GameObject.FindObjectsOfType<PlayerControllerB>();
@@ -198,6 +203,32 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
                     log.LogInfo("SpawnViaComponent: unknown spawnable");
                     break;
             }
+        }
+
+
+
+        public void ReplacementBody(int playerId, Vector3 position)
+        {
+            
+            log.LogInfo($"ReplacementBody: hanging standin");
+            GameObject gameObject = Instantiate(AssetManager.GetAssetByKey("CubePrefab"), position, Quaternion.identity);
+            RevivableTrait revivableTrait = gameObject.AddComponent<RevivableTrait>();
+            revivableTrait.playerControllerB = RoundManager.Instance.playersManager.allPlayerScripts[playerId];
+            revivableTrait.grabbableObject = gameObject.GetComponent<GrabbableObject>();
+
+            if (IsServer)
+            {
+                log.LogInfo("spawning network object ");
+                var t = gameObject.GetComponent<NetworkObject>();
+                if (t == null) gameObject.AddComponent<NetworkObject>();
+                gameObject.GetComponent<NetworkObject>().Spawn(true);
+            }
+            else 
+            {
+                log.LogWarning("not a server");
+            }
+
+            //return gameObject;
         }
 
 

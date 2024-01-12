@@ -7,11 +7,13 @@ namespace LethalRescueCompanyMod.Models
     {
         public CommandContract.Command command;
         public Vector3 location;
+        public int playerId;
 
-        public Event(CommandContract.Command command, Vector3 location)
+        public Event(CommandContract.Command command, Vector3 location, int playerId)
         {
             this.command = command;
             this.location = location;
+            this.playerId = playerId;
         }
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
@@ -21,12 +23,14 @@ namespace LethalRescueCompanyMod.Models
                 var reader = serializer.GetFastBufferReader();
                 reader.ReadValueSafe(out command);
                 reader.ReadValueSafe(out location);
+                reader.ReadValueSafe(out playerId);
             }
             else
             {
                 var writer = serializer.GetFastBufferWriter();
                 writer.WriteValueSafe(command);
                 writer.WriteValueSafe(location);
+                writer.WriteValueSafe(playerId);
             }
         }
 

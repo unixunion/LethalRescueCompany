@@ -108,7 +108,7 @@ namespace LethalRescueCompanyPlugin.Patches
                         log.LogInfo("cloning this shit");
                         //BodyCloneBehavior.ReplacementBody(deadBodyInfo).GetComponent<GrabbableObject>();
 
-                        BodyCloneBehavior.ReplacementBody(ragdollGrabbableObject.ragdoll).GetComponent<GrabbableObject>();
+                        BodyCloneBehavior.ReplacementBody(ragdollGrabbableObject.ragdoll); //.GetComponent<GrabbableObject>();
 
                         //Destroy(originalDeadBodyInfo);
                     }

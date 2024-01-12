@@ -7,6 +7,7 @@ public static class CommandContract
         SpawnSpider,
         SpawnCube,
         KillSpider,
-        DeadSwap
+        DeadSwap,
+        SpawnBody,
     }
 }

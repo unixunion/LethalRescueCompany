@@ -68,7 +68,7 @@ namespace LethalRescueCompanyMod.Patches
                     break;
                 default:
                     log.LogInfo("default spawn action interpreter");
-                    var commandObj = new Event(CommandContract.Command.SpawnCube, Vector3.zero);
+                    var commandObj = new Event(CommandContract.Command.SpawnCube, Vector3.zero.normalized, (int)player.playerClientId);
                     RescueCompanyController.Instance.HandleEvent(commandObj);
                     break;
             }
