@@ -46,8 +46,15 @@ namespace LethalRescueCompanyMod
 
         public void revivePlayer(bool removeBody)
         {
-            if (grabbableObject == null) return;
+           
             if (playerControllerB == null) return;
+            if (Settings.debugAddRevive && !isUsed && !isRespawning) StartCoroutine(WaitFiveSecondsAndRevive(playerControllerB, playerControllerB.playersManager.outsideShipSpawnPosition.position, false));
+
+            if (grabbableObject == null) return;
+           
+
+            // debug revival
+
             if (grabbableObject.isInShipRoom && playerControllerB.playersManager!=null)
             {
                 if (!grabbableObject.isHeld) {
@@ -127,7 +134,6 @@ namespace LethalRescueCompanyMod
             yield return new WaitForSeconds(5);
             log.LogMessage("Done waiting");
             helper.ReviveRescuedPlayer(playerControllerB, spawnPositions, removeBody);
-            isUsed = true;
             isRespawning = false;
         }
     }

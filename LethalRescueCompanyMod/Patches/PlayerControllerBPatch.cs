@@ -7,6 +7,7 @@ using LethalRescueCompanyMod.NetworkBehaviors;
 using UnityEngine;
 using LethalRescueCompanyMod.Hacks;
 using System.Linq;
+using LethalRescueCompanyMod.Models;
 
 //round manager has spawn enemies
 
@@ -26,6 +27,7 @@ namespace LethalRescueCompanyPlugin.Patches
         static bool isDebug = Settings.isDebug;
         static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
         static Helper helper = new Helper();
+        
 
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
@@ -75,8 +77,8 @@ namespace LethalRescueCompanyPlugin.Patches
 
 
 
-        //[HarmonyPatch("BeginGrabObject")]
-        //[HarmonyPrefix]
+        [HarmonyPatch("BeginGrabObject")]
+        [HarmonyPrefix]
         static void ReplaceObjectWithSurrogate(ref Camera ___gameplayCamera, ref PlayerControllerB __instance)
         {
             Ray interactRay = new Ray(___gameplayCamera.transform.position, ___gameplayCamera.transform.forward);
@@ -90,18 +92,23 @@ namespace LethalRescueCompanyPlugin.Patches
                 log.LogInfo($"grabbing hack: {currentlyGrabbingObject.GetComponent<GrabbableObject>()}");
 
                 var trait = currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
-                trait.Interact();
 
                 if (trait != null)
                 {
+   
                     log.LogInfo($"BeginGrabbbing: has trait: {currentlyGrabbingObject.name}");
-
+                    trait.Interact();
                     var ragdollGrabbableObject = currentlyGrabbingObject.GetComponentInParent<RagdollGrabbableObject>();
                     if (ragdollGrabbableObject != null)
                     {
                         log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
-                        var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
-                        BodyCloneBehavior.ReplacementBody(originalDeadBodyInfo).GetComponent<GrabbableObject>();
+                        //var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
+                        
+                        var deadBodyInfo = currentlyGrabbingObject.GetComponentInParent<DeadBodyInfo>();
+                        if (deadBodyInfo == null) return;
+                        log.LogInfo("cloning this shit");
+                        BodyCloneBehavior.ReplacementBody(deadBodyInfo).GetComponent<GrabbableObject>();
+
                         //Destroy(originalDeadBodyInfo);
                     }
                 }
@@ -122,8 +129,8 @@ namespace LethalRescueCompanyPlugin.Patches
 
 
 
-        [HarmonyPatch("GrabObject")]
-        [HarmonyPrefix]
+        //[HarmonyPatch("GrabObject")]
+        //[HarmonyPrefix]
         static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject, ref GrabbableObject ___currentlyHeldObject, ref PlayerControllerB __instance, ref GrabbableObject ___currentlyHeldObjectServer)
         {
             if (___currentlyGrabbingObject == null)
@@ -171,16 +178,17 @@ namespace LethalRescueCompanyPlugin.Patches
 
 
                     // fuck with the body parts as per wasMatchingPosition = false
-                    //for (int i = 0; i < originalDeadBodyInfo.bodyParts.Length; i++) {
-                    //    originalDeadBodyInfo.bodyParts[i].isKinematic = false;
-                    //    originalDeadBodyInfo.bodyParts[i].WakeUp();
-                    //}
+                    for (int i = 0; i < deadBodyInfo.bodyParts.Length; i++)
+                    {
+                        deadBodyInfo.bodyParts[i].isKinematic = false;
+                        deadBodyInfo.bodyParts[i].WakeUp();
+                    }
 
-                    //if (originalDeadBodyInfo.attachedLimb != null)
-                    //{
-                    //    originalDeadBodyInfo.attachedLimb.freezeRotation = false;
-                    //    originalDeadBodyInfo.attachedLimb.isKinematic = false;
-                    //}
+                    if (deadBodyInfo.attachedLimb != null)
+                    {
+                        deadBodyInfo.attachedLimb.freezeRotation = false;
+                        deadBodyInfo.attachedLimb.isKinematic = false;
+                    }
 
 
                     // detaching stuff
@@ -191,8 +199,8 @@ namespace LethalRescueCompanyPlugin.Patches
                     //}
 
 
-                    //originalDeadBodyInfo.attachedLimb = null;
-                    //originalDeadBodyInfo.attachedTo = null;
+                    deadBodyInfo.attachedLimb = null;
+                    deadBodyInfo.attachedTo = null;
 
                     // more
                     //originalDeadBodyInfo.secondaryAttachedLimb = null;
@@ -228,7 +236,8 @@ namespace LethalRescueCompanyPlugin.Patches
             if (Settings.debugAddRevive)
             {
                 log.LogInfo("making revivable");
-                __instance.deadBody.gameObject.AddComponent<RevivableTrait>();
+                RevivableTrait revivableTrait = __instance.deadBody.gameObject.AddComponent<RevivableTrait>();
+                revivableTrait.setPlayerControllerB(__instance);
                 log.LogInfo("trait added");
             }
         }

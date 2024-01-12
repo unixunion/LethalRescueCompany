@@ -15,8 +15,8 @@ namespace LethalRescueCompanyMod.NetworkBehaviors
         {
             var tf = deadBodyInfo.transform;
             //AssetManager.GetAssetByKey("CubePrefab")
-            log.LogInfo($"ReplacementBody: hanging body prefab: {Settings.hangingBodyPrefab}");
-            GameObject gameObject = Instantiate(Settings.hangingBodyPrefab, tf.position, tf.rotation);
+            log.LogInfo($"ReplacementBody: hanging standin");
+            GameObject gameObject = Instantiate(AssetManager.GetAssetByKey("CubePrefab"), tf.position, tf.rotation);
             RevivableTrait revivableTrait = gameObject.AddComponent<RevivableTrait>();
             revivableTrait.playerControllerB = deadBodyInfo.playerScript;
             revivableTrait.grabbableObject = gameObject.GetComponent<GrabbableObject>();
