@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace LethalRescueCompanyMod
 {
@@ -14,6 +9,7 @@ namespace LethalRescueCompanyMod
     {
         public static bool isDebug { get; set; } = true;
         public static bool isSolo { get; set; } = true;
+        public static bool debugAddRevive { get; set; } = false;
         public static GameObject hangingBodyPrefab { get; set; } = null;
     }
 }

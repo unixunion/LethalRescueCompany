@@ -36,8 +36,8 @@ namespace LethalRescueCompanyPlugin.Patches
         }
 
 
-        [HarmonyPatch("BeginGrabObject")]
-        [HarmonyPrefix]
+        //[HarmonyPatch("BeginGrabObject")]
+        //[HarmonyPrefix]
         static void ReplaceObjectWithSurrogate(ref Camera ___gameplayCamera, ref PlayerControllerB __instance)
         {
             Ray interactRay = new Ray(___gameplayCamera.transform.position, ___gameplayCamera.transform.forward);
@@ -49,7 +49,7 @@ namespace LethalRescueCompanyPlugin.Patches
             var testing = hit.collider.transform.gameObject.GetComponent<GrabbableObject>();
 
             //var testing = hit.collider.transform.gameObject.GetComponentInParent<DeadBodyInfo>();
-            log.LogInfo($"testing: {testing}");
+            log.LogInfo($"testing: {testing.name}");
             //var t2 = hit.collider.transform.gameObject.GetComponentInParent<RagdollGrabbableObject>();
             //log.LogInfo($"t2: {t2}");
             //var t3 = hit.collider.transform.gameObject.GetComponent<RagdollGrabbableObject>();
@@ -68,7 +68,10 @@ namespace LethalRescueCompanyPlugin.Patches
                 if (dbinfo != null)
                 {
                     log.LogInfo("freeing the body");
-                    dbinfo.attachedLimb = null;
+
+                    // changed from nulling to setting kinematics TODO FIXME TESTING
+                    if (dbinfo.attachedLimb != null) dbinfo.attachedLimb.isKinematic = false;
+                    
                     dbinfo.attachedTo = null;
                     dbinfo.wasMatchingPosition = false;
                 } else
@@ -125,8 +128,10 @@ namespace LethalRescueCompanyPlugin.Patches
             }
         }
 
-        //[HarmonyPatch("GrabObject")]
-        //[HarmonyPrefix]
+
+
+        [HarmonyPatch("GrabObject")]
+        [HarmonyPrefix]
         static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject, ref GrabbableObject ___currentlyHeldObject, ref PlayerControllerB __instance, ref GrabbableObject ___currentlyHeldObjectServer)
         {
 
@@ -143,13 +148,17 @@ namespace LethalRescueCompanyPlugin.Patches
 
             if (trait != null)
             {
-                log.LogInfo($"BeginGrabbbing: has trait: {___currentlyGrabbingObject.name}");
+                log.LogInfo($"BeginGrabbbing: has RevivableTrait. obj.name: {___currentlyGrabbingObject.name}");
 
                 var ragdollGrabbableObject = ___currentlyGrabbingObject.GetComponentInParent<RagdollGrabbableObject>();
                 if (ragdollGrabbableObject != null)
                 {
                     log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
                     var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
+
+                    originalDeadBodyInfo.attachedLimb = null;
+                    originalDeadBodyInfo.attachedTo = null;
+                    originalDeadBodyInfo.wasMatchingPosition = false;
 
                     // glutchfest 2024
                     //log.LogInfo("performing the switcheroo");
@@ -159,7 +168,7 @@ namespace LethalRescueCompanyPlugin.Patches
                     //log.LogInfo($"BeginGrabbbing: now set to: {___currentlyGrabbingObject.name}");
 
                     // this was in order to grab the network spawned cube, dont delete it!
-                    ___currentlyGrabbingObject = BodyCloneBehavior.ReplacementBody(originalDeadBodyInfo).GetComponent<GrabbableObject>();
+                    //___currentlyGrabbingObject = BodyCloneBehavior.ReplacementBody(originalDeadBodyInfo).GetComponent<GrabbableObject>();
                     //___currentlyHeldObjectServer = ___currentlyGrabbingObject;
 
                     //__instance.SpawnDeadBody(originalDeadBodyInfo.playerObjectId, originalDeadBodyInfo.transform.position, 0, originalDeadBodyInfo.playerScript);
@@ -189,7 +198,7 @@ namespace LethalRescueCompanyPlugin.Patches
         [HarmonyPostfix]
         static void debugDeath(ref PlayerControllerB __instance)
         {
-            if (isDebug)
+            if (Settings.debugAddRevive)
             {
                 log.LogInfo("making revivable");
                 __instance.deadBody.gameObject.AddComponent<RevivableTrait>();

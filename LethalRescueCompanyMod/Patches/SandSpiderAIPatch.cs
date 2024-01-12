@@ -68,6 +68,7 @@ namespace LethalRescueCompanyMod.Patches
             //if (Settings.isDebug) log.LogInfo($"reattached via secondary to the primary attachment point");
 
             deadBodyInfo.canBeGrabbedBackByPlayers = true;
+            
             // according to code, this is not needed, as the above line overrides it in the late update.
             //deadBodyInfo.grabBodyObject.grabbable = true;
             
@@ -78,6 +79,7 @@ namespace LethalRescueCompanyMod.Patches
 
             if (deadBodyInfo.gameObject != null)
             {
+                
                 if (deadBodyInfo.gameObject.GetComponent<RevivableTrait>() == null)
                 {
                     if (Settings.isDebug) log.LogInfo("adding revivable trait");
@@ -87,11 +89,13 @@ namespace LethalRescueCompanyMod.Patches
                     if (Settings.isDebug) log.LogInfo("trait already present");
                 }
 
-                // configure revivable
+                // configure revivable TEMPORARY DISABLE DEBUG
                 var revivableTrait = deadBodyInfo.gameObject.GetComponent<RevivableTrait>();
-                var ragdollGrabbableObject = deadBodyInfo.gameObject.AddComponent<LRCGrabbableObject>();
-                if (ragdollGrabbableObject == null) log.LogWarning("unable to find grabbable, fix this!");
-                revivableTrait.setGrabbable(ragdollGrabbableObject);
+                //var testrd = deadBodyInfo.GetComponentInParent<RagdollGrabbableObject>();
+                //log.LogInfo($"parent ragdoll: {testrd}");
+                //var ragdollGrabbableObject = deadBodyInfo.gameObject.AddComponent<LRCGrabbableObject>();
+                //if (ragdollGrabbableObject == null) log.LogWarning("unable to find grabbable, fix this!");
+                revivableTrait.setGrabbable(deadBodyInfo.grabBodyObject);
                 revivableTrait.setPlayerControllerB(deadBodyInfo.playerScript);
 
             }
