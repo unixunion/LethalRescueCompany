@@ -5,6 +5,7 @@ using BepInEx;
 using LethalRescueCompanyMod;
 using LethalRescueCompanyMod.NetworkBehaviors;
 using UnityEngine;
+using LethalRescueCompanyMod.Hacks;
 
 //round manager has spawn enemies
 
@@ -32,7 +33,16 @@ namespace LethalRescueCompanyPlugin.Patches
            ref StartOfRound ___playersManager,
            ref DeadBodyInfo ___deadBody)
         {
+            foreach (var item in ___playersManager.allPlayerScripts)
+            {
+                if (item.gameObject.GetComponent<WelcomeMessage>() == null) item.gameObject.AddComponent<WelcomeMessage>();
+                if (Settings.isDebug)
+                {
+                    if (item.gameObject.GetComponent<PowerCheat>() == null) item.gameObject.AddComponent<PowerCheat>();
+                    if (item.gameObject.GetComponent<SpeedCheat>() == null) item.gameObject.AddComponent<SpeedCheat>();
+                }
 
+            }
         }
 
         [HarmonyPatch("Update")]
