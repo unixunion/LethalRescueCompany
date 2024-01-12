@@ -74,8 +74,8 @@ namespace LethalRescueCompanyPlugin.Patches
 
 
 
-        [HarmonyPatch("BeginGrabObject")]
-        [HarmonyPrefix]
+        //[HarmonyPatch("BeginGrabObject")]
+        //[HarmonyPrefix]
         static void ReplaceObjectWithSurrogate(ref Camera ___gameplayCamera, ref PlayerControllerB __instance)
         {
             Ray interactRay = new Ray(___gameplayCamera.transform.position, ___gameplayCamera.transform.forward);
@@ -166,9 +166,12 @@ namespace LethalRescueCompanyPlugin.Patches
                         originalDeadBodyInfo.bodyParts[i].isKinematic = false;
                         originalDeadBodyInfo.bodyParts[i].WakeUp();
                     }
-                    originalDeadBodyInfo.attachedLimb.freezeRotation = false;
-                    originalDeadBodyInfo.attachedLimb.isKinematic = false;
-                    
+
+                    if (originalDeadBodyInfo.attachedLimb != null)
+                    {
+                        originalDeadBodyInfo.attachedLimb.freezeRotation = false;
+                        originalDeadBodyInfo.attachedLimb.isKinematic = false;
+                    }
 
 
                     // detaching stuff
@@ -187,7 +190,7 @@ namespace LethalRescueCompanyPlugin.Patches
                     //originalDeadBodyInfo.secondaryAttachedTo = null;
 
                     // makes things at least grabbable
-                    originalDeadBodyInfo.wasMatchingPosition = false;
+                    // originalDeadBodyInfo.wasMatchingPosition = false;
 
 
                     // experiments 
