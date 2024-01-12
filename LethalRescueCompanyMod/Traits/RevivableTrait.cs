@@ -46,16 +46,11 @@ namespace LethalRescueCompanyMod
 
         public void revivePlayer(bool removeBody)
         {
-            log.LogInfo("checking1");
             if (grabbableObject == null) return;
-            log.LogInfo("checking2");
             if (playerControllerB == null) return;
-            log.LogInfo("checking3");
             if (grabbableObject.isInShipRoom && playerControllerB.playersManager!=null)
             {
-                log.LogInfo("checking4");
                 if (!grabbableObject.isHeld) {
-                    log.LogInfo("checking5");
                     if (!isRespawning && !isUsed)
                     {
                         log.LogInfo("revive conditions met, object is not held");

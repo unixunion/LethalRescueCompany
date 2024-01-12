@@ -89,10 +89,18 @@ namespace LethalRescueCompanyPlugin.Patches
                 {
                     log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
                     var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
-
+                    
+                    log.LogInfo($"Confuckery: attachedLimb: {originalDeadBodyInfo.attachedLimb} ||  attachedTo: {originalDeadBodyInfo.attachedTo} ||  attachedTo.parent:{originalDeadBodyInfo.attachedTo.parent} ");
+                    
+                    
                     originalDeadBodyInfo.attachedLimb = null;
                     originalDeadBodyInfo.attachedTo = null;
+                    
+                    log.LogInfo($"Lerp: {originalDeadBodyInfo.lerpBeforeMatchingPosition} || wasMatchingPosition: {originalDeadBodyInfo.wasMatchingPosition} || matchPositionExactly: {originalDeadBodyInfo.matchPositionExactly}");
+                    originalDeadBodyInfo.lerpBeforeMatchingPosition = false;
                     originalDeadBodyInfo.wasMatchingPosition = false;
+                    //originalDeadBodyInfo.matchPositionExactly = false;
+                    //originalDeadBodyInfo.bodyParts[6].transform.
                 }
                 else
                 {
@@ -105,6 +113,7 @@ namespace LethalRescueCompanyPlugin.Patches
                 log.LogDebug("no revivable trait found, cant grab patch this");
             }
         }
+
 
         [HarmonyPatch("SpawnDeadBody")]
         [HarmonyPostfix]

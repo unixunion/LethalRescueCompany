@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using GameNetcodeStuff;
 using HarmonyLib;
 using LethalRescueCompanyMod.Models;
 
@@ -34,6 +35,20 @@ namespace LethalRescueCompanyMod.Patches
             Settings.hangingBodyPrefab = __instance.hangBodyPhysicsPrefab;
         }
 
+
+        [HarmonyPatch("GrabBody")]
+        [HarmonyPrefix]
+        static void testDebug(ref PlayerControllerB ___targetPlayer)
+        {
+            log.LogInfo($"DEBUGGY DEBUGGY :: {___targetPlayer.deadBody.bodyParts[6]} || {___targetPlayer.deadBody.attachedLimb}");
+        }
+
+        [HarmonyPatch("GrabBody")]
+        [HarmonyPostfix]
+        static void thisisMyHorse(ref PlayerControllerB ___targetPlayer)
+        {
+            log.LogInfo($"My horse is amazing :: {___targetPlayer.deadBody.bodyParts[6]} || {___targetPlayer.deadBody.attachedLimb}");
+        }
 
         [HarmonyPatch("HangBodyFromCeiling")]
         [HarmonyPostfix]
