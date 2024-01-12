@@ -15,17 +15,7 @@ namespace LethalRescueCompanyMod.Patches
         static DeadBodyInfo currentlyHeldBody = null;
         
 
-        [HarmonyPatch("HangBodyFromCeiling")]
-        [HarmonyPrefix]
-        static void hangBodyFromCeilingPrePatch(ref DeadBodyInfo ___currentlyHeldBody)
-        {
-            log.LogInfo($"Getting currentlyHeldBody: {___currentlyHeldBody}");
-            currentlyHeldBody = ___currentlyHeldBody;
-            for (int i = 0; i < currentlyHeldBody.bodyBloodDecals.Length; i++)
-            {
-                currentlyHeldBody.bodyBloodDecals[i].SetActive(value: false);
-            }
-        }
+       
 
 
         [HarmonyPatch("Start")]
@@ -40,20 +30,34 @@ namespace LethalRescueCompanyMod.Patches
         [HarmonyPrefix]
         static void testDebug(ref PlayerControllerB ___targetPlayer)
         {
-            log.LogInfo($"DEBUGGY DEBUGGY :: {___targetPlayer.deadBody.bodyParts[6]} || {___targetPlayer.deadBody.attachedLimb}");
+            //log.LogInfo($"DEBUGGY DEBUGGY :: {___targetPlayer.deadBody.bodyParts[6]} || {___targetPlayer.deadBody.attachedLimb}");
         }
 
-        [HarmonyPatch("GrabBody")]
-        [HarmonyPostfix]
-        static void thisisMyHorse(ref PlayerControllerB ___targetPlayer)
+        //[HarmonyPatch("GrabBody")]
+        //[HarmonyPostfix]
+        //static void thisisMyHorse(ref PlayerControllerB ___targetPlayer)
+        //{
+        //    log.LogInfo($"My horse is amazing :: {___targetPlayer.deadBody.bodyParts[6]} || {___targetPlayer.deadBody.attachedLimb}");
+        //}
+
+        [HarmonyPatch("HangBodyFromCeiling")]
+        [HarmonyPrefix]
+        static void hangBodyFromCeilingPrePatch(ref DeadBodyInfo ___currentlyHeldBody)
         {
-            log.LogInfo($"My horse is amazing :: {___targetPlayer.deadBody.bodyParts[6]} || {___targetPlayer.deadBody.attachedLimb}");
+            log.LogInfo($"Getting currentlyHeldBody: {___currentlyHeldBody}");
+            currentlyHeldBody = ___currentlyHeldBody;
+            if (currentlyHeldBody == null) return;
+            for (int i = 0; i < currentlyHeldBody.bodyBloodDecals.Length; i++)
+            {
+                currentlyHeldBody.bodyBloodDecals[i].SetActive(value: false);
+            }
         }
 
         [HarmonyPatch("HangBodyFromCeiling")]
         [HarmonyPostfix]
         static void hangBodyFromCeilingPostPatch(ref SandSpiderAI __instance)
         {
+            if (currentlyHeldBody == null) return;
             makeWebbedBodyGrabbable(currentlyHeldBody);
 
             // if debug / solo
