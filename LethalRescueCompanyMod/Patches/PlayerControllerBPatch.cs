@@ -6,8 +6,6 @@ using LethalRescueCompanyMod;
 using LethalRescueCompanyMod.NetworkBehaviors;
 using UnityEngine;
 using LethalRescueCompanyMod.Hacks;
-using System.Linq;
-using LethalRescueCompanyMod.Models;
 
 //round manager has spawn enemies
 
@@ -39,6 +37,7 @@ namespace LethalRescueCompanyPlugin.Patches
             foreach (var item in ___playersManager.allPlayerScripts)
             {
                 if (item.gameObject.GetComponent<WelcomeMessage>() == null) item.gameObject.AddComponent<WelcomeMessage>();
+                // this should only be added on debug? or are we making the spider master a normal mechanic?
                 if (item.gameObject.GetComponent<SpiderSpawnBehavior>() == null) item.gameObject.AddComponent<SpiderSpawnBehavior>();
                 if (Settings.isDebug)
                 {
@@ -49,6 +48,8 @@ namespace LethalRescueCompanyPlugin.Patches
             }
         }
 
+
+        // this is not needed anymore right? as the revivable trait has its own update?
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
         static void updatePatch(
@@ -77,8 +78,8 @@ namespace LethalRescueCompanyPlugin.Patches
 
 
 
-        [HarmonyPatch("BeginGrabObject")]
-        [HarmonyPrefix]
+        //[HarmonyPatch("BeginGrabObject")]
+        //[HarmonyPrefix]
         static void ReplaceObjectWithSurrogate(ref Camera ___gameplayCamera, ref PlayerControllerB __instance)
         {
             Ray interactRay = new Ray(___gameplayCamera.transform.position, ___gameplayCamera.transform.forward);
@@ -230,8 +231,8 @@ namespace LethalRescueCompanyPlugin.Patches
         }
 
 
-        [HarmonyPatch("SpawnDeadBody")]
-        [HarmonyPostfix]
+        //[HarmonyPatch("SpawnDeadBody")]
+        //[HarmonyPostfix]
         static void debugDeath(ref PlayerControllerB __instance)
         {
             if (Settings.isDebug)

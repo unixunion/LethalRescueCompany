@@ -117,6 +117,9 @@ namespace LethalRescueCompanyMod.Patches
                 revivableTrait.setGrabbable(deadBodyInfo.grabBodyObject);
                 revivableTrait.setPlayerControllerB(deadBodyInfo.playerScript);
 
+                log.LogInfo("Dropping the body");
+                deadBodyInfo.attachedTo = null;
+
             }
             else
             {
