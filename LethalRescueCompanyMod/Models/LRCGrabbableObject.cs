@@ -1,7 +1,5 @@
 ﻿using BepInEx.Logging;
 using LethalRescueCompanyMod.NetworkBehaviors;
-using System;
-using Unity.Netcode;
 
 namespace LethalRescueCompanyMod.Models
 {

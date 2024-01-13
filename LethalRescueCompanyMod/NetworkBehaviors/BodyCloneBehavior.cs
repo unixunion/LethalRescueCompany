@@ -1,7 +1,6 @@
 ﻿using BepInEx.Logging;
 using GameNetcodeStuff;
 using LethalRescueCompanyMod.Models;
-using System;
 using Unity.Netcode;
 using UnityEngine;
 

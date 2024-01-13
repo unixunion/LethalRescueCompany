@@ -1,11 +1,5 @@
 ﻿using BepInEx.Logging;
-using Dissonance;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace LethalRescueCompanyMod
@@ -27,7 +21,7 @@ namespace LethalRescueCompanyMod
         private IEnumerator showWelcome()
         {
             yield return new WaitForSeconds(10);
-            HUDManager.Instance.DisplayTip("Lethal Rescue Company", "You can rescue your crewmates that have been cacooned by spiders by bringing their cacooned bodies back to the ship");
+            HUDManager.Instance.DisplayTip("Lethal Rescue Company", "You can rescue your cacooned crew by bringing their bodies back to the ship");
         }
     }
 }

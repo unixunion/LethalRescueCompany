@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-public static class CommandContract
+﻿public static class CommandContract
 {
     public enum Command
     {
