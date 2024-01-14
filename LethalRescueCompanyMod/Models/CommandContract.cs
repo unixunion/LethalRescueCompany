@@ -6,6 +6,6 @@
         SpawnCube,
         KillSpider,
         DeadSwap,
-        SpawnBody,
+        SpawnBody
     }
 }

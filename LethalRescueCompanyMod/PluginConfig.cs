@@ -1,28 +1,25 @@
 ﻿using BepInEx.Configuration;
 
-namespace LethalRescueCompanyPlugin
+namespace LethalRescueCompanyPlugin;
+
+public class PluginConfig
 {
-    public class PluginConfig
+    private readonly ConfigFile configFile;
+
+    public PluginConfig(ConfigFile cfg)
     {
-        readonly ConfigFile configFile;
+        configFile = cfg;
+    }
 
-        public bool debug { get; set; }
+    public bool debug { get; set; }
 
-        public PluginConfig(ConfigFile cfg)
-        {
-            configFile = cfg;
-        }
+    private T ConfigEntry<T>(string section, string key, T defaultVal, string description)
+    {
+        return configFile.Bind(section, key, defaultVal, description).Value;
+    }
 
-        private T ConfigEntry<T>(string section, string key, T defaultVal, string description)
-        {
-            return configFile.Bind(section, key, defaultVal, description).Value;
-        }
-
-        public void InitBindings()
-        {
-            debug = ConfigEntry("Developer", "Debug", true, "Developer Super Powers and verbose logging");
-
-        }
-
+    public void InitBindings()
+    {
+        debug = ConfigEntry("Developer", "Debug", true, "Developer Super Powers and verbose logging");
     }
 }

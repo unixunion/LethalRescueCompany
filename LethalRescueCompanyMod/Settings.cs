@@ -1,17 +1,16 @@
 ﻿using UnityEngine;
 
-namespace LethalRescueCompanyMod
-{
-    /**
-     * The accessor for the settings, maybe move this to pluginConfig...
-     **/
-    public static class Settings
-    {
-        public static bool isDebug { get; set; } = true;
-        public static bool isSolo { get; set; } = true;
+namespace LethalRescueCompanyMod;
 
-        public static bool teleportEnabled { get; set; } = true;
-        public static bool debugAddRevive { get; set; } = true;
-        public static GameObject hangingBodyPrefab { get; set; } = null;
-    }
+/**
+ * The accessor for the settings, maybe move this to pluginConfig...
+ */
+public static class Settings
+{
+    public static bool IsDebug { get; set; } = false;
+    public static bool IsSolo { get; set; } = false;
+
+    public static bool TeleportEnabled { get; set; } = false;
+    public static bool DebugAddRevive { get; set; } = false;
+    public static GameObject HangingBodyPrefab { get; set; } = null;
 }

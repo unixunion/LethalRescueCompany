@@ -1,11 +1,10 @@
-﻿using BepInEx.Logging;
+﻿using BepInEx;
+using BepInEx.Logging;
 using GameNetcodeStuff;
 using HarmonyLib;
-using BepInEx;
-using LethalRescueCompanyMod;
+using LethalRescueCompanyMod.Hacks;
 using LethalRescueCompanyMod.NetworkBehaviors;
 using UnityEngine;
-using LethalRescueCompanyMod.Hacks;
 
 //round manager has spawn enemies
 
@@ -17,231 +16,226 @@ using LethalRescueCompanyMod.Hacks;
 // https://thunderstore.io/c/lethal-company/p/Noop/UnityExplorer/
 
 
-namespace LethalRescueCompanyPlugin.Patches
+namespace LethalRescueCompanyMod.Patches;
+
+[HarmonyPatch(typeof(PlayerControllerB))]
+internal class PlayerControllerBPatch : BaseUnityPlugin
 {
-    [HarmonyPatch(typeof(PlayerControllerB))]
-    internal class PlayerControllerBPatch : BaseUnityPlugin
-    {
-        static bool isDebug = Settings.isDebug;
-        static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
-        static Helper helper = new Helper();
-        
+    private static bool isDebug = Settings.IsDebug;
 
-        [HarmonyPatch("Start")]
-        [HarmonyPostfix]
-        static void startPatch(
-           ref PlayerControllerB __instance,
-           ref StartOfRound ___playersManager,
-           ref DeadBodyInfo ___deadBody)
-        {
-            foreach (var item in ___playersManager.allPlayerScripts)
-            {
-                if (item.gameObject.GetComponent<WelcomeMessage>() == null) item.gameObject.AddComponent<WelcomeMessage>();
-                // this should only be added on debug? or are we making the spider master a normal mechanic?
-                if (item.gameObject.GetComponent<SpiderSpawnBehavior>() == null) item.gameObject.AddComponent<SpiderSpawnBehavior>();
-                if (Settings.isDebug)
-                {
-                    if (item.gameObject.GetComponent<PowerCheat>() == null) item.gameObject.AddComponent<PowerCheat>();
-                    if (item.gameObject.GetComponent<SpeedCheat>() == null) item.gameObject.AddComponent<SpeedCheat>();
-                }
+    internal static ManualLogSource log =
+        BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.PlayerControllerBPatch");
 
-            }
-        }
+    private static Helper helper = new();
 
 
-        // this is not needed anymore right? as the revivable trait has its own update?
-        [HarmonyPatch("Update")]
-        [HarmonyPostfix]
-        static void updatePatch(
+    [HarmonyPatch("Start")]
+    [HarmonyPostfix]
+    private static void startPatch(
         ref PlayerControllerB __instance,
         ref StartOfRound ___playersManager,
-            ref DeadBodyInfo ___deadBody)
+        ref DeadBodyInfo ___deadBody)
+    {
+        foreach (var item in ___playersManager.allPlayerScripts)
         {
-            // nope out if not a body
-            if (___deadBody == null) return;
-            if (!__instance.isPlayerDead) return;
-            if (__instance == null)
+            if (item.gameObject.GetComponent<WelcomeMessage>() == null) item.gameObject.AddComponent<WelcomeMessage>();
+            // this should only be added on debug? or are we making the spider master a normal mechanic?
+            if (item.gameObject.GetComponent<SpiderSpawnBehavior>() == null)
+                item.gameObject.AddComponent<SpiderSpawnBehavior>();
+            if (Settings.IsDebug)
             {
-                log.LogError("instance is null");
-                return;
-            }
-
-            var revivabletrait = ___deadBody.gameObject.GetComponent<RevivableTrait>();
-            if (revivabletrait == null)
-            {
-                //log.LogDebug("revivable trait is null");
-                return;
+                if (item.gameObject.GetComponent<PowerCheat>() == null) item.gameObject.AddComponent<PowerCheat>();
+                if (item.gameObject.GetComponent<SpeedCheat>() == null) item.gameObject.AddComponent<SpeedCheat>();
             }
         }
+    }
 
 
-
-
-
-        //[HarmonyPatch("BeginGrabObject")]
-        //[HarmonyPrefix]
-        static void ReplaceObjectWithSurrogate(ref Camera ___gameplayCamera, ref PlayerControllerB __instance)
+    // this is not needed anymore right? as the revivable trait has its own update?
+    [HarmonyPatch("Update")]
+    [HarmonyPostfix]
+    private static void updatePatch(
+        ref PlayerControllerB __instance,
+        ref StartOfRound ___playersManager,
+        ref DeadBodyInfo ___deadBody)
+    {
+        // nope out if not a body
+        if (___deadBody == null) return;
+        if (!__instance.isPlayerDead) return;
+        if (__instance == null)
         {
-            Ray interactRay = new Ray(___gameplayCamera.transform.position, ___gameplayCamera.transform.forward);
-            Physics.Raycast(interactRay, out var hit, __instance.grabDistance, 832);
-
-            log.LogInfo($"ray hit: {hit}");
-            var currentlyGrabbingObject = hit.collider.transform.gameObject.GetComponent<GrabbableObject>();
-
-            if (currentlyGrabbingObject != null)
-            {
-                log.LogInfo($"grabbing hack: {currentlyGrabbingObject.GetComponent<GrabbableObject>()}");
-
-                var trait = currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
-
-                if (trait != null)
-                {
-   
-                    log.LogInfo($"BeginGrabbbing: has trait: {currentlyGrabbingObject.name}");
-                    trait.Interact();
-                    var ragdollGrabbableObject = currentlyGrabbingObject.GetComponentInParent<RagdollGrabbableObject>();
-                    if (ragdollGrabbableObject != null)
-                    {
-                        log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
-                        
-                        var deadBodyInfo = currentlyGrabbingObject.GetComponentInParent<DeadBodyInfo>();
-                        if (deadBodyInfo == null) return;
-                        log.LogInfo("cloning this shit");
-                        //BodyCloneBehavior.ReplacementBody(deadBodyInfo).GetComponent<GrabbableObject>();
-
-                        BodyCloneBehavior.ReplacementBody(ragdollGrabbableObject.ragdoll); //.GetComponent<GrabbableObject>();
-
-                        //Destroy(originalDeadBodyInfo);
-                    }
-                }
-
-
-            }
-            else
-            {
-                log.LogInfo($"object does not contain GrabbableObject ");
-            }
-
-            // currentlyGrabbingObject.InteractItem();
-
+            log.LogError("instance is null");
+            return;
         }
 
+        var revivabletrait = ___deadBody.gameObject.GetComponent<RevivableTrait>();
+        if (revivabletrait == null)
+            //log.LogDebug("revivable trait is null");
+            return;
+    }
 
 
+    //[HarmonyPatch("BeginGrabObject")]
+    //[HarmonyPrefix]
+    private static void ReplaceObjectWithSurrogate(ref Camera ___gameplayCamera, ref PlayerControllerB __instance)
+    {
+        var interactRay = new Ray(___gameplayCamera.transform.position, ___gameplayCamera.transform.forward);
+        Physics.Raycast(interactRay, out var hit, __instance.grabDistance, 832);
 
+        log.LogInfo($"ray hit: {hit}");
+        var currentlyGrabbingObject = hit.collider.transform.gameObject.GetComponent<GrabbableObject>();
 
-
-        //[HarmonyPatch("GrabObject")]
-        //[HarmonyPrefix]
-        static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject, ref GrabbableObject ___currentlyHeldObject, ref PlayerControllerB __instance, ref GrabbableObject ___currentlyHeldObjectServer)
+        if (currentlyGrabbingObject != null)
         {
-            if (___currentlyGrabbingObject == null)
-            {
-                log.LogError("grabbing null?");
-                return;
-            };
+            log.LogInfo($"grabbing hack: {currentlyGrabbingObject.GetComponent<GrabbableObject>()}");
 
-            log.LogInfo($"BeginGrabbbing: {___currentlyGrabbingObject.name}");
-
-            var trait = ___currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
+            var trait = currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
 
             if (trait != null)
             {
-                log.LogInfo($"BeginGrabbbing: has RevivableTrait. obj.name: {___currentlyGrabbingObject.name}");
-
-                var ragdollGrabbableObject = ___currentlyGrabbingObject.GetComponentInParent<RagdollGrabbableObject>();
-                var deadBodyInfo = ___currentlyGrabbingObject.GetComponentInParent<DeadBodyInfo>();
+                log.LogInfo($"BeginGrabbbing: has trait: {currentlyGrabbingObject.name}");
+                trait.Interact();
+                var ragdollGrabbableObject = currentlyGrabbingObject.GetComponentInParent<RagdollGrabbableObject>();
                 if (ragdollGrabbableObject != null)
                 {
                     log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
-                    var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
 
-                    __instance.SpawnDeadBody(
-                            (int)originalDeadBodyInfo.playerScript.playerClientId,
-                            Vector3.zero,
-                            (int)CauseOfDeath.Mauling,
-                            deadBodyInfo.playerScript
-                        );
+                    var deadBodyInfo = currentlyGrabbingObject.GetComponentInParent<DeadBodyInfo>();
+                    if (deadBodyInfo == null) return;
+                    log.LogInfo("cloning this shit");
+                    //BodyCloneBehavior.ReplacementBody(deadBodyInfo).GetComponent<GrabbableObject>();
 
-                    //log.LogInfo($"debugging: attachedLimb: {originalDeadBodyInfo.attachedLimb} ||  attachedTo: {originalDeadBodyInfo.attachedTo} ||  attachedTo.parent:{originalDeadBodyInfo.attachedTo.parent} {originalDeadBodyInfo} || attachedTo.parent==base.transform {originalDeadBodyInfo.attachedTo == __instance.deadBody.transform} ");
-                    //log.LogInfo($"debugging: lerpBeforeMatchingPosition: {originalDeadBodyInfo.lerpBeforeMatchingPosition} || wasMatchingPosition: {originalDeadBodyInfo.wasMatchingPosition} || matchPositionExactly: {originalDeadBodyInfo.matchPositionExactly}");
-                    //log.LogInfo($"debugging: deactivated: {originalDeadBodyInfo.deactivated} || parentedToShip: {originalDeadBodyInfo.parentedToShip}");
-                    //log.LogInfo($"debugging: attachedLimb.centerOfMass: {originalDeadBodyInfo.attachedLimb.centerOfMass}, attachedLimb.inertiaTensorRotation: {originalDeadBodyInfo.attachedLimb.inertiaTensorRotation}");
+                    BodyCloneBehavior.ReplacementBody(ragdollGrabbableObject
+                        .ragdoll); //.GetComponent<GrabbableObject>();
 
-                    // attachedLimb = PlayerRagdoll(Clone)
-                    // attachedTo = target ( check spider code )
-                    // 
-
-                    // notes of what happens when wasMatchingPosition = false.
-                    //attachedLimb.position = attachedTo.position;
-                    //attachedLimb.rotation = attachedTo.rotation;
-                    //attachedLimb.centerOfMass = Vector3.zero;
-                    //attachedLimb.inertiaTensorRotation = Quaternion.identity;
-
-
-                    // fuck with the body parts as per wasMatchingPosition = false
-                    for (int i = 0; i < deadBodyInfo.bodyParts.Length; i++)
-                    {
-                        deadBodyInfo.bodyParts[i].isKinematic = false;
-                        deadBodyInfo.bodyParts[i].WakeUp();
-                    }
-
-                    if (deadBodyInfo.attachedLimb != null)
-                    {
-                        deadBodyInfo.attachedLimb.freezeRotation = false;
-                        deadBodyInfo.attachedLimb.isKinematic = false;
-                    }
-
-
-                    // detaching stuff
-                    //if (originalDeadBodyInfo.attachedLimb != null)
-                    //{
-                    //    originalDeadBodyInfo.attachedLimb.isKinematic = false;
-                    //    originalDeadBodyInfo.attachedLimb.freezeRotation = false;
-                    //}
-
-
-                    deadBodyInfo.attachedLimb = null;
-                    deadBodyInfo.attachedTo = null;
-
-                    // more
-                    //originalDeadBodyInfo.secondaryAttachedLimb = null;
-                    //originalDeadBodyInfo.secondaryAttachedTo = null;
-
-                    // makes things at least grabbable
-                    // originalDeadBodyInfo.wasMatchingPosition = false;
-
-
-                    // experiments 
-                    // originalDeadBodyInfo.lerpBeforeMatchingPosition = false;
-                    // ragdollGrabbableObject.EquipItem();
-                    //originalDeadBodyInfo.matchPositionExactly = false;
-                    //originalDeadBodyInfo.bodyParts[6].transform.
+                    //Destroy(originalDeadBodyInfo);
                 }
-                else
+            }
+        }
+        else
+        {
+            log.LogInfo("object does not contain GrabbableObject ");
+        }
+
+        // currentlyGrabbingObject.InteractItem();
+    }
+
+
+    //[HarmonyPatch("GrabObject")]
+    //[HarmonyPrefix]
+    private static void grabHangingBody(ref GrabbableObject ___currentlyGrabbingObject,
+        ref GrabbableObject ___currentlyHeldObject, ref PlayerControllerB __instance,
+        ref GrabbableObject ___currentlyHeldObjectServer)
+    {
+        if (___currentlyGrabbingObject == null)
+        {
+            log.LogError("grabbing null?");
+            return;
+        }
+
+        ;
+
+        log.LogInfo($"BeginGrabbbing: {___currentlyGrabbingObject.name}");
+
+        var trait = ___currentlyGrabbingObject.GetComponentInParent<RevivableTrait>();
+
+        if (trait != null)
+        {
+            log.LogInfo($"BeginGrabbbing: has RevivableTrait. obj.name: {___currentlyGrabbingObject.name}");
+
+            var ragdollGrabbableObject = ___currentlyGrabbingObject.GetComponentInParent<RagdollGrabbableObject>();
+            var deadBodyInfo = ___currentlyGrabbingObject.GetComponentInParent<DeadBodyInfo>();
+            if (ragdollGrabbableObject != null)
+            {
+                log.LogInfo("BeginGrabbbing: It is indeed a ragdollGrabbableObject body, dropping");
+                var originalDeadBodyInfo = ragdollGrabbableObject.ragdoll;
+
+                __instance.SpawnDeadBody(
+                    (int)originalDeadBodyInfo.playerScript.playerClientId,
+                    Vector3.zero,
+                    (int)CauseOfDeath.Mauling,
+                    deadBodyInfo.playerScript
+                );
+
+                //log.LogInfo($"debugging: attachedLimb: {originalDeadBodyInfo.attachedLimb} ||  attachedTo: {originalDeadBodyInfo.attachedTo} ||  attachedTo.parent:{originalDeadBodyInfo.attachedTo.parent} {originalDeadBodyInfo} || attachedTo.parent==base.transform {originalDeadBodyInfo.attachedTo == __instance.deadBody.transform} ");
+                //log.LogInfo($"debugging: lerpBeforeMatchingPosition: {originalDeadBodyInfo.lerpBeforeMatchingPosition} || wasMatchingPosition: {originalDeadBodyInfo.wasMatchingPosition} || matchPositionExactly: {originalDeadBodyInfo.matchPositionExactly}");
+                //log.LogInfo($"debugging: deactivated: {originalDeadBodyInfo.deactivated} || parentedToShip: {originalDeadBodyInfo.parentedToShip}");
+                //log.LogInfo($"debugging: attachedLimb.centerOfMass: {originalDeadBodyInfo.attachedLimb.centerOfMass}, attachedLimb.inertiaTensorRotation: {originalDeadBodyInfo.attachedLimb.inertiaTensorRotation}");
+
+                // attachedLimb = PlayerRagdoll(Clone)
+                // attachedTo = target ( check spider code )
+                // 
+
+                // notes of what happens when wasMatchingPosition = false.
+                //attachedLimb.position = attachedTo.position;
+                //attachedLimb.rotation = attachedTo.rotation;
+                //attachedLimb.centerOfMass = Vector3.zero;
+                //attachedLimb.inertiaTensorRotation = Quaternion.identity;
+
+
+                // fuck with the body parts as per wasMatchingPosition = false
+                for (var i = 0; i < deadBodyInfo.bodyParts.Length; i++)
                 {
-                    log.LogWarning("BeginGrabbbing: not ragdollGrabbableObject");
+                    deadBodyInfo.bodyParts[i].isKinematic = false;
+                    deadBodyInfo.bodyParts[i].WakeUp();
                 }
-                log.LogInfo("ive done all I can");
+
+                if (deadBodyInfo.attachedLimb != null)
+                {
+                    deadBodyInfo.attachedLimb.freezeRotation = false;
+                    deadBodyInfo.attachedLimb.isKinematic = false;
+                }
+
+
+                // detaching stuff
+                //if (originalDeadBodyInfo.attachedLimb != null)
+                //{
+                //    originalDeadBodyInfo.attachedLimb.isKinematic = false;
+                //    originalDeadBodyInfo.attachedLimb.freezeRotation = false;
+                //}
+
+
+                deadBodyInfo.attachedLimb = null;
+                deadBodyInfo.attachedTo = null;
+
+                // more
+                //originalDeadBodyInfo.secondaryAttachedLimb = null;
+                //originalDeadBodyInfo.secondaryAttachedTo = null;
+
+                // makes things at least grabbable
+                // originalDeadBodyInfo.wasMatchingPosition = false;
+
+
+                // experiments 
+                // originalDeadBodyInfo.lerpBeforeMatchingPosition = false;
+                // ragdollGrabbableObject.EquipItem();
+                //originalDeadBodyInfo.matchPositionExactly = false;
+                //originalDeadBodyInfo.bodyParts[6].transform.
             }
             else
             {
-                log.LogDebug("no revivable trait found, cant grab patch this");
+                log.LogWarning("BeginGrabbbing: not ragdollGrabbableObject");
             }
+
+            log.LogInfo("ive done all I can");
         }
-
-
-        //[HarmonyPatch("SpawnDeadBody")]
-        //[HarmonyPostfix]
-        static void debugDeath(ref PlayerControllerB __instance)
+        else
         {
-            if (Settings.isDebug)
-            {
-                log.LogInfo("making revivable");
-                RevivableTrait revivableTrait = __instance.deadBody.gameObject.AddComponent<RevivableTrait>();
-                revivableTrait.setPlayerControllerB(__instance);
-                log.LogInfo("trait added");
-            }
+            log.LogDebug("no revivable trait found, cant grab patch this");
+        }
+    }
+
+
+    //[HarmonyPatch("SpawnDeadBody")]
+    //[HarmonyPostfix]
+    private static void debugDeath(ref PlayerControllerB __instance)
+    {
+        if (Settings.IsDebug)
+        {
+            log.LogInfo("making revivable");
+            var revivableTrait = __instance.deadBody.gameObject.AddComponent<RevivableTrait>();
+            revivableTrait.setPlayerControllerB(__instance);
+            log.LogInfo("trait added");
         }
     }
 }

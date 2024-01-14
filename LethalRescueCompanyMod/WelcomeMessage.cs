@@ -1,27 +1,25 @@
-﻿using BepInEx.Logging;
-using System.Collections;
+﻿using System.Collections;
+using BepInEx.Logging;
 using UnityEngine;
+using Logger = BepInEx.Logging.Logger;
 
-namespace LethalRescueCompanyMod
+namespace LethalRescueCompanyMod;
+
+public class WelcomeMessage : MonoBehaviour
 {
-    public class WelcomeMessage : MonoBehaviour
+    internal static ManualLogSource log = Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.WelcomeMessage");
+    public bool hasShownWelcome;
+
+    public WelcomeMessage()
     {
-        public bool hasShownWelcome = false;
-        static internal ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("LethalRescueCompanyPlugin.Patches.WelcomeMessage");
-        public WelcomeMessage()
-        {
-            if (!hasShownWelcome)
-            {
-                StartCoroutine(showWelcome());
-            }    
-
-        }
+        if (!hasShownWelcome) StartCoroutine(showWelcome());
+    }
 
 
-        private IEnumerator showWelcome()
-        {
-            yield return new WaitForSeconds(10);
-            HUDManager.Instance.DisplayTip("Lethal Rescue Company", "You can rescue your cacooned crew by bringing their bodies back to the ship");
-        }
+    private IEnumerator showWelcome()
+    {
+        yield return new WaitForSeconds(10);
+        HUDManager.Instance.DisplayTip("Lethal Rescue Company",
+            "You can rescue your cacooned crew by bringing their bodies back to the ship");
     }
 }
